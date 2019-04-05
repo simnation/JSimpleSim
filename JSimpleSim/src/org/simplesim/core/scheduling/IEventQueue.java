@@ -10,18 +10,18 @@ import java.util.List;;
 
 /**
  * Basic event queue interface for all queue implementations of the scheduling
- * package.<br/>
+ * package.<p/>
  * Event queues are a priority queue data structure. Research on these data
  * structures has been done for some decades now and there is quite a lot of
  * literature and implementations. In the realm of discrete event simulation,
  * the scheduling of events has been identified as a major bottleneck (taking up
  * to 40% computing time in large simulation models). Thus, this interface is
- * designed to cover all necessary functionality in a minimalistic way.<br/>
+ * designed to cover all necessary functionality in a minimalistic way.
  * During simulation {@link #enqueue(E, Time)}, {@link #dequeueAll(Time)} and
  * {@link #getMin()} are used most often, presumably. A requeue operation can be
  * done by dequeuing an event and then enqueuing it again at a different time.
  * <p/>
- * Event queues may not be synchronized. Accessing unsynchronized event queues
+ * Event queues might not be synchronized. Accessing unsynchronized event queues
  * from different threads may result in non-deterministic behavior! Please check
  * the documentation of the event queue you are going to use or synchronize
  * externally.
@@ -31,7 +31,7 @@ import java.util.List;;
  * per event!
  * <p/>
  *
- * @param <E> the type of events to be stored in the queue
+ * @param <E> type of events to be stored in the queue
  * 
  * @author Rene Kuhlemann
  */
@@ -40,7 +40,7 @@ public interface IEventQueue<E> {
 	/**
 	 * Gets the minimal time stamp.
 	 * 
-	 * @return current minimal time stamp, or null for an empty queue
+	 * @return current minimal time stamp (does not test if queue is empty!)
 	 */
 	Time getMin();
 
@@ -107,7 +107,7 @@ public interface IEventQueue<E> {
 	/**
 	 * Dequeues all elements with the given time stamp.
 	 * 
-	 * @param time the time
+	 * @param time time stamp of the events to dequeue
 	 * 
 	 * @return a list containing all events with this time stamp or an empty list if
 	 *         there are not events at the given time

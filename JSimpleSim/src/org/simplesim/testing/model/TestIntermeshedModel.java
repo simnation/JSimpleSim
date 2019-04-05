@@ -13,7 +13,7 @@ import org.simplesim.core.routing.AbstractPort;
 import org.simplesim.core.routing.Message;
 import org.simplesim.core.routing.SinglePort;
 import org.simplesim.core.scheduling.IEventQueue;
-import org.simplesim.core.scheduling.SortedListEventQueue;
+import org.simplesim.core.scheduling.SortedEventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractState;
@@ -63,7 +63,7 @@ public final class TestIntermeshedModel {
 
 		@Override
 		protected IEventQueue<Integer> createInternalEventQueue() {
-			return new SortedListEventQueue<>();
+			return new SortedEventQueue<>();
 		}
 
 		@Override

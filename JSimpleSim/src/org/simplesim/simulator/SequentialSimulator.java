@@ -11,7 +11,7 @@ import java.util.List;
 import org.simplesim.core.routing.IMessageForwardingStrategy;
 import org.simplesim.core.routing.RecursiveMessageForwarding;
 import org.simplesim.core.scheduling.IEventQueue;
-import org.simplesim.core.scheduling.SortedListEventQueue;
+import org.simplesim.core.scheduling.SortedEventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
@@ -43,7 +43,7 @@ public class SequentialSimulator {
 	}
 
 	public SequentialSimulator(AbstractDomain<?> root) {
-		this(root,new SortedListEventQueue<AbstractAgent<?, ?>>());
+		this(root,new SortedEventQueue<AbstractAgent<?, ?>>());
 	}
 
 	void initGlobalEventQueue() {

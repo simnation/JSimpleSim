@@ -14,7 +14,7 @@ import org.simplesim.core.routing.RoutedMessage;
 import org.simplesim.core.routing.SinglePort;
 import org.simplesim.core.scheduling.EventQueueEntry;
 import org.simplesim.core.scheduling.IEventQueue;
-import org.simplesim.core.scheduling.SortedListEventQueue;
+import org.simplesim.core.scheduling.SortedEventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
@@ -70,7 +70,7 @@ public final class TestTreeModel {
 
 		@Override
 		protected IEventQueue<Integer> createInternalEventQueue() {
-			return new SortedListEventQueue<Integer>();
+			return new SortedEventQueue<Integer>();
 		}
 
 		@Override

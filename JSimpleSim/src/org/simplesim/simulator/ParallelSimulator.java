@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.simplesim.core.scheduling.IEventQueue;
-import org.simplesim.core.scheduling.SortedListEventQueue;
+import org.simplesim.core.scheduling.SortedEventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
@@ -33,7 +33,7 @@ public final class ParallelSimulator extends SequentialSimulator {
 	}
 
 	public ParallelSimulator(AbstractDomain<?> model) {
-		this(model,new SortedListEventQueue<AbstractAgent<?, ?>>());
+		this(model,new SortedEventQueue<AbstractAgent<?, ?>>());
 	}
 
 	@Override

@@ -20,12 +20,10 @@ import java.util.Iterator;
  *
  * @param <E> event type
  */
-public abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> implements IEventQueue<E> {
+abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> implements IEventQueue<E> {
 
 	private final Q queue; // the queue as subclass of a Collection
 	
-	private final ItemCache<EventQueueEntry<E>> cache;
-
 	/**
 	 * Class constructor taking the event queue and the cache size as parameters
 	 *
@@ -33,9 +31,8 @@ public abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry
 	 * @param chacheSize size of internal element cache, set to 0 to switch of
 	 *                   caching.
 	 */
-	AbstractEventQueue(Q eq, int chacheSize) {
+	AbstractEventQueue(Q eq) {
 		queue=eq;
-		cache=new ItemCache<>(chacheSize);
 	}
 
 	/**
@@ -45,32 +42,6 @@ public abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry
 	 */
 	Q getQueue() {
 		return queue;
-	}
-	
-	/**
-	 * Gets the cache.
-	 *
-	 * @return the cache
-	 */
-	ItemCache<EventQueueEntry<E>> getCache() {
-		return cache;
-	}
-
-	/**
-	 * Provides a new {@link EventQueueEntry} with given time and event type.
-	 * If there are cached elements they are reused, otherwise the entry is created.
-	 *
-	 * @param event the event of the entry
-	 * @param time  the time stamp of the event
-	 *
-	 * @return an {@code EventQueueEntry} with given event type and time stamp
-	 */
-	EventQueueEntry<E> createEntry(E event, Time time) {
-		EventQueueEntry<E> entry=cache.reuse();
-		if (entry==null) return new EventQueueEntry<>(event,time);
-		entry.setEvent(event);
-		entry.setTime(time);
-		return entry;
 	}
 
 	/*
@@ -130,7 +101,7 @@ public abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry
 	 */
 	@Override
 	public void enqueue(E event, Time time) {
-		getQueue().add(createEntry(event,time));
+		getQueue().add(new EventQueueEntry<E>(event,time));
 	}
 
 	/*
