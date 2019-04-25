@@ -2,12 +2,14 @@
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
- * This software is published as open source and licensed under the terms of GNU GPLv3.
+ * This software is published as open source and licensed under the terms of GNU
+ * GPLv3.
  */
 package org.simplesim.core.routing;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import org.simplesim.model.BasicModelEntity;
 
@@ -48,10 +50,11 @@ public final class SinglePort extends AbstractPort {
 	}
 
 	@Override
-	public Set<AbstractPort> copyMessages() {
+	public Collection<AbstractPort> copyMessages() {
+		if (!hasValue()) return Collections.emptyList();
 		destination.writeAll(this.readAll());
-		this.clear();
-		final Set<AbstractPort> result=new HashSet<>(1);
+		clear();
+		final Collection<AbstractPort> result=new ArrayList<>(1);
 		result.add(destination);
 		return result;
 	}

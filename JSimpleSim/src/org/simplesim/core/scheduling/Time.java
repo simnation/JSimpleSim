@@ -34,6 +34,8 @@ public final class Time implements Comparable<Time> {
 	public static final int WEEK=DAYS_PER_WEEK*DAY;
 	public static final int MONTH=DAYS_PER_MONTH*DAY;
 	public static final int YEAR=MONTHS_PER_YEAR*MONTH;
+	
+	public static final Time ZERO=new Time(0);
 
 	/*
 	 * This is an immutable class, so ticks are final (multiple references to a
@@ -48,10 +50,6 @@ public final class Time implements Comparable<Time> {
 	// copy constructor
 	public Time(Time time) {
 		this(time.ticks);
-	}
-
-	public Time() {
-		this(0);
 	}
 
 	public Time(int year, int month, int day, int hour, int min) {
@@ -120,6 +118,10 @@ public final class Time implements Comparable<Time> {
 
 	public static long years(long ticks) {
 		return ticks/YEAR;
+	}
+	
+	public static Time getZero() {
+		return ZERO;
 	}
 
 	@Override

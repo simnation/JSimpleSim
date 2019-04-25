@@ -11,7 +11,7 @@ package org.simplesim.model;
  * 
  * @author Rene Kuhlemann
  */
-public abstract class AbstractState {
+public interface AbstractState {
 
  
 }

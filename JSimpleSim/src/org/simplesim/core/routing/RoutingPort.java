@@ -7,6 +7,7 @@
 package org.simplesim.core.routing;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -51,7 +52,7 @@ public final class RoutingPort extends AbstractPort {
 	}
 
 	@Override
-	public Set<AbstractPort> copyMessages() {
+	public Collection<AbstractPort> copyMessages() {
 		final Set<AbstractPort> result=new HashSet<>();
 		while (hasValue()) {
 			final Message<?> msg=read(); // message is also removed in this step!

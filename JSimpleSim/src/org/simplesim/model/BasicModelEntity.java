@@ -2,13 +2,15 @@
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
- * This software is published as open source and licensed under the terms of GNU GPLv3.
+ * This software is published as open source and licensed under the terms of GNU
+ * GPLv3.
  */
 package org.simplesim.model;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.simplesim.core.exceptions.InvalidPortException;
 import org.simplesim.core.exceptions.NotUniqueException;
 import org.simplesim.core.exceptions.OperationNotAllowedException;
 import org.simplesim.core.routing.AbstractPort;
@@ -32,7 +34,7 @@ public abstract class BasicModelEntity {
 	/**
 	 * Name of the entity, can be null
 	 */
-	private String name;
+	private final String name;
 
 	/** Address in numbers, describing the model's branch within the model tree */
 	private int[] address;
@@ -41,13 +43,13 @@ public abstract class BasicModelEntity {
 	private AbstractDomain<?> parent=null;
 
 	/**
-	 * Set of in and out ports. Each DEVS model can have an unlimited number of
-	 * unique ports.
+	 * List of in and out ports. Each model can have an unlimited number of unique
+	 * ports.
 	 */
-	private final Set<AbstractPort> inports=new LinkedHashSet<>(4);
+	private final List<AbstractPort> inports=new ArrayList<>(4);
 
 	/** The out ports. */
-	private final Set<AbstractPort> outports=new LinkedHashSet<>(4);
+	private final List<AbstractPort> outports=new ArrayList<>(4);
 
 	/** The level in the hierarchy the model is located at. */
 	private int level=INIT_LEVEL;
@@ -62,7 +64,7 @@ public abstract class BasicModelEntity {
 	/**
 	 * Constructor
 	 *
-	 * @param name of the entity
+	 * @param name    of the entity
 	 * @param address of the entity within the model hierarchy
 	 */
 	public BasicModelEntity(String n, int[] addr) {
@@ -83,6 +85,9 @@ public abstract class BasicModelEntity {
 
 	/**
 	 * Creates and adds a new {@link SinglePort} as inport to the model.
+	 * </p>
+	 * Use this to create an inport in an {@code AbstractAgent} or building a
+	 * connection into an {@code AbstractDomain}.
 	 *
 	 *
 	 * @return returns a reference to the new port for further usage
@@ -93,6 +98,9 @@ public abstract class BasicModelEntity {
 
 	/**
 	 * Creates and adds a new {@link MultiPort} as inport to the model.
+	 * </p>
+	 * Using a {@code MultiPort} as an inport of an {@code AbstractDomain} and if
+	 * messages have to be copied to various destinations at once
 	 *
 	 *
 	 * @return returns a reference to the new port for further usage
@@ -121,18 +129,18 @@ public abstract class BasicModelEntity {
 	}
 
 	/**
-	 * Add a port to the model.
+	 * Adds a port to the model.
 	 *
-	 * @param portSet the port set
-	 * @param port    the port
+	 * @param portList the port list
+	 * @param port     the port
 	 * @return returns a reference to the port for further usage
 	 */
-	private AbstractPort addPort(Set<AbstractPort> portSet, AbstractPort port) {
+	private AbstractPort addPort(List<AbstractPort> portList, AbstractPort port) {
 		if (isSimulationRunning()) throw new OperationNotAllowedException(
-				"You are not allowed to directly add or remove ports during a simulation step!!");
-		if (inports.contains(port)||outports.contains(port))
+				"Tried to add or remove a port during a simulation run in "+getFullName());
+		if (portList.contains(port))
 			throw new NotUniqueException("You are not allowed to add the same port twice to a model!");
-		portSet.add(port);
+		portList.add(port);
 		return port;
 	}
 
@@ -146,9 +154,9 @@ public abstract class BasicModelEntity {
 	}
 
 	/**
-	 * Gain access to InPorts in an immutable way
+	 * Gain access to the inports in an immutable way
 	 *
-	 * @return the inPorts
+	 * @return the inports
 	 */
 	public final Iterable<AbstractPort> getInports() {
 		return inports;
@@ -164,9 +172,9 @@ public abstract class BasicModelEntity {
 	}
 
 	/**
-	 * Gain access to OutPorts in an immutable way
+	 * Gain access to the outports in an immutable way
 	 *
-	 * @return the outPorts
+	 * @return the outports
 	 */
 	public final Iterable<AbstractPort> getOutports() {
 		return outports;
@@ -181,19 +189,16 @@ public abstract class BasicModelEntity {
 	}
 
 	/**
-	 * DEVS models are hierarchical models and thus each model resides on a level in
-	 * the model tree. For some algorithms this level information can be used to
-	 * speed up the algorithms. The level information is generated when the
-	 * getLevel() method is called first, is it resetted whenever the parent of the
-	 * model changes (and automatically recomputed on the next getLevel() call). The
-	 * level of the root node is alyways 0, the "no valid" level value is {@value #INIT_LEVEL}.
+	 * DEVS-like models are hierarchical models and thus each model resides on a
+	 * level in the model tree. The level information is generated when the
+	 * getLevel() method is called first. The level of the root node is alyways 0,
+	 * the "no valid" level value is {@value #INIT_LEVEL}.
 	 *
-	 * @return the level this model is situated in the hierarchy
+	 * @return the level of this model in the model hierarchy
 	 */
 
 	public final int getLevel() {
-		// if we need the level information and if it is not already there then
-		// we try to compute it
+		// if there is no level information yet, re-compute it
 		if (level==INIT_LEVEL) if (parent==null) level=0;
 		else level=parent.getLevel()+1;
 		return level;
@@ -222,8 +227,7 @@ public abstract class BasicModelEntity {
 
 	public final String getFullName() {
 		final String result;
-		if (parent==null)
-			result=toString();
+		if (parent==null) result=toString();
 		else {
 			final StringBuilder sb=new StringBuilder(parent.getFullName());
 			sb.append(".");
@@ -300,10 +304,11 @@ public abstract class BasicModelEntity {
 	 * @param portSet the port set
 	 * @param port    the port
 	 */
-	private void removePort(Set<AbstractPort> portSet, AbstractPort port) {
+	private void removePort(List<AbstractPort> portSet, AbstractPort port) {
 		if (simulation_runs) throw new OperationNotAllowedException(
-				"You are not allowed to directly add or remove ports during a simulation step!!");
-		portSet.remove(port);
+				"Tried to add or remove a port during a simulation run in "+getFullName());
+		if (!portSet.remove(port))
+			throw new InvalidPortException("Tried to remove an unknown port from agent in "+getFullName());
 	}
 
 	public static final void toggleSimulationIsRunning(boolean toggle) {
@@ -360,8 +365,7 @@ public abstract class BasicModelEntity {
 
 	@Override
 	public String toString() {
-		if (name!=null)
-			return name;
+		if (name!=null) return name;
 		else if (address!=null) return (Integer.toString(address[address.length-1]));
 		return ("");
 	}

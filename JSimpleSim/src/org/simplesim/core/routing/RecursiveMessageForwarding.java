@@ -2,13 +2,13 @@
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
- * This software is published as open source and licensed under the terms of GNU GPLv3.
+ * This software is published as open source and licensed under the terms of GNU
+ * GPLv3.
  */
 package org.simplesim.core.routing;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
@@ -36,17 +36,17 @@ public final class RecursiveMessageForwarding implements IMessageForwardingStrat
 	 * List)
 	 */
 	@Override
-	public void forwardMessages(List<AbstractAgent<?, ?>> agentList) {
+	public void forwardMessages(Collection<AbstractAgent<?, ?>> agentList) {
 		// part I: get list of all ports carrying an outgoing message
-		final Set<AbstractPort> set=listPortsWithOutgoingMsg(agentList);
+		final Collection<AbstractPort> ports=listPortsWithOutgoingMsg(agentList);
 		// part II: do recursive forwarding of messages
-		nextLevel(set,0);
+		nextLevel(ports,0);
 	}
 
-	private void nextLevel(Set<AbstractPort> sources, int level) {
+	private void nextLevel(Collection<AbstractPort> sources, int level) {
 		if (level>=MAX_RECURSION_LEVEL) throw new StackOverflowError(
 				"Recursion level during message forwarding exceeded max. depth of "+MAX_RECURSION_LEVEL);
-		final Set<AbstractPort> destinations=new HashSet<>();
+		final Collection<AbstractPort> destinations=new ArrayList<>();
 		for (final AbstractPort src : sources) {
 			// make sure there is another connection
 			if (src.isEndPoint()) continue;

@@ -16,7 +16,7 @@ import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
 import org.simplesim.model.BasicModelEntity;
-import org.simplesim.model.RootModel;
+import org.simplesim.testing.model.RootModel;
 
 /**
  * Simulator to run a {@link RootModel} by processing events sequentially
@@ -24,7 +24,7 @@ import org.simplesim.model.RootModel;
  * @author Rene Kuhlemann
  *
  */
-public class SequentialSimulator {
+public class SequentialSimulator implements ISimulator {
 
 	// top node of the simulation model
 	private final AbstractDomain<?> root;
@@ -35,15 +35,16 @@ public class SequentialSimulator {
 	// the global event queue of the simulation
 	private final IEventQueue<AbstractAgent<?, ?>> geq;
 
-	private IMessageForwardingStrategy mfs=new RecursiveMessageForwarding();
+	private final IMessageForwardingStrategy mfs;
 
-	public SequentialSimulator(AbstractDomain<?> rt, IEventQueue<AbstractAgent<?, ?>> queue) {
+	public SequentialSimulator(AbstractDomain<?> rt, IEventQueue<AbstractAgent<?, ?>> queue, IMessageForwardingStrategy forwarding) {
 		root=rt;
 		geq=queue;
+		mfs=forwarding;
 	}
 
 	public SequentialSimulator(AbstractDomain<?> root) {
-		this(root,new SortedEventQueue<AbstractAgent<?, ?>>());
+		this(root,new SortedEventQueue<AbstractAgent<?, ?>>(),new RecursiveMessageForwarding());
 	}
 
 	void initGlobalEventQueue() {
@@ -60,7 +61,7 @@ public class SequentialSimulator {
 		setSimulationTime(getGlobalEventQueue().getMin());
 		System.out.println("Simulation time is "+getSimulationTime().toString());
 
-		while (getSimulationTime().getTicks()<stop.getTicks()) {
+		while (getSimulationTime().compareTo(stop)<0) {
 			// part I: process all current events by calling the agents' doEvent method
 			// and enqueue the next events of the agents
 			final List<AbstractAgent<?, ?>> eventList=getGlobalEventQueue().dequeueAll(getSimulationTime());
@@ -83,6 +84,10 @@ public class SequentialSimulator {
 	void setSimulationTime(Time time) {
 		simTime=time;
 	}
+	
+	IMessageForwardingStrategy getMessageForwardingStrategy() {
+		return mfs;
+	}
 
 	AbstractDomain<?> getRoot() {
 		return root;
@@ -94,20 +99,6 @@ public class SequentialSimulator {
 
 	public Time getSimulationTime() {
 		return simTime;
-	}
-
-	/**
-	 * @return the mfs
-	 */
-	public IMessageForwardingStrategy getMessageForwardingStrategy() {
-		return mfs;
-	}
-
-	/**
-	 * @param mfs the mfs to set
-	 */
-	public void setMessageForwardingStrategy(IMessageForwardingStrategy mfs) {
-		this.mfs=mfs;
 	}
 
 }

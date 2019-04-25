@@ -44,6 +44,10 @@ public abstract class AbstractAgent<S extends AbstractState, E> extends BasicMod
 	public AbstractAgent(String name) {
 		this(name, null);
 	}
+	
+	public AbstractAgent() {
+		this(null,null);
+	}	
 
 	/**
 	 * This method can be overridden in descendant classes for creating different

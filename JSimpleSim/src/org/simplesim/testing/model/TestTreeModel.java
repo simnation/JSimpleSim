@@ -19,7 +19,6 @@ import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
 import org.simplesim.model.AbstractState;
-import org.simplesim.model.RootModel;
 import org.simplesim.simulator.ParallelSimulator;
 import org.simplesim.simulator.SequentialSimulator;
 
@@ -46,7 +45,7 @@ public final class TestTreeModel {
 	
 	private static final List<Agent> agent_list=new ArrayList<>();
 
-	private static class AgentState extends AbstractState {
+	private static class AgentState implements AbstractState {
 	}
 
 	private static class Agent extends AbstractAgent<AgentState,Integer> {

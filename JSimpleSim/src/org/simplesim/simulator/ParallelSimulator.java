@@ -13,6 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.simplesim.core.routing.IMessageForwardingStrategy;
 import org.simplesim.core.scheduling.IEventQueue;
 import org.simplesim.core.scheduling.SortedEventQueue;
 import org.simplesim.core.scheduling.Time;
@@ -28,12 +29,12 @@ import org.simplesim.model.BasicModelEntity;
  */
 public final class ParallelSimulator extends SequentialSimulator {
 
-	public ParallelSimulator(AbstractDomain<?> model, IEventQueue<AbstractAgent<?, ?>> queue) {
-		super(model,queue);
+	public ParallelSimulator(AbstractDomain<?> model, IEventQueue<AbstractAgent<?, ?>> queue, IMessageForwardingStrategy forwarding) {
+		super(model,queue,forwarding);
 	}
 
 	public ParallelSimulator(AbstractDomain<?> model) {
-		this(model,new SortedEventQueue<AbstractAgent<?, ?>>());
+		super(model);
 	}
 
 	@Override
@@ -44,7 +45,7 @@ public final class ParallelSimulator extends SequentialSimulator {
 		initGlobalEventQueue();
 		setSimulationTime(getGlobalEventQueue().getMin());
 		System.out.println("Simulation time is "+getSimulationTime().toString());
-		while (getSimulationTime().getTicks()<stop.getTicks()) {
+		while (getSimulationTime().compareTo(stop)<0) {
 			// part I: process all current events by calling the agents' doEvent method
 			// and enqueue the next events of the agents
 			final List<AbstractAgent<?, ?>> agentList=getGlobalEventQueue().dequeueAll(getSimulationTime());

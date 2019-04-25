@@ -4,9 +4,11 @@
  *
  * This software is published as open source and licensed under the terms of GNU GPLv3.
  */
-package org.simplesim.model;
+package org.simplesim.testing.model;
 
-import org.simplesim.model.RootModel.GlobalInfoBoard;
+import org.simplesim.model.AbstractDomain;
+import org.simplesim.model.IBulletinBoard;
+import org.simplesim.testing.model.RootModel.GlobalInfoBoard;
 
 /**
  * @author Rene Kuhlemann
@@ -14,7 +16,7 @@ import org.simplesim.model.RootModel.GlobalInfoBoard;
  */
 public class RootModel extends AbstractDomain<GlobalInfoBoard> {
 	
-	static class GlobalInfoBoard implements IInfoBoard {
+	static class GlobalInfoBoard implements IBulletinBoard {
 		
 	}
 

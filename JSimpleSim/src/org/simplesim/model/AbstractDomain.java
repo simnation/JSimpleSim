@@ -20,12 +20,12 @@ import org.simplesim.core.routing.RoutingPort;
  * @author Rene Kuhlemann
  *
  */
-public abstract class AbstractDomain<I extends IInfoBoard> extends BasicModelEntity {
+public abstract class AbstractDomain<B extends IBulletinBoard> extends BasicModelEntity {
 
 	/** A set of sub models (or child models). */
 	private final Set<BasicModelEntity> entities=new HashSet<>();
 
-	private I infoBoard=null;
+	private B bulletinBoard=null;
 
 	/**
 	 * Creates a new instance of a domain . This instance is named by the given
@@ -45,8 +45,8 @@ public abstract class AbstractDomain<I extends IInfoBoard> extends BasicModelEnt
 		super(null,addr);
 	}
 
-	public final void setInfoBoard(I info) {
-		infoBoard=info;
+	public final void setBulletinBoard(B board) {
+		bulletinBoard=board;
 	}
 
 	/**
@@ -122,8 +122,8 @@ public abstract class AbstractDomain<I extends IInfoBoard> extends BasicModelEnt
 	/**
 	 * @return the InfoBoard
 	 */
-	public final I getInfoBoard() {
-		return infoBoard;
+	public final B getBulletinBoard() {
+		return bulletinBoard;
 	}
 
 }

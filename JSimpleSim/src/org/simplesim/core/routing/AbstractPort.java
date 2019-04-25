@@ -7,8 +7,8 @@
 package org.simplesim.core.routing;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.simplesim.model.BasicModelEntity;
 
@@ -34,7 +34,7 @@ public abstract class AbstractPort {
 	 * set to 1. Thus memory consumption is low in the beginning, it will
 	 * automatically be adapted if needed later on.
 	 */
-	private final ArrayList<Message<?>> values=new ArrayList<>(1);
+	private final List<Message<?>> values=new ArrayList<>(1);
 
 	@SuppressWarnings("serial")
 	static class PortConnectionException extends RuntimeException {
@@ -63,7 +63,7 @@ public abstract class AbstractPort {
 	 *
 	 * @return list of destination ports that need further forwarding
 	 */
-	public abstract Set<AbstractPort> copyMessages();
+	public abstract Collection<AbstractPort> copyMessages();
 
 	public final void clear() {
 		values.clear();
@@ -78,13 +78,13 @@ public abstract class AbstractPort {
 	}
 
 	/**
-	 * Returns and REMOVES the first element in message list or null if list is empty
+	 * Returns and REMOVES the last element in message list or null if list is empty
 	 *
-	 * @return first element in message list or null if list is empty
+	 * @return last element in message list or null if list is empty
 	 */
 	public final Message<?> read() {
 		if (!hasValue()) return null;
-		return values.remove(0);
+		return values.remove(countValues()-1);
 	}
 
 	/**
@@ -93,7 +93,7 @@ public abstract class AbstractPort {
 	 *
 	 * @return the message list
 	 */
-	public final List<Message<?>> readAll() {
+	public final Collection<Message<?>> readAll() {
 		return values;
 	}
 
@@ -101,7 +101,7 @@ public abstract class AbstractPort {
 		values.add(m);
 	}
 
-	public final void writeAll(List<Message<?>> m) {
+	public final void writeAll(Collection<Message<?>> m) {
 		values.addAll(m);
 	}
 

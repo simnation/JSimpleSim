@@ -7,6 +7,7 @@
 package org.simplesim.core.routing;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,10 +41,10 @@ public final class IterativeMessageForwarding implements IMessageForwardingStrat
 	 * List)
 	 */
 	@Override
-	public void forwardMessages(List<AbstractAgent<?, ?>> agentList) {
+	public void forwardMessages(Collection<AbstractAgent<?, ?>> agentList) {
 		// part I: build a list of sets, each set representing a level of the overall
 		// model and containing all respective ports with outgoing messages
-		final Set<AbstractPort> sources=listPortsWithOutgoingMsg(agentList);
+		final Collection<AbstractPort> sources=listPortsWithOutgoingMsg(agentList);
 		for (final AbstractPort port : sources) {
 			final int level=port.getParent().getParent().getLevel();
 			if (level<0) continue;

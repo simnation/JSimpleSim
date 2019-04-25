@@ -14,6 +14,6 @@ package org.simplesim.model;
  * @author Rene Kuhlemann
  *
  */
-public interface IInfoBoard {
+public interface IBulletinBoard {
 
 }
