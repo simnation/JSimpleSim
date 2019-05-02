@@ -5,12 +5,12 @@
  */
 package org.simplesim.examples.neuronalnetwork;
 
-import org.simplesim.model.AbstractState;
+import org.simplesim.model.IAgentState;
 
 /**
  * @author Rene Kuhlemann
  *
  */
-public class NeuronState implements AbstractState {
+public class NeuronState implements IAgentState {
 
 }

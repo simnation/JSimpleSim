@@ -15,6 +15,14 @@ import org.simplesim.model.AbstractAgent;
  */
 public class Neuron extends AbstractAgent<NeuronState, Object> {
 
+	/**
+	 * @param name
+	 */
+	public Neuron() {
+		super("");
+		// TODO Auto-generated constructor stub
+	}
+
 	/* (non-Javadoc)
 	 * @see org.simplesim.model.AbstractAgent#createState()
 	 */

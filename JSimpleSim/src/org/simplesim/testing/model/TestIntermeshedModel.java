@@ -16,7 +16,7 @@ import org.simplesim.core.scheduling.IEventQueue;
 import org.simplesim.core.scheduling.SortedEventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
-import org.simplesim.model.AbstractState;
+import org.simplesim.model.IAgentState;
 import org.simplesim.simulator.ParallelSimulator;
 
 /**
@@ -35,7 +35,7 @@ public final class TestIntermeshedModel {
 	private static final int MAX_EVENTS=64;
 	private static final Time SIMULATION_STOP=new Time(Time.DAY);
 
-	private static class AgentState implements AbstractState {
+	private static class AgentState implements IAgentState {
 	}
 
 	private static class Agent extends AbstractAgent<AgentState, Integer> {

@@ -2,29 +2,47 @@
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
- * This software is published as open source and licensed under the terms of GNU GPLv3.
+ * This software is published as open source and licensed under the terms of GNU
+ * GPLv3.
  */
 package org.simplesim.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.simplesim.core.exceptions.NotUniqueException;
 import org.simplesim.core.routing.RoutingPort;
+import org.simplesim.core.scheduling.Time;
 
 /**
- * To document
+ * Implements all basic functionality of a domain.
+ * <p>
+ * Domains serve as a compartment for other entities within the simulation model. These entities
+ * may be agents or other domains. Therefore, simulation model are build as a tree-like structure with
+ * {@code AbstractDomain} as branching and {@code AbstraxctAgent} as leaf, resembling a composite pattern.
+ * The domain adds the following features:
+ * <ul>
+ * <li>a {@link IBulletinBord} to provide further information to the domain's agents
+ * <li>modify the agent's state ({@link IAgentState})
+ * <li>compute output and write messages to other entities to the outports 
+ * <li>add events to the internal event queue if necessary ({@link org.simplesim.core.scheduling.IEventQueue})
+ * <li>return the time of the next local event ({@link org.simplesim.core.scheduling.Time})
+ * </ul><p>
+ * 
  *
  * @author Rene Kuhlemann
  *
+ * @see <a href="https://en.wikipedia.org/wiki/Composite_pattern">Reference to composite pattern</a>
  */
 public abstract class AbstractDomain<B extends IBulletinBoard> extends BasicModelEntity {
 
-	/** A set of sub models (or child models). */
-	private final Set<BasicModelEntity> entities=new HashSet<>();
+	/** set of sub models (or child models). */
+	private final List<BasicModelEntity> entities=new ArrayList<>();
 
+	/**
+	 * the place for domain specific information (statistics, external parameters)
+	 */
 	private B bulletinBoard=null;
 
 	/**
@@ -55,10 +73,12 @@ public abstract class AbstractDomain<B extends IBulletinBoard> extends BasicMode
 	 * this is not checked!
 	 *
 	 * @param entity the model
+	 *
+	 * @throws NotUniqueException if the entity is already part of this domain
 	 */
 	public final void addModel(BasicModelEntity entity) {
-		if (entities.contains(entity))
-			throw new NotUniqueException("Model "+entity.toString()+" added twice to domain "+this.toString());
+		if (containsEntity(entity))
+			throw new NotUniqueException("Model "+entity.getName()+" added twice to domain "+this.getFullName());
 		entity.setParent(this);
 		entities.add(entity);
 	}
@@ -80,7 +100,7 @@ public abstract class AbstractDomain<B extends IBulletinBoard> extends BasicMode
 	 *
 	 * @return returns a reference to the new port for further usage
 	 */
-	public final RoutingPort addRoutingInPort() {
+	public final RoutingPort addRoutingPort() {
 		return (RoutingPort) addInport(new RoutingPort(this));
 	}
 
@@ -92,9 +112,9 @@ public abstract class AbstractDomain<B extends IBulletinBoard> extends BasicMode
 	 */
 	public final Collection<AbstractAgent<?, ?>> getAllAgents() {
 		final Collection<AbstractAgent<?, ?>> result=new ArrayList<>();
-		for (final BasicModelEntity iter : entities) if (iter instanceof AbstractAgent)
-			result.add((AbstractAgent<?, ?>) iter);
-		else if (iter instanceof AbstractDomain) result.addAll(((AbstractDomain<?>) iter).getAllAgents());
+		for (final BasicModelEntity iter : entities)
+			if (iter instanceof AbstractAgent) result.add((AbstractAgent<?, ?>) iter);
+			else if (iter instanceof AbstractDomain) result.addAll(((AbstractDomain<?>) iter).getAllAgents());
 		return result;
 	}
 
@@ -115,7 +135,7 @@ public abstract class AbstractDomain<B extends IBulletinBoard> extends BasicMode
 	 *
 	 * @return true, if checks for model
 	 */
-	public final boolean hasModel(BasicModelEntity model) {
+	public final boolean containsEntity(BasicModelEntity model) {
 		return entities.contains(model);
 	}
 

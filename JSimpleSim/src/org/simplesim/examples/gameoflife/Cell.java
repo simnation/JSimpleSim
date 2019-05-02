@@ -24,7 +24,7 @@ public final class Cell extends AbstractAgent<CellState, Object> {
 	 * @param addr
 	 */
 	public Cell(int posX, int posY, boolean life) {
-		super();
+		super("");
 		getState().setPosX(posX);
 		getState().setPosY(posY);
 		getState().setLife(life);

@@ -8,12 +8,12 @@ package org.simplesim.examples.gameoflife;
 
 import java.util.Observable;
 
-import org.simplesim.model.AbstractState;
+import org.simplesim.model.IAgentState;
 
 /**
  * @author Rene Kuhlemann
  */
-public class CellState extends Observable implements AbstractState {
+public class CellState extends Observable implements IAgentState {
 
 	private int posX, posY;
 	private boolean life;
