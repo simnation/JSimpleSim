@@ -1,28 +1,32 @@
-/*
+/**
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
  * This software is published as open source and licensed under the terms of GNU
  * GPLv3.
+ * 
+ * Contributors:
+ * 	- Rene Kuhlemann - development and initial implementation
+ * 
  */
 package org.simplesim.core.scheduling;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
- * Sorted list implementation of the {@link IEventQueue} interface.
- * <p/>
+ * Sorted list implementation of the {@code IEventQueue} interface.
+ * <p>
  * A <i>descending</i> sorted list is used to hold the data, internally stored
- * in an {@link ArrayList}. Look up operations are done by binary search,
+ * in an {@code ArrayList}. Look up operations are done by binary search,
  * leading to a complexity of O(log n). {@code enqueue()} and {@code dequeue(E)}
  * operations also need to move all elements with a lesser time stamp (max.
  * O(n)). {@code dequeue()}, {@code getMin()} and {@code dequeueAll()} are done
  * in O(1), since the elements with the least time stamp are always placed at
- * the end of the list (descending sort order).
- *
- * @author Rene Kuhlemann
+ * the end of the list (descending sorting order).
+ * <p>
+ * This implementation is well-suited for local event queues, which often are memory-critical
+ * and generally hold fewer events.
  *
  * @param <E> event type
  */
@@ -52,8 +56,7 @@ public class SortedEventQueue<E> extends AbstractEventQueue<E, List<EventQueueEn
 	@Override
 	public E dequeue() {
 		if (isEmpty()) return null;
-		final EventQueueEntry<E> result=getQueue().remove(size()-1);
-		return result.getEvent();
+		return getQueue().remove(size()-1).getEvent();
 	}
 
 	/*
@@ -76,6 +79,7 @@ public class SortedEventQueue<E> extends AbstractEventQueue<E, List<EventQueueEn
 	 */
 	@Override
 	public List<E> dequeueAll(Time time) {
+		if (time.equals(getMin())) return dequeueAll();
 		return dequeueAll(getPosition(time)-1,time);
 	}
 
@@ -99,7 +103,6 @@ public class SortedEventQueue<E> extends AbstractEventQueue<E, List<EventQueueEn
 	 *         stamp
 	 */
 	private List<E> dequeueAll(int pos, Time time) {
-		if (isEmpty()) return Collections.emptyList();
 		final List<E> result=new ArrayList<>();
 		for (int index=pos; index>=0; index--) {
 			if (!getQueue().get(index).getTime().equals(time)) break;
@@ -117,11 +120,10 @@ public class SortedEventQueue<E> extends AbstractEventQueue<E, List<EventQueueEn
 	 *         values
 	 */
 	private int getPosition(Time time) {
-		int right=size(), left=0, mid;
+		int right=size(), left=0;
 		while (left<right) {
-			mid=(left+right)>>1; // = left + (right - left) / 2;
-			if (getQueue().get(mid).getTime().compareTo(time)<0)
-				right=mid;
+			final int mid=(left+right)>>1; // = left + (right - left) / 2;
+			if (getQueue().get(mid).getTime().compareTo(time)<0) right=mid;
 			else left=mid+1;
 		}
 		return left;

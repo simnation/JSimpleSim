@@ -1,8 +1,13 @@
-/*
+/**
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
- * This software is published as open source and licensed under the terms of GNU GPLv3.
+ * This software is published as open source and licensed under the terms of GNU
+ * GPLv3.
+ * 
+ * Contributors:
+ * 	- Rene Kuhlemann - development and initial implementation
+ * 
  */
 package org.simplesim.core.routing;
 
@@ -16,17 +21,16 @@ import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
 
 /**
- * This implementation of a {@link IMessageForwardingStrategy} first assigns
- * outports to a layer according to the level of the next
+ * Iterative version of a {@code IMessageForwardingStrategy}.
+ * <p>
+ * This implementation first assigns outports to layers according to the level of their parent 
  * {@link AbstractDomain}. Then forwarding starts at the bottom most port and
  * works its way up to the root. In a second step, messages are forwarded
  * top-down in a similar way.
- *
+ * <p>
  * Choose this strategy if you have a model with long message pipelines across
  * several domains. In each level, all relevant port will be accumulation and
  * messages are forwarded in one step to the next level.
- *
- * @author Rene Kuhlemann
  *
  */
 public final class IterativeMessageForwarding implements IMessageForwardingStrategy {

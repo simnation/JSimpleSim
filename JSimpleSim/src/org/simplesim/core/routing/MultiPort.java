@@ -1,9 +1,13 @@
-/*
+/**
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
  * This software is published as open source and licensed under the terms of GNU
  * GPLv3.
+ * 
+ * Contributors:
+ * 	- Rene Kuhlemann - development and initial implementation
+ * 
  */
 package org.simplesim.core.routing;
 
@@ -12,12 +16,20 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.simplesim.core.exceptions.NotUniqueException;
+import org.simplesim.model.AbstractAgent;
+import org.simplesim.model.AbstractDomain;
 import org.simplesim.model.BasicModelEntity;
+import static org.simplesim.model.BasicModelEntity.UniqueConstraintViolation;
+
 
 /**
- * @author Rene Kuhlemann
+ * Port connecting an outport with several inports.
+ * <p>
+ * Messages from the outport are copied to all connected inports. The parent entities 
+ * of any port may be an {@link AbstractAgent} or an {@link AbstractDomain}
  *
+ * @see Message
+ * @see SinglePort
  */
 public final class MultiPort extends AbstractPort {
 
@@ -29,8 +41,8 @@ public final class MultiPort extends AbstractPort {
 
 	@Override
 	public void connectTo(AbstractPort port) {
-		if (destinations.contains(port)) throw new NotUniqueException("MultiPort in "+this.getParent().getFullName()
-				+" has already be connected to "+port.getParent().getFullName());
+		if (destinations.contains(port)) throw new UniqueConstraintViolation("MultiPort in "+this.getParent().getFullName()
+				+" may not be connected twice to "+port.getParent().getFullName());
 		destinations.add(port);
 	}
 
@@ -47,9 +59,9 @@ public final class MultiPort extends AbstractPort {
 
 	@Override
 	public Collection<AbstractPort> copyMessages() {
-		if (!hasValue()) return Collections.emptyList();
+		if (!hasMessages()) return Collections.emptyList();
 		for (final AbstractPort dest : destinations) dest.writeAll(this.readAll());
-		this.clear();
+		clearMessages();
 		return destinations;
 	}
 

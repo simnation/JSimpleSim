@@ -20,15 +20,15 @@ import java.util.List;;
  * minimalistic way. During simulation {@link #enqueue(E, Time)},
  * {@link #dequeueAll(Time)} and {@link #getMin()} are used most often,
  * presumably. A requeue operation can be done by dequeuing an event and then
- * enqueuing it again at a different time.
+ * enqueuing it again with a different time stamp.
  * <p>
  * Event queues might not be synchronized. Accessing unsynchronized event queues
  * from different threads may result in non-deterministic behavior. Please check
  * the documentation of the event queue you are going to use or synchronize
  * externally.
  * <p>
- * Please note that an event queue is an (injective) one-to-one mapping: There
- * are no events in the queue that are equal, so there is only one time stamp
+ * Please note that event queues have (injective) one-to-one mapping: There
+ * must not be any two events in the queue that are equal, so there is only one time stamp
  * per event!
  *
  * @param <E> type of events to be stored in the queue
@@ -39,8 +39,11 @@ public interface IEventQueue<E> {
 
 	/**
 	 * Gets the minimal time stamp.
+	 * <p>
+	 * An empty event queue may result in non-deterministic behavior and is not checked!
 	 *
 	 * @return current minimal time stamp (does not test if queue is empty!)
+	 * 
 	 */
 	Time getMin();
 
@@ -91,7 +94,7 @@ public interface IEventQueue<E> {
 	 * <p>
 	 * If there are several events with the same time stamp, the result can be any
 	 * of these events
-	 *
+	 * 
 	 * @return event with the smallest time stamp or null if the queue is empty
 	 * @see #getMin()
 	 */
@@ -99,17 +102,23 @@ public interface IEventQueue<E> {
 
 	/**
 	 * Dequeues all elements with the smallest time stamp.
+	 * A call to this method is equivalent to {@code dequeueAll(getMin())}.
+	 * <p>
+	 * An empty event queue may result in non-deterministic behavior and is not checked!
 	 *
 	 * @return a list containing all events with the minimum time stamp or an empty
 	 *         list if the event queue is empty.
 	 * 
 	 * @see #getMin()
+	 * @see {@link #dequeueAll(Time)}
 	 */
 	List<E> dequeueAll();
 
 	/**
 	 * Dequeues all elements with the given time stamp.
-	 *
+	 * <p>
+	 * An empty event queue may result in non-deterministic behavior and is not checked!
+	 * 
 	 * @param time the time stamp of the events to dequeue
 	 *
 	 * @return a list containing all events with this time stamp or an empty list if

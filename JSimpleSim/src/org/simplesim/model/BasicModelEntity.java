@@ -1,18 +1,19 @@
-/*
+/**
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
  * This software is published as open source and licensed under the terms of GNU
  * GPLv3.
+ * 
+ * Contributors:
+ * 	- Rene Kuhlemann - development and initial implementation
+ * 
  */
 package org.simplesim.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.simplesim.core.exceptions.InvalidPortException;
-import org.simplesim.core.exceptions.NotUniqueException;
-import org.simplesim.core.exceptions.OperationNotAllowedException;
 import org.simplesim.core.routing.AbstractPort;
 import org.simplesim.core.routing.MultiPort;
 import org.simplesim.core.routing.SinglePort;
@@ -27,8 +28,6 @@ import org.simplesim.core.routing.SinglePort;
  * <li>managing in- and outports
  * <li>utility methods (model level, naming, {@code toString}, {@code equals})
  * </ul>
- *
- * @author Rene Kuhlemann
  *
  */
 public abstract class BasicModelEntity {
@@ -61,16 +60,25 @@ public abstract class BasicModelEntity {
 
 	/** The level in the hierarchy the model is located at. */
 	private int level=INIT_LEVEL;
-
+	
 	/**
-	 * Exception to be thrown if the model is changed during a simulation run.<p>
-	 * Note: Use {@code BasicModelEntity.isSimulationRunning} to verify.
+	 * Exception to be thrown if an invalid operation occurs when adding or removing a port.
 	 */
 	@SuppressWarnings("serial")
-	public static final class ModelChangeException extends RuntimeException {
-		public ModelChangeException(String message) {
+	public static class InvalidPortException extends RuntimeException {
+		public InvalidPortException(String message) {
 			super(message);
 		}
+	}
+	
+	/** 
+	 * Exception to be thrown if a duplicate object is used where only a unique one is allowed.
+	 */
+	@SuppressWarnings("serial")
+	public static class UniqueConstraintViolation extends RuntimeException {
+	  public UniqueConstraintViolation(String message) {
+	    super(message);
+	  }
 	}
 
 	/**
@@ -174,8 +182,8 @@ public abstract class BasicModelEntity {
 	/** private utility method to add port to port lists */
 	private AbstractPort addPort(List<AbstractPort> portList, AbstractPort port) {
 		if (isSimulationRunning())
-			throw new OperationNotAllowedException("Tried to add a port during a simulation run in "+getFullName());
-		if (portList.contains(port)) throw new NotUniqueException("A port may not be added twice to the same model!");
+			throw new UnsupportedOperationException("Tried to add a port during a simulation run in "+getFullName());
+		if (portList.contains(port)) throw new UniqueConstraintViolation("A port may not be added twice to the same model!");
 		portList.add(port);
 		return port;
 	}
@@ -313,7 +321,7 @@ public abstract class BasicModelEntity {
 	 * @return true if any inport has an input
 	 */
 	public final boolean hasExternalInput() {
-		for (final AbstractPort port : getInports()) if (port.hasValue()) return true;
+		for (final AbstractPort port : getInports()) if (port.hasMessages()) return true;
 		return false; // if we get here no port with a pending message has been found
 	}
 
@@ -374,7 +382,7 @@ public abstract class BasicModelEntity {
 
 	private void removePort(List<AbstractPort> portList, AbstractPort port) {
 		if (simulation_runs)
-			throw new OperationNotAllowedException("Tried to remove a port during a simulation run in "+getFullName());
+			throw new UnsupportedOperationException("Tried to remove a port during a simulation run in "+getFullName());
 		if (!portList.remove(port))
 			throw new InvalidPortException("Tried to remove an unknown port from agent in "+getFullName());
 	}

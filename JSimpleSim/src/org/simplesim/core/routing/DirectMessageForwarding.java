@@ -10,19 +10,15 @@ package org.simplesim.core.routing;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.simplesim.core.exceptions.PortTypeMismatchException;
 import org.simplesim.model.AbstractAgent;
-import org.simplesim.model.AbstractDomain;
 
 /**
- * This implementation of a {@link IMessageForwardingStrategy} works with an
- * intermeshed network.
- *
- * Choose this strategy if you have a model where each agent is connected
- * directly to its message partners an there is no intersecting
- * {@link AbstractDomain}.
- *
- * @author Rene Kuhlemann
+ * Strategy for direct message forwarding.
+ * <p>
+ * Connects agents <i>directly</i>, without taking care of a model hierarchy.
+ * <p>
+ * Use this implementation of a {@code IMessageForwardingStrategy} for graphs,
+ * intermeshed networks and when there is no need for a model hierarchy.
  *
  */
 public final class DirectMessageForwarding implements IMessageForwardingStrategy {
@@ -30,7 +26,9 @@ public final class DirectMessageForwarding implements IMessageForwardingStrategy
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.devs.core.ports.IMessageForwardingStrategy#forwardMessages(java.util.List)
+	 * @see
+	 * org.devs.core.ports.IMessageForwardingStrategy#forwardMessages(java.util.
+	 * List)
 	 */
 	@Override
 	public void forwardMessages(Collection<AbstractAgent<?, ?>> agentList) {
@@ -40,9 +38,7 @@ public final class DirectMessageForwarding implements IMessageForwardingStrategy
 		// part II: do forwarding of messages, only one Step because of the direct
 		// connections
 		for (final AbstractPort src : sources) destinations.addAll(src.copyMessages());
-		for (final AbstractPort dest : destinations) // make sure there are no other connection
-			if (!dest.isEndPoint()) throw new PortTypeMismatchException(
-					"Next port has to be end-point when using the direct message forwarding strategy!");
+		// Only one copy cycle because there should be only direct connections
 	}
 
 }

@@ -1,8 +1,13 @@
-/*
+/**
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
- * This software is published as open source and licensed under the terms of GNU GPLv3.
+ * This software is published as open source and licensed under the terms of GNU
+ * GPLv3.
+ * 
+ * Contributors:
+ * 	- Rene Kuhlemann - development and initial implementation
+ * 
  */
 package org.simplesim.core.scheduling;
 
@@ -10,15 +15,16 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * This abstract class implements basic functionality to be extended by concrete
- * event queues. <br>
- * Any collection type can be passed as a container for the queue by subclasses.
- * There is also a basic cache functionality implemented to recycle unused
- * entries of the event queue {@link EventQueueEntry}.
- *
- * @author Rene Kuhlemann
- *
+ * Provides basic functionality of an event queue to be extended by concrete
+ * implementation in derived classes.<p>
+ * Any collection type can be passed as a container for the queue by subclasses. 
+ * Please refer to {@link AbstractBucketQueue} and its subclasses for the implementation 
+ * of a bucket strategy.
+ * 
  * @param <E> event type
+ * 
+ * @see EventQueueEntry
+ * 
  */
 abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> implements IEventQueue<E> {
 

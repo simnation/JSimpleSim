@@ -1,19 +1,20 @@
-/*
+/**
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
  * This software is published as open source and licensed under the terms of GNU
  * GPLv3.
+ * 
+ * Contributors:
+ * 	- Rene Kuhlemann - development and initial implementation
+ * 
  */
 package org.simplesim.core.scheduling;
 
 /**
- * Entry of any event queue derived from {@link IEventQueue}. Setters can be
- * used by event queue implementations to reuse entries. Outside the package
- * {@linkplain org.simplesim.core.scheduling} this class can be considered as
- * <i>immutable</i> and thus thread-safe.
- *
- * @author Rene Kuhlemann
+ * Provides a coupling between a time stamp and a corresponding event.
+ * <p>
+ * Note: This class is immutable and thus thread-safe.
  *
  */
 final class EventQueueEntry<E> implements Comparable<EventQueueEntry<E>> {

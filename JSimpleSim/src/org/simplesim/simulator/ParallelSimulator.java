@@ -1,8 +1,13 @@
-/*
+/**
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
- * This software is published as open source and licensed under the terms of GNU GPLv3.
+ * This software is published as open source and licensed under the terms of GNU
+ * GPLv3.
+ * 
+ * Contributors:
+ * 	- Rene Kuhlemann - development and initial implementation
+ * 
  */
 package org.simplesim.simulator;
 
@@ -24,7 +29,6 @@ import org.simplesim.model.BasicModelEntity;
 /**
  * parallel simulator using multiple threads to execute the agents' logic
  * 
- * @author Rene Kuhlemann
  *
  */
 public final class ParallelSimulator extends SequentialSimulator {
@@ -44,11 +48,10 @@ public final class ParallelSimulator extends SequentialSimulator {
 		final List<Future<Time>> futures=new ArrayList<>();
 		initGlobalEventQueue();
 		setSimulationTime(getGlobalEventQueue().getMin());
-		System.out.println("Simulation time is "+getSimulationTime().toString());
 		while (getSimulationTime().compareTo(stop)<0) {
 			// part I: process all current events by calling the agents' doEvent method
 			// and enqueue the next events of the agents
-			final List<AbstractAgent<?, ?>> agentList=getGlobalEventQueue().dequeueAll(getSimulationTime());
+			final List<AbstractAgent<?, ?>> agentList=getGlobalEventQueue().dequeueAll();
 			// System.out.println("Number of concurrent events: "+current.size());
 			// start multi-threaded execution
 			for (final AbstractAgent<?, ?> agent : agentList)

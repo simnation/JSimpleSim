@@ -60,9 +60,9 @@ public final class Cell extends AbstractAgent<CellState, Object> {
 	 */
 	@Override
 	protected Time doEvent(Time time) {
-		if (getInport().hasValue()) {
+		if (getInport().hasMessages()) {
 			int neighbours=0;
-			while (getInport().hasValue()) if ((Boolean) getInport().read().getContent()) neighbours++;
+			while (getInport().hasMessages()) if ((Boolean) getInport().read().getContent()) neighbours++;
 			final boolean life=(getState().isLife()&&(neighbours==2))||(neighbours==3);
 			if (life!=getState().isLife()) getState().setLife(life);
 		}

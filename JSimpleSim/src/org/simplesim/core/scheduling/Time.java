@@ -1,8 +1,13 @@
-/*
+/**
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
- * This software is published as open source and licensed under the terms of GNU GPLv3.
+ * This software is published as open source and licensed under the terms of GNU
+ * GPLv3.
+ * 
+ * Contributors:
+ * 	- Rene Kuhlemann - development and initial implementation
+ * 
  */
 package org.simplesim.core.scheduling;
 
@@ -13,8 +18,6 @@ package org.simplesim.core.scheduling;
  * within the simulator, only the {@code Time} wrapper is used.
  *<p>
  * Note: This class is immutable.
- *
- * @author Rene Kuhlemann
  *
  */
 public final class Time implements Comparable<Time> {
@@ -37,7 +40,7 @@ public final class Time implements Comparable<Time> {
 	
 	public static final Time ZERO=new Time(0);
 
-	/*
+	/**
 	 * This is an immutable class, so ticks are final (multiple references to a
 	 * changing time instance are prone to hard to find bugs)
 	 */
@@ -100,24 +103,24 @@ public final class Time implements Comparable<Time> {
 		return new Time(time).toString();
 	}
 
-	public static long minutes(long ticks) {
-		return ticks%HOUR;
+	public static int minutes(long ticks) {
+		return (int) (ticks%HOUR);
 	}
 
-	public static long hours(long ticks) {
-		return (ticks%DAY)/HOUR;
+	public static int hours(long ticks) {
+		return (int) ((ticks%DAY)/HOUR);
 	}
 
-	public static long days(long ticks) {
-		return (ticks%MONTH)/DAY;
+	public static int days(long ticks) {
+		return (int) ((ticks%MONTH)/DAY);
 	}
 
-	public static long months(long ticks) {
-		return (ticks%YEAR)/MONTH;
+	public static int months(long ticks) {
+		return (int) ((ticks%YEAR)/MONTH);
 	}
 
-	public static long years(long ticks) {
-		return ticks/YEAR;
+	public static int years(long ticks) {
+		return (int) (ticks/YEAR);
 	}
 	
 	public static Time getZero() {

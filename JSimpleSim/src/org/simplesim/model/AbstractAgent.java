@@ -1,9 +1,13 @@
-/*
+/**
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
  * This software is published as open source and licensed under the terms of GNU
  * GPLv3.
+ * 
+ * Contributors:
+ * 	- Rene Kuhlemann - development and initial implementation
+ * 
  */
 package org.simplesim.model;
 
@@ -16,7 +20,7 @@ import org.simplesim.simulator.TimeStepSimulator;
  * Implements all basic functionality of an agent.
  * <p>
  * Agents are the acting entities of the simulation model. They should implement
- * a strategy within their {@link #doEvent(Time)} method. This is ususally done
+ * a strategy within their {@link #doEvent(Time)} method. This is usually done
  * by the following five steps:
  * <ol>
  * <li>read the messages from the inports ({@link org.simplesim.core.routing.Message})
@@ -29,7 +33,6 @@ import org.simplesim.simulator.TimeStepSimulator;
  * If implemented, the agent may also refer to the bulletin boards of its parent
  * domain or the root domain ({@link IBulletinBoard}) for additional external information.
  *
- * @author Rene Kuhlemann
  * @param <S> type of the state
  * @param <E> type of the events
  */

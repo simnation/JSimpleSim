@@ -1,36 +1,38 @@
-/*
+/**
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
  * This software is published as open source and licensed under the terms of GNU
  * GPLv3.
+ * 
+ * Contributors:
+ * 	- Rene Kuhlemann - development and initial implementation
+ * 
  */
 package org.simplesim.core.scheduling;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This abstract class implements basic functionality of a bucket queue to be
  * extended by concrete implementations.
- * </p>
- * Any {@link Map} can be passed as a container for the queue by subclasses.
- * Time stamps are mapped to buckets and a bucket is represented by a
- * {@link Set}. There is also a basic cache functionality implemented to recycle
- * unused sets of the event map.
+ * <p>
+ * Any {@code Map} can be passed as a container for the queue by subclasses.
+ * Time stamps are mapped to buckets, a bucket is represented by an
+ * {@code ArrayList}.
  *
- * @author Rene Kuhlemann
  * @param <E> event type
  */
-abstract class AbstractBucketQueue<E, M extends Map<Time, Set<E>>> implements IEventQueue<E> {
+abstract class AbstractBucketQueue<E, M extends Map<Time, List<E>>> implements IEventQueue<E> {
 
+	/** the collection of buckets organized as a map: time --> bucket */
 	private final M map;
 
-	int size=0; // accessible by subclasses
+	/** number of total events, accessible by subclasses */
+	int size=0;
 
 	public AbstractBucketQueue(M m) {
 		map=m;
@@ -40,22 +42,32 @@ abstract class AbstractBucketQueue<E, M extends Map<Time, Set<E>>> implements IE
 		return map;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.simplesim.core.scheduling.IEventQueue#getTime(java.lang.Object)
+	 */
 	@Override
 	public Time getTime(E event) {
 		for (final Time time : getMap().keySet()) {
-			final Set<E> set=getMap().get(time);
-			if (set.contains(event)) return time;
+			final List<E> list=getMap().get(time);
+			if (list.contains(event)) return time;
 		}
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.simplesim.core.scheduling.IEventQueue#dequeue(java.lang.Object)
+	 */
 	@Override
 	public Time dequeue(E event) {
 		for (final Time time : getMap().keySet()) {
-			final Set<E> set=getMap().get(time);
-			if (set.contains(event)) {
-				set.remove(event);
-				if (set.isEmpty()) getMap().remove(time);
+			final List<E> list=getMap().get(time);
+			if (list.contains(event)) {
+				list.remove(event);
+				if (list.isEmpty()) getMap().remove(time);
 				size--;
 				return time;
 			}
@@ -63,37 +75,79 @@ abstract class AbstractBucketQueue<E, M extends Map<Time, Set<E>>> implements IE
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.simplesim.core.scheduling.IEventQueue#isEmpty()
+	 */
 	@Override
 	public boolean isEmpty() {
 		return getMap().isEmpty();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.simplesim.core.scheduling.IEventQueue#size()
+	 */
 	@Override
 	public int size() {
 		return size;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.simplesim.core.scheduling.IEventQueue#enqueue(java.lang.Object,
+	 * org.simplesim.core.scheduling.Time)
+	 */
 	@Override
 	public void enqueue(E event, Time time) {
-		Set<E> set=getMap().get(time);
-		if (set==null) {
-			set=new HashSet<>();
-			getMap().put(time,set);
+		List<E> list=getMap().get(time);
+		if (list==null) {
+			list=new ArrayList<>();
+			getMap().put(time,list);
 		}
-		set.add(event);
+		list.add(event);
 		size++;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.simplesim.core.scheduling.IEventQueue#dequeue()
+	 */
 	@Override
-	public List<E> dequeueAll(Time time) {
-		if (getMap().isEmpty()) return Collections.emptyList();
-		final Set<E> set=getMap().remove(time);
-		if (set==null) return Collections.emptyList();
-		final List<E> result=new ArrayList<>(set);
-		size-=set.size();
+	public E dequeue() {
+		if (isEmpty()) return null;
+		final Time min=getMin(); // various getMin() implementations in derived queue classes
+		final List<E> list=getMap().get(min);
+		if (list.isEmpty()) return null; // should never happen!
+		final E result=list.remove(list.size()-1);
+		if (list.isEmpty()) getMap().remove(min); // only element dequeued, set is empty, remove from map
+		size--;
 		return result;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.simplesim.core.scheduling.IEventQueue#dequeueAll(org.simplesim.core.
+	 * scheduling.Time)
+	 */
+	@Override
+	public List<E> dequeueAll(Time time) {
+		final List<E> result=getMap().remove(time);
+		if (result==null) return Collections.emptyList();
+		size-=result.size();
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.simplesim.core.scheduling.IEventQueue#dequeueAll()
+	 */
 	@Override
 	public List<E> dequeueAll() {
 		return dequeueAll(getMin());

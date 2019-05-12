@@ -42,7 +42,7 @@ public class Model extends AbstractDomain<GlobalBulletinBoard> {
 		for (int y=0; y<dy; y++) for (int x=0; x<dx; x++) {
 			final Cell cell=new Cell(x,y,false);
 			world[x][y]=cell;
-			addModel(cell);
+			addEntity(cell);
 		}
 	}
 

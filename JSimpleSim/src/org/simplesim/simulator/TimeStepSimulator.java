@@ -1,8 +1,13 @@
 /**
- * JSimpleSim is a framework to build mutli-agent systems in a quick and easy
+ * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
- * This software is published as open source and licensed under GNU GPLv3.
+ * This software is published as open source and licensed under the terms of GNU
+ * GPLv3.
+ * 
+ * Contributors:
+ * 	- Rene Kuhlemann - development and initial implementation
+ * 
  */
 package org.simplesim.simulator;
 
@@ -14,7 +19,7 @@ import org.simplesim.model.AbstractDomain;
 import org.simplesim.model.BasicModelEntity;
 
 /**
- * @author Rene Kuhlemann
+ *  To be documented
  *
  */
 public final class TimeStepSimulator implements ISimulator {
@@ -52,9 +57,9 @@ public final class TimeStepSimulator implements ISimulator {
 		while (getSimulationTime().compareTo(stop)<0) {
 			// part I: process all current events by calling the agents' doEvent method
 			// in time step, iterate over ALL agents, ignore time of next event
-			for (final AbstractAgent<?, ?> agent : getRoot().getAllAgents()) agent.doEventSim(getSimulationTime());
+			for (final AbstractAgent<?, ?> agent : getRoot().listAllAgents()) agent.doEventSim(getSimulationTime());
 			// part II: do the message forwarding
-			getMessageForwardingStrategy().forwardMessages(getRoot().getAllAgents());
+			getMessageForwardingStrategy().forwardMessages(getRoot().listAllAgents());
 			// part III: add the time step
 			setSimulationTime(getSimulationTime().add(timeStep));
 			// System.out.println("Simulation time is "+getSimulationTime().toString());

@@ -102,7 +102,7 @@ public final class TestIntermeshedModel {
 		// part I: create agents for the intermeshed network within the root model
 		for (int index=1; index<=size; index++) {
 			final Agent agent=new Agent("Agent"+Integer.toString(index));
-			RootModel.getInstance().addModel(agent);
+			RootModel.getInstance().addEntity(agent);
 			list.add(agent);
 		}
 		// part II: connect agents with each others

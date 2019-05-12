@@ -77,10 +77,10 @@ public final class TestTreeModel {
 
 		@Override
 		protected Time doEvent(Time time) {
-			if (getInport().hasValue())
-				System.out.println(getFullName()+" received "+getInport().countValues()+" messages from:");
+			if (getInport().hasMessages())
+				System.out.println(getFullName()+" received "+getInport().countMessages()+" messages from:");
 			else System.out.println(getFullName()+" received no messages.");
-			while (getInport().hasValue()) System.out.println(((RoutedMessage) getInport().read()).getSource());
+			while (getInport().hasMessages()) System.out.println(((RoutedMessage) getInport().read()).getSource());
 			getEventQueue().enqueue(1,time.add(1+((long) (Math.random()*INTERVALL))));
 			final Agent ag=agent_list.get((int) (Math.random()*agent_list.size()));
 			final int[] src=this.getAddress();
@@ -129,7 +129,7 @@ public final class TestTreeModel {
 		} else for (int index=0; index<AGENTS_PER_DOMAIN; index++) {
 			newAddr[newAddr.length-1]=index;
 			final Agent agent=new Agent(newAddr.clone());
-			domain.addModel(agent);
+			domain.addEntity(agent);
 			agent.getOutport().connectTo(outport);
 			inport.connectTo(agent.getInport());
 			agent_list.add(agent);

@@ -1,9 +1,13 @@
-/*
+/**
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
  * This software is published as open source and licensed under the terms of GNU
  * GPLv3.
+ * 
+ * Contributors:
+ * 	- Rene Kuhlemann - development and initial implementation
+ * 
  */
 package org.simplesim.model;
 
@@ -11,38 +15,30 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.simplesim.core.exceptions.NotUniqueException;
 import org.simplesim.core.routing.RoutingPort;
-import org.simplesim.core.scheduling.Time;
 
 /**
  * Implements all basic functionality of a domain.
  * <p>
  * Domains serve as a compartment for other entities within the simulation model. These entities
  * may be agents or other domains. Therefore, simulation model are build as a tree-like structure with
- * {@code AbstractDomain} as branching and {@code AbstraxctAgent} as leaf, resembling a composite pattern.
+ * {@code AbstractDomain} as branching and {@link AbstractAgent} as leaf, resembling a composite pattern.
  * The domain adds the following features:
  * <ul>
- * <li>a {@link IBulletinBord} to provide further information to the domain's agents
- * <li>modify the agent's state ({@link IAgentState})
- * <li>compute output and write messages to other entities to the outports 
- * <li>add events to the internal event queue if necessary ({@link org.simplesim.core.scheduling.IEventQueue})
- * <li>return the time of the next local event ({@link org.simplesim.core.scheduling.Time})
- * </ul><p>
- * 
+ * <li>a {@link IBulletinBord} to provide further information for the agents of the domain
+ * <li>offer message routing by adding a {@code RoutingPort}
+ * <li>give an overview of the entities contained in this domain
+ * <li>list all agents in this domain and its subdomains
+ * </ul>
  *
- * @author Rene Kuhlemann
- *
- * @see <a href="https://en.wikipedia.org/wiki/Composite_pattern">Reference to composite pattern</a>
+ * @see <a href="https://en.wikipedia.org/wiki/Composite_pattern">Reference for composite pattern</a>
  */
 public abstract class AbstractDomain<B extends IBulletinBoard> extends BasicModelEntity {
 
-	/** set of sub models (or child models). */
+	/** set of child entities (sub models). */
 	private final List<BasicModelEntity> entities=new ArrayList<>();
 
-	/**
-	 * the place for domain specific information (statistics, external parameters)
-	 */
+	/** memory for domain specific information (statistics, external parameters) */
 	private B bulletinBoard=null;
 
 	/**
@@ -76,9 +72,9 @@ public abstract class AbstractDomain<B extends IBulletinBoard> extends BasicMode
 	 *
 	 * @throws NotUniqueException if the entity is already part of this domain
 	 */
-	public final void addModel(BasicModelEntity entity) {
+	public final void addEntity(BasicModelEntity entity) {
 		if (containsEntity(entity))
-			throw new NotUniqueException("Model "+entity.getName()+" added twice to domain "+this.getFullName());
+			throw new UniqueConstraintViolation("Model "+entity.getName()+" added twice to domain "+this.getFullName());
 		entity.setParent(this);
 		entities.add(entity);
 	}
@@ -88,7 +84,7 @@ public abstract class AbstractDomain<B extends IBulletinBoard> extends BasicMode
 	 *
 	 * @return the sub model count
 	 */
-	public final int countSubModels() {
+	public final int countDomainEntities() {
 		return entities.size();
 	}
 
@@ -110,11 +106,11 @@ public abstract class AbstractDomain<B extends IBulletinBoard> extends BasicMode
 	 *
 	 * @return list of all agents / atomic submodels of this coupled model
 	 */
-	public final Collection<AbstractAgent<?, ?>> getAllAgents() {
+	public final Collection<AbstractAgent<?, ?>> listAllAgents() {
 		final Collection<AbstractAgent<?, ?>> result=new ArrayList<>();
 		for (final BasicModelEntity iter : entities)
 			if (iter instanceof AbstractAgent) result.add((AbstractAgent<?, ?>) iter);
-			else if (iter instanceof AbstractDomain) result.addAll(((AbstractDomain<?>) iter).getAllAgents());
+			else if (iter instanceof AbstractDomain) result.addAll(((AbstractDomain<?>) iter).listAllAgents());
 		return result;
 	}
 
@@ -124,7 +120,7 @@ public abstract class AbstractDomain<B extends IBulletinBoard> extends BasicMode
 	 *
 	 * @return an iterator for iterating over all sub models
 	 */
-	public final Iterable<BasicModelEntity> getDomainEntities() {
+	public final Iterable<BasicModelEntity> listDomainEntities() {
 		return entities;
 	}
 

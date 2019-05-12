@@ -14,19 +14,20 @@ import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
 
 /**
- * This implementation of a {@link IMessageForwardingStrategy} starts at the
- * outports and works its way recursively through the connected ports.
- *
- * Choose this strategy if you have a model with short message pipelines and
- * messaging mostly between {@link AbstractAgent} of the same
+ * Recursive version of a {@code IMessageForwardingStrategy}.
+ * <p>
+ * This implementation starts at all outports with messages and works its way through 
+ * the connected ports, recursively. Whereas the {@link IterativeMessageForwarding} accumulates messages
+ * prior to forwarding, with this strategy some ports may be called twice.
+ * <p>
+ * Choose this implementation if the model has short message pipelines and
+ * messaging occurs mostly between {@link AbstractAgent} of the same
  * {@link AbstractDomain}.
- *
- * @author Rene Kuhlemann
  *
  */
 public final class RecursiveMessageForwarding implements IMessageForwardingStrategy {
 
-	private static final int MAX_RECURSION_LEVEL=50;
+	private static final int MAX_RECURSION_LEVEL=100;
 
 	/*
 	 * (non-Javadoc)
