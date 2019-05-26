@@ -6,48 +6,68 @@
  */
 package org.simplesim.examples.gameoflife;
 
-import static org.simplesim.examples.gameoflife.Application.CELL_SIZE;
+import static org.simplesim.examples.gameoflife.Application.BOARD_DX;
+import static org.simplesim.examples.gameoflife.Application.BOARD_DY;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.util.Observable;
-import java.util.Observer;
+import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.WindowConstants;
+
+import org.simplesim.core.util.Listener;
+import org.simplesim.model.AbstractAgent;
+import org.simplesim.simulator.AbstractSimulator;
 
 /**
- * @author Rene Kuhlemann
+ * 
  *
  */
-public class View extends JPanel implements Observer {
+@SuppressWarnings("serial")
+public class View extends JFrame implements Listener<AbstractSimulator> {
 
-	private static final long serialVersionUID=1L;
+	public static final int CELL_SIZE=5;
 
-	
-
-	private final Model model;
-
-	public View(Model m) {
-		model=m;
+	public View(String title) {
+		super(title);
+		final Dimension size=new Dimension(CELL_SIZE*BOARD_DX,CELL_SIZE*BOARD_DY);
+		setPreferredSize(size);
+		setSize(size);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		pack();
+		setVisible(true);
+		System.out.println(getSize().toString());
 	}
-	
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-	 */
+
 	@Override
-	public void update(Observable o, Object arg) {
-		final Graphics g=this.getGraphics();
-		final CellState cs=(CellState) o;
-		if (cs.isLife()) g.setColor(Color.YELLOW);
-		else g.setColor(Color.BLUE);
-		final int x=cs.getPosX()*CELL_SIZE;
-		final int y=cs.getPosY()*CELL_SIZE;
-		g.fillRect(x,y,CELL_SIZE,CELL_SIZE);
+	public void notifyListener(AbstractSimulator source) {
+		final BufferStrategy bs=getBufferStrategy();
+		do {
+			do {
+				// Get a new graphics context every time through the loop
+				// to make sure the strategy is validated
+				final Graphics g=bs.getDrawGraphics();
+				for (final AbstractAgent<?, ?> cell : source.getCurrentEventList()) {
+					final CellState cs=((Cell) cell).getState();
+					if (cs.isLife()) g.setColor(Color.YELLOW);
+					else g.setColor(Color.BLUE);
+					final int x=cs.getPosX()*CELL_SIZE;
+					final int y=cs.getPosY()*CELL_SIZE;
+					g.fillRect(x,y,CELL_SIZE,CELL_SIZE);
+				}
+				g.dispose();
+				// Repeat the rendering if the drawing buffer contents
+				// were restored
+			} while (bs.contentsRestored());
+			bs.show();
+		} while (bs.contentsLost());
+	}
+
+	public void close() {
+		setVisible(false);
+		dispose();
 	}
 
 }

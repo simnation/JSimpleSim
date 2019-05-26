@@ -6,14 +6,12 @@
  */
 package org.simplesim.examples.gameoflife;
 
-import java.util.Observable;
-
 import org.simplesim.model.IAgentState;
 
 /**
  * @author Rene Kuhlemann
  */
-public class CellState extends Observable implements IAgentState {
+public class CellState implements IAgentState {
 
 	private int posX, posY;
 	private boolean life;
@@ -61,7 +59,5 @@ public class CellState extends Observable implements IAgentState {
 	 */
 	public void setLife(boolean newLife) {
 		life=newLife;
-		setChanged();
-		notifyObservers(this);
 	}
 }

@@ -18,7 +18,7 @@ import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
 import org.simplesim.model.IAgentState;
-import org.simplesim.simulator.ParallelSimulator;
+import org.simplesim.simulator.ConcurrentDESimulator;
 
 /**
  * This test build a hierarchical tree model, where agents are grouped in
@@ -145,7 +145,7 @@ public final class TestTreeModel {
 		System.out.println("Model-building finished!");
 		// final SequentialSimulator simulator=new
 		// SequentialSimulator(RootModel.getInstance());
-		final ParallelSimulator simulator=new ParallelSimulator(RootModel.getInstance());
+		final ConcurrentDESimulator simulator=new ConcurrentDESimulator(RootModel.getInstance());
 		simulator.runSimulation(SIMULATION_STOP);
 		System.out.println("Simulation run finished. Runtime (ms): "+(System.currentTimeMillis()-start));
 	}

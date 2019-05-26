@@ -14,7 +14,7 @@ package org.simplesim.model;
 import org.simplesim.core.scheduling.IEventQueue;
 import org.simplesim.core.scheduling.SortedEventQueue;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.simulator.TimeStepSimulator;
+import org.simplesim.simulator.SequentialTSSimulator;
 
 /**
  * Implements all basic functionality of an agent.
@@ -47,33 +47,18 @@ public abstract class AbstractAgent<S extends IAgentState, E> extends BasicModel
 	/**
 	 * Sets agent identity and creates the internal state and event queue by using
 	 * the protected create methods.
-	 *
-	 * @param name    the name of the entity, may be null or empty
-	 * @param address the address of the entity within the model hierarchy, may be
+	 * 
+	 * @param address the address of the entity within the model hierarchy (like an IP-address), may be
 	 *                null
 	 */
-	public AbstractAgent(String name, int[] addr) {
-		super(name,addr);
+	public AbstractAgent(int[] addr) {
+		super(addr);
 		state=createState();
 		leq=createInternalEventQueue();
 	}
 
-	/**
-	 * Initializes agent using identification by int array (like IP-address)
-	 *
-	 * @param address the address of the entity within the model hierarchy
-	 */
-	public AbstractAgent(int[] addr) {
-		this(null,addr);
-	}
-
-	/**
-	 * Initializes agent using identification by a naming string
-	 *
-	 * @param name the name of the entity, may be empty
-	 */
-	public AbstractAgent(String name) {
-		this(name,null);
+	public AbstractAgent() {
+		this(null);
 	}
 
 	/**
@@ -107,7 +92,7 @@ public abstract class AbstractAgent<S extends IAgentState, E> extends BasicModel
 	 * queue.
 	 *
 	 * @return a new event queue, may be null when using the
-	 *         {@link TimeStepSimulator}
+	 *         {@link SequentialTSSimulator}
 	 */
 	protected abstract IEventQueue<E> createInternalEventQueue();
 

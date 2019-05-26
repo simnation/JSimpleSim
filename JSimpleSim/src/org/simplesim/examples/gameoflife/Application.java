@@ -6,16 +6,11 @@
  */
 package org.simplesim.examples.gameoflife;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
 import org.simplesim.core.routing.DirectMessageForwarding;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.simulator.ISimulator;
-import org.simplesim.simulator.TimeStepSimulator;
+import org.simplesim.simulator.AbstractSimulator;
+import org.simplesim.simulator.ConcurrentTSSimulator;
+import org.simplesim.simulator.SequentialTSSimulator;
 
 /**
  * @author Rene Kuhlemann
@@ -25,14 +20,10 @@ public final class Application {
 
 	public static final int BOARD_DX=300;
 	public static final int BOARD_DY=200;
-	
-	public static final int CELL_SIZE=5;
 
 	private static final double LIFE_PROBABILITY=0.3d;
-	
-	final JFrame frame=new JFrame("JSimpleSim exmaple: Conway's Game of Life");
 
-	private void initModel(Model model, View view) {
+	private static void initModel(Model model) {
 		// connect cells
 		for (int y=0; y<BOARD_DY; y++) for (int x=0; x<BOARD_DX; x++) {
 			int left, right, up, down;
@@ -54,35 +45,9 @@ public final class Application {
 			cell.getOutport().connectTo(model.getCell(left,down).getInport());
 			cell.getOutport().connectTo(model.getCell(left,y).getInport());
 			cell.getOutport().connectTo(model.getCell(left,up).getInport());
-			// add observer
-			cell.getState().addObserver(view);
 			// set life status randomly
 			cell.getState().setLife(Math.random()<LIFE_PROBABILITY);
 		}
-	}
-
-	private void runSimulation(Model model, Time stop) {
-		final ISimulator simulator=new TimeStepSimulator(model,new DirectMessageForwarding());
-		simulator.runSimulation(stop);
-	}
-	
-	private void initAndShowGUI(View view) {
-		final Dimension size=new Dimension(CELL_SIZE*BOARD_DX,CELL_SIZE*BOARD_DY);
-		view.setPreferredSize(size);
-		view.setSize(size);
-		frame.add(view);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
-		System.out.println(view.getSize().toString());
-	}
-	
-	/**
-	 * 
-	 */
-	private void close() {
-		frame.setVisible(false);
-	    frame.dispose();
 	}
 
 	/**
@@ -90,12 +55,15 @@ public final class Application {
 	 */
 	public static void main(String[] args) {
 		final Model model=new Model(BOARD_DX,BOARD_DY);
-		final View view=new View(model);
-		final Application app=new Application();
-		app.initAndShowGUI(view);
-		app.initModel(model,view);
-		app.runSimulation(model,new Time(3000));
-		app.close();
+		initModel(model);
+		final View view=new View("JSimpleSim exmaple: Conway's Game of Life");
+		view.createBufferStrategy(2);
+		//final AbstractSimulator simulator=new SequentialTSSimulator(model,new DirectMessageForwarding());
+		final AbstractSimulator simulator=new ConcurrentTSSimulator(model,new DirectMessageForwarding());
+		// add observer
+		simulator.registerEventsProcessedListener(view);
+		simulator.runSimulation(new Time(3000));
+		view.close();
 	}
 
 }

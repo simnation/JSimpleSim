@@ -40,14 +40,11 @@ public abstract class BasicModelEntity {
 	 */
 	private static boolean simulation_runs=false;
 
-	/** Name of the entity, can be null */
-	private final String name;
-
 	/** Address in numbers, describing the model's branch within the model tree */
 	private int[] address;
 
 	/** Parent entity in model hierarchy. */
-	private AbstractDomain<?> parent=null;
+	private AbstractDomain parent=null;
 
 	/**
 	 * List of in and out ports. Each model can have an unlimited number of unique
@@ -82,14 +79,16 @@ public abstract class BasicModelEntity {
 	}
 
 	/**
-	 * Constructor taking name and address as initial parameters.
+	 * Constructor taking the address as initial parameter.
 	 *
-	 * @param name     the name of the entity, may be null or empty
-	 * @param address  the address of the entity within the model hierarchy, may be null
+	 * @param address the address of the entity within the model hierarchy, may be null
 	 */
-	public BasicModelEntity(String n, int[] addr) {
-		name=n;
+	public BasicModelEntity(int[] addr) {
 		address=addr;
+	}
+	
+	public BasicModelEntity() {
+		this(null);
 	}
 
 	/**
@@ -262,15 +261,6 @@ public abstract class BasicModelEntity {
 	}
 
 	/**
-	 * Gets the entity name. Can be null or empty.
-	 *
-	 * @return the name
-	 */
-	public final String getName() {
-		return name;
-	}
-
-	/**
 	 * Gets the entity address. Can be null.
 	 * <p>
 	 *
@@ -288,8 +278,7 @@ public abstract class BasicModelEntity {
 	 * Returns the full name of a model, concatenating the names of the parent
 	 * entities.
 	 * <p>
-	 *
-	 * Example: When A and B are parents of this entity and this entity is named C,
+	 * Example: If A and B are parents of this entity and this entity is named C,
 	 * then the full name is A.B.C
 	 *
 	 * @return the full name of this entity
@@ -311,7 +300,7 @@ public abstract class BasicModelEntity {
 	 *
 	 * @return the parent of this model
 	 */
-	public final AbstractDomain<?> getParent() {
+	public final AbstractDomain getParent() {
 		return parent;
 	}
 
@@ -418,8 +407,8 @@ public abstract class BasicModelEntity {
 	 *
 	 * @param parent which should become the parent of this model
 	 */
-	final void setParent(AbstractDomain<?> parent) {
-		this.parent=parent;
+	final void setParent(AbstractDomain par) {
+		parent=par;
 		// any updating which is related to setting a new parent must be done in
 		// the reset method - this method is overwritten in descendant classes
 		reset();
@@ -468,8 +457,7 @@ public abstract class BasicModelEntity {
 	 */
 	@Override
 	public String toString() {
-		if (name!=null) return name;
-		else if (address!=null) return (Integer.toString(address[address.length-1]));
+		if (address!=null) return (Integer.toString(address[address.length-1]));
 		return ("");
 	}
 

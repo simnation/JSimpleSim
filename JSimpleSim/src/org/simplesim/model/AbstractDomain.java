@@ -4,15 +4,13 @@
  *
  * This software is published as open source and licensed under the terms of GNU
  * GPLv3.
- * 
- * Contributors:
- * 	- Rene Kuhlemann - development and initial implementation
- * 
+ *
+ * Contributors: - Rene Kuhlemann - development and initial implementation
+ *
  */
 package org.simplesim.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.simplesim.core.routing.RoutingPort;
@@ -20,47 +18,36 @@ import org.simplesim.core.routing.RoutingPort;
 /**
  * Implements all basic functionality of a domain.
  * <p>
- * Domains serve as a compartment for other entities within the simulation model. These entities
- * may be agents or other domains. Therefore, simulation model are build as a tree-like structure with
- * {@code AbstractDomain} as branching and {@link AbstractAgent} as leaf, resembling a composite pattern.
+ * Domains serve as a compartment for other entities within the simulation
+ * model. These entities may be agents or other domains. Therefore, simulation
+ * model are build as a tree-like structure with {@code AbstractDomain} as
+ * branching and {@link AbstractAgent} as leaf, resembling a composite pattern.
  * The domain adds the following features:
  * <ul>
- * <li>a {@link IBulletinBord} to provide further information for the agents of the domain
  * <li>offer message routing by adding a {@code RoutingPort}
  * <li>give an overview of the entities contained in this domain
  * <li>list all agents in this domain and its subdomains
  * </ul>
  *
- * @see <a href="https://en.wikipedia.org/wiki/Composite_pattern">Reference for composite pattern</a>
+ * @see <a href="https://en.wikipedia.org/wiki/Composite_pattern">Reference for
+ *      composite pattern</a>
  */
-public abstract class AbstractDomain<B extends IBulletinBoard> extends BasicModelEntity {
+public abstract class AbstractDomain extends BasicModelEntity {
 
 	/** set of child entities (sub models). */
 	private final List<BasicModelEntity> entities=new ArrayList<>();
 
-	/** memory for domain specific information (statistics, external parameters) */
-	private B bulletinBoard=null;
-
 	/**
-	 * Creates a new instance of a domain . This instance is named by the given
-	 * parameter name.
+	 * Creates a new instance of a domain with a given address.
 	 *
-	 * @param name the name
+	 * @param addr the address
 	 */
-	public AbstractDomain(String name, int[] addr) {
-		super(name,addr);
-	}
-
-	public AbstractDomain(String name) {
-		this(name,null);
-	}
-
 	public AbstractDomain(int[] addr) {
-		super(null,addr);
+		super(addr);
 	}
 
-	public final void setBulletinBoard(B board) {
-		bulletinBoard=board;
+	public AbstractDomain() {
+		this(null);
 	}
 
 	/**
@@ -73,8 +60,8 @@ public abstract class AbstractDomain<B extends IBulletinBoard> extends BasicMode
 	 * @throws NotUniqueException if the entity is already part of this domain
 	 */
 	public final void addEntity(BasicModelEntity entity) {
-		if (containsEntity(entity))
-			throw new UniqueConstraintViolation("Model "+entity.getName()+" added twice to domain "+this.getFullName());
+		if (containsEntity(entity)) throw new UniqueConstraintViolation(
+				"Model "+entity.toString()+" added twice to domain "+this.getFullName());
 		entity.setParent(this);
 		entities.add(entity);
 	}
@@ -104,13 +91,17 @@ public abstract class AbstractDomain<B extends IBulletinBoard> extends BasicMode
 	 * Returns all atomic submodels (i.e. list of agents) within this
 	 * {@link AbstractDomain}.
 	 *
+	 * @param recursive true if listing should be done recursively for agents in all
+	 *                  subdomains, too
+	 *
 	 * @return list of all agents / atomic submodels of this coupled model
 	 */
-	public final Collection<AbstractAgent<?, ?>> listAllAgents() {
-		final Collection<AbstractAgent<?, ?>> result=new ArrayList<>();
+	public final List<AbstractAgent<?, ?>> listAllAgents(boolean recursive) {
+		final List<AbstractAgent<?, ?>> result=new ArrayList<>();
 		for (final BasicModelEntity iter : entities)
 			if (iter instanceof AbstractAgent) result.add((AbstractAgent<?, ?>) iter);
-			else if (iter instanceof AbstractDomain) result.addAll(((AbstractDomain<?>) iter).listAllAgents());
+			else if (recursive&&(iter instanceof AbstractDomain))
+				result.addAll(((AbstractDomain) iter).listAllAgents(true));
 		return result;
 	}
 
@@ -133,13 +124,6 @@ public abstract class AbstractDomain<B extends IBulletinBoard> extends BasicMode
 	 */
 	public final boolean containsEntity(BasicModelEntity model) {
 		return entities.contains(model);
-	}
-
-	/**
-	 * @return the InfoBoard
-	 */
-	public final B getBulletinBoard() {
-		return bulletinBoard;
 	}
 
 }

@@ -4,29 +4,28 @@
  *
  * This software is published as open source and licensed under the terms of GNU
  * GPLv3.
- * 
- * Contributors:
- * 	- Rene Kuhlemann - development and initial implementation
- * 
+ *
+ * Contributors: - Rene Kuhlemann - development and initial implementation
+ *
  */
 package org.simplesim.core.routing;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.simplesim.model.BasicModelEntity;
 
 /**
  * Port for routing messages automatically.
  * <p>
- * Routing is done by reading the messages' destination descriptions and sending 
- * the message along the right connection accordingly. Thus only a {@link RoutedMessage} can
- * be handled by this port since it contains additional address information.
+ * Routing is done by reading the messages' destination descriptions and sending
+ * the message along the right connection accordingly. Thus only a
+ * {@link RoutedMessage} can be handled by this port since it contains
+ * additional address information.
  * <p>
- * The operation modus is similar to a {@link MulitPort}, but the messages is only
- * forward to ONE port of the destination list, <i>not</i> all.
+ * The operation modus is similar to a {@link MulitPort}, but the messages is
+ * only forward to ONE port of the destination list, <i>not</i> all.
  *
  */
 public final class RoutingPort extends AbstractPort {
@@ -57,7 +56,7 @@ public final class RoutingPort extends AbstractPort {
 
 	@Override
 	public Collection<AbstractPort> copyMessages() {
-		final Set<AbstractPort> result=new HashSet<>();
+		final List<AbstractPort> result=new ArrayList<>();
 		while (hasMessages()) {
 			final Message<?> msg=read(); // message is also removed in this step!
 			if (!(msg instanceof RoutedMessage))
@@ -66,7 +65,7 @@ public final class RoutingPort extends AbstractPort {
 			final int index=((RoutedMessage) msg).getDestIndex(nxtlvl);
 			final AbstractPort dest=destinations.get(index); // find the right port for forwarding
 			dest.write(msg);
-			result.add(dest); // no duplicates in destination list because of Set
+			if (!result.contains(dest)) result.add(dest); // allow no duplicates in destination list
 		}
 		return result;
 	}
