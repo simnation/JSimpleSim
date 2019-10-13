@@ -1,4 +1,4 @@
-/**
+/*
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
  * This queue is suitable for a global event queue, especially if there are a lot
  * of events with the same time stamp. {@code getMin()}, {@code dequeue()} and
  * {@code dequeAll()} are faster than in a {@code HashedBucketQueue}, since this
- * queue is sorted, but for the price of a larger memory footprint.
+ * queue is sorted, but for the cost of a larger memory footprint.
  *
  * @param <E> event type
  * 

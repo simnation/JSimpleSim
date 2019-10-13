@@ -21,7 +21,8 @@ import java.util.Iterator;
  * Please refer to {@link AbstractBucketQueue} and its subclasses for the implementation 
  * of a bucket strategy.
  * 
- * @param <E> event type
+ * @param <E> type of events
+ * @param <Q> type of queue
  * 
  * @see EventQueueEntry
  * 
@@ -34,18 +35,12 @@ abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> i
 	 * Class constructor taking the event queue and the cache size as parameters
 	 *
 	 * @param eq         the event queue, implementing a {@link Collection}
-	 * @param chacheSize size of internal element cache, set to 0 to switch of
-	 *                   caching.
+	 * 
 	 */
 	AbstractEventQueue(Q eq) {
 		queue=eq;
 	}
 
-	/**
-	 * Gets the event queue.
-	 *
-	 * @return the event queue
-	 */
 	Q getQueue() {
 		return queue;
 	}

@@ -71,7 +71,7 @@ public final class TestTreeModel {
 		}
 
 		@Override
-		protected IEventQueue<Integer> createInternalEventQueue() {
+		protected IEventQueue<Integer> createLocalEventQueue() {
 			return new SortedEventQueue<>();
 		}
 

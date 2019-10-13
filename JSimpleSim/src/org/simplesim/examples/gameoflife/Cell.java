@@ -48,7 +48,7 @@ public final class Cell extends AbstractAgent<CellState, Object> {
 	 * @see org.simplesim.model.AbstractAgent#createInternalEventQueue()
 	 */
 	@Override
-	protected IEventQueue<Object> createInternalEventQueue() {
+	protected IEventQueue<Object> createLocalEventQueue() {
 		return null; // time step simulation --> no local event queue
 	}
 
@@ -76,6 +76,10 @@ public final class Cell extends AbstractAgent<CellState, Object> {
 
 	public AbstractPort getOutport() {
 		return outport;
+	}
+
+	public String getName() {
+		return "cell";
 	}
 
 }

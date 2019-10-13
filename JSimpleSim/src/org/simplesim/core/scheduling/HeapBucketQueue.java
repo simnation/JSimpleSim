@@ -1,4 +1,4 @@
-/**
+/*
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
@@ -28,7 +28,7 @@ import java.util.Queue;
  * Because of the underlying heap structure, the look-up of the first element is faster than in a
  * {@code HashedBucketQueue} while still maintaining a small memory footprint.
  * <p>
- * So, well suited as global event queue, the {@code HeapBucketQueue} is placed between the {@code HashedBucketQueue}
+ * So, well suited as global event queue, the {@code HeapBucketQueue} is situated between the {@code HashedBucketQueue}
  * and the {@code SortedBucketQueue} by its trade-off between memory usage and performance.
  * 
  * @param <E> event type

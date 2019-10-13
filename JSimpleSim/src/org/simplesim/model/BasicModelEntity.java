@@ -273,6 +273,14 @@ public abstract class BasicModelEntity {
 	public final int[] getAddress() {
 		return address;
 	}
+	
+	
+	/**
+	 * Returns the name of this model entity
+	 * 
+	 * @return the name of this model entity, may be an empty string but not null
+	 */
+	public abstract String getName();
 
 	/**
 	 * Returns the full name of a model, concatenating the names of the parent
@@ -284,15 +292,11 @@ public abstract class BasicModelEntity {
 	 * @return the full name of this entity
 	 */
 	public final String getFullName() {
-		final String result;
-		if (parent==null) result=toString();
-		else {
-			final StringBuilder sb=new StringBuilder(parent.getFullName());
-			sb.append(".");
-			sb.append(toString());
-			result=sb.toString();
-		}
-		return result;
+		if (parent==null) return getName();
+		final StringBuilder sb=new StringBuilder(parent.getFullName());
+		sb.append(".");
+		sb.append(getName());
+		return sb.toString();
 	}
 
 	/**

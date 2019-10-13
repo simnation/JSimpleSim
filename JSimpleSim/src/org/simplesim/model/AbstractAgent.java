@@ -4,10 +4,9 @@
  *
  * This software is published as open source and licensed under the terms of GNU
  * GPLv3.
- * 
- * Contributors:
- * 	- Rene Kuhlemann - development and initial implementation
- * 
+ *
+ * Contributors: - Rene Kuhlemann - development and initial implementation
+ *
  */
 package org.simplesim.model;
 
@@ -23,17 +22,22 @@ import org.simplesim.simulator.SequentialTSSimulator;
  * a strategy within their {@link #doEvent(Time)} method. This is usually done
  * by the following five steps:
  * <ol>
- * <li>read the messages from the inports ({@link org.simplesim.core.routing.Message})
+ * <li>read the messages from the inports
+ * ({@link org.simplesim.core.routing.Message})
  * <li>modify the agent's state ({@link IAgentState})
- * <li>compute output and write messages to other entities to the outports 
- * <li>add events to the internal event queue if necessary ({@link org.simplesim.core.scheduling.IEventQueue})
- * <li>return the time of the next local event ({@link org.simplesim.core.scheduling.Time})
- * </ol><p>
- * Agents are always embedded in an {@link AbstractDomain} for compartmentalization.
- * If implemented, the agent may also refer to the bulletin boards of its parent
- * domain or the root domain ({@link IBulletinBoard}) for additional external information.
+ * <li>compute output and write messages to other entities to the outports
+ * <li>add events to the internal event queue if necessary
+ * ({@link org.simplesim.core.scheduling.IEventQueue})
+ * <li>return the time of the next local event
+ * ({@link org.simplesim.core.scheduling.Time})
+ * </ol>
+ * <p>
+ * Agents are always embedded in an {@link AbstractDomain} for
+ * compartmentalization. If implemented, the agent may also refer to the
+ * bulletin boards of its parent domain or the root domain
+ * ({@link IBulletinBoard}) for additional external information.
  *
- * @param <S> type of the state
+ * @param <S> type of the agent state containing all state variables
  * @param <E> type of the events
  */
 public abstract class AbstractAgent<S extends IAgentState, E> extends BasicModelEntity {
@@ -47,14 +51,14 @@ public abstract class AbstractAgent<S extends IAgentState, E> extends BasicModel
 	/**
 	 * Sets agent identity and creates the internal state and event queue by using
 	 * the protected create methods.
-	 * 
-	 * @param address the address of the entity within the model hierarchy (like an IP-address), may be
-	 *                null
+	 *
+	 * @param address the address of the entity within the model hierarchy (like an
+	 *                IP-address), may be null
 	 */
 	public AbstractAgent(int[] addr) {
 		super(addr);
 		state=createState();
-		leq=createInternalEventQueue();
+		leq=createLocalEventQueue();
 	}
 
 	public AbstractAgent() {
@@ -94,12 +98,13 @@ public abstract class AbstractAgent<S extends IAgentState, E> extends BasicModel
 	 * @return a new event queue, may be null when using the
 	 *         {@link SequentialTSSimulator}
 	 */
-	protected abstract IEventQueue<E> createInternalEventQueue();
+	protected abstract IEventQueue<E> createLocalEventQueue();
 
 	/**
-	 * Gets the local event queue.<p>
+	 * Gets the local event queue.
+	 * <p>
 	 * Note: The event queue should only be manipulated by this agent itself.
-	 * 
+	 *
 	 * @return the local event queue
 	 */
 	protected final IEventQueue<E> getEventQueue() {
@@ -135,8 +140,9 @@ public abstract class AbstractAgent<S extends IAgentState, E> extends BasicModel
 	 * <li>add events to the internal event queue if necessary
 	 * <li>return the time of the next local event (=next time to call this method)
 	 * </ul>
-	 * If implemented, the agent may also refer to the bulletin boards of its parent
-	 * domain or the root domain
+	 * If implemented, the agent may also refer <i>read-only</i> to a bulletin board
+	 * implementation of its parent domain or the root domain for additional
+	 * external parameters
 	 * <p>
 	 *
 	 * @param time current simulation time
@@ -150,7 +156,7 @@ public abstract class AbstractAgent<S extends IAgentState, E> extends BasicModel
 	 * @see org.simplesim.core.routing.Message Message
 	 * @see org.simplesim.core.routing.AbstractPort AbstractPort
 	 */
-	protected abstract Time doEvent(final Time time);
+	protected abstract Time doEvent(Time time);
 
 	/**
 	 * Calls the {@code doEvent} method.
@@ -161,7 +167,7 @@ public abstract class AbstractAgent<S extends IAgentState, E> extends BasicModel
 	 *
 	 * @return time of the next event (tone)
 	 */
-	public final Time doEventSim(final Time time) {
+	public final Time doEventSim(Time time) {
 		return doEvent(time);
 	}
 

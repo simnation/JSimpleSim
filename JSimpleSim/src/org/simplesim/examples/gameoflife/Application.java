@@ -10,7 +10,6 @@ import org.simplesim.core.routing.DirectMessageForwarding;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.simulator.AbstractSimulator;
 import org.simplesim.simulator.ConcurrentTSSimulator;
-import org.simplesim.simulator.SequentialTSSimulator;
 
 /**
  * @author Rene Kuhlemann
@@ -58,7 +57,8 @@ public final class Application {
 		initModel(model);
 		final View view=new View("JSimpleSim exmaple: Conway's Game of Life");
 		view.createBufferStrategy(2);
-		//final AbstractSimulator simulator=new SequentialTSSimulator(model,new DirectMessageForwarding());
+		// final AbstractSimulator simulator=new SequentialTSSimulator(model,new
+		// DirectMessageForwarding());
 		final AbstractSimulator simulator=new ConcurrentTSSimulator(model,new DirectMessageForwarding());
 		// add observer
 		simulator.registerEventsProcessedListener(view);

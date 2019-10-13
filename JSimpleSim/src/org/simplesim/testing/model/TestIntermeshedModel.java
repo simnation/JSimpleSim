@@ -61,7 +61,7 @@ public final class TestIntermeshedModel {
 		}
 
 		@Override
-		protected IEventQueue<Integer> createInternalEventQueue() {
+		protected IEventQueue<Integer> createLocalEventQueue() {
 			return new SortedEventQueue<>();
 		}
 

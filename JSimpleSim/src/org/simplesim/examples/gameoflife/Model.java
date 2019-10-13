@@ -15,12 +15,9 @@ import org.simplesim.model.AbstractDomain;
 public class Model extends AbstractDomain {
 
 	private final Cell world[][];
-	private final int board_dx, board_dy;
 
 	public Model(int dx, int dy) {
 		super();
-		board_dx=dx;
-		board_dy=dy;
 		world=new Cell[dx][dy];
 		setAddress(new int[0]);
 		// create cells and add to model ==> no connection yet!
@@ -33,6 +30,10 @@ public class Model extends AbstractDomain {
 
 	public Cell getCell(int x, int y) {
 		return world[x][y];
+	}
+
+	public String getName() {
+		return "world";
 	}
 
 }

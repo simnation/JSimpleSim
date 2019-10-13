@@ -1,4 +1,4 @@
-/**
+/*
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
@@ -24,7 +24,8 @@ import java.util.Map;
  * Time stamps are mapped to buckets, a bucket is represented by an
  * {@code ArrayList}.
  *
- * @param <E> event type
+ * @param <E> type of events
+ * @param <M> type of map containing the buckets
  */
 abstract class AbstractBucketQueue<E, M extends Map<Time, List<E>>> implements IEventQueue<E> {
 

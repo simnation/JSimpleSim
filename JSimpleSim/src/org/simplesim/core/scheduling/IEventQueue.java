@@ -4,6 +4,10 @@
  *
  * This software is published as open source and licensed under the terms of GNU
  * GPLv3.
+ * 
+ * Contributors:
+ * 	- Rene Kuhlemann - development and initial implementation
+ * 
  */
 package org.simplesim.core.scheduling;
 
@@ -33,7 +37,6 @@ import java.util.List;;
  *
  * @param <E> type of events to be stored in the queue
  *
- * @author Rene Kuhlemann
  */
 public interface IEventQueue<E> {
 
