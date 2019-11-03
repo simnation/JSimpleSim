@@ -13,11 +13,11 @@ package org.simplesim.simulator;
 import java.util.Collections;
 import java.util.List;
 
+import org.simplesim.core.notification.Listener;
+import org.simplesim.core.notification.ListenerSupport;
 import org.simplesim.core.routing.IMessageForwardingStrategy;
 import org.simplesim.core.scheduling.IEventQueue;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.core.util.Listener;
-import org.simplesim.core.util.ListenerSupport;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
 

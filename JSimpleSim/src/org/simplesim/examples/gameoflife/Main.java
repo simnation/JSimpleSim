@@ -15,12 +15,12 @@ import org.simplesim.simulator.ConcurrentTSSimulator;
  * @author Rene Kuhlemann
  *
  */
-public final class Application {
+public final class Main {
 
 	public static final int BOARD_DX=300;
 	public static final int BOARD_DY=200;
 
-	private static final double LIFE_PROBABILITY=0.3d;
+	private static final double LIFE_PROBABILITY=0.35d;
 
 	private static void initModel(Model model) {
 		// connect cells
@@ -56,7 +56,6 @@ public final class Application {
 		final Model model=new Model(BOARD_DX,BOARD_DY);
 		initModel(model);
 		final View view=new View("JSimpleSim exmaple: Conway's Game of Life");
-		view.createBufferStrategy(2);
 		// final AbstractSimulator simulator=new SequentialTSSimulator(model,new
 		// DirectMessageForwarding());
 		final AbstractSimulator simulator=new ConcurrentTSSimulator(model,new DirectMessageForwarding());

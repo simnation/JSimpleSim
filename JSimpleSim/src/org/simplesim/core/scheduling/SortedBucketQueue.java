@@ -17,25 +17,25 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
- * Event queue with a sorted list of buckets, each bucket containing events with
- * equal time stamps.
+ * Event queue backed by a {@code TreeMap} with each bucket containing events of
+ * equal time stamps
  * </p>
- * This queue is suitable for a global event queue, especially if there are a lot
- * of events with the same time stamp. {@code getMin()}, {@code dequeue()} and
- * {@code dequeAll()} are faster than in a {@code HashedBucketQueue}, since this
- * queue is sorted, but for the cost of a larger memory footprint.
- *
+ * Note: This queue type performs best for dequeuing <i>all</i> events
+ * with minimal time stamp ({@link #dequeueAll()}). It is well suited for a
+ * global event queue and has a performance similar to the {@code HeapBucketQueue}.
+ * <p>
  * @param <E> event type
  * 
  * @see HashedBucketQueue
  * @see HeapBucketQueue
+ * @see TreeMap
  */
-public final class SortedBucketQueue<E> extends AbstractBucketQueue<E, SortedMap<Time, List<E>>> {
+public final class SortedBucketQueue<E> extends AbstractBucketQueue<E,SortedMap<Time, List<E>>> {
 
 	/**
 	 * Constructor allowing to parameterize your own variant of a {@code SortedMap}.
-	 * For example {@link TreeMap}, {@link ConcurrentSkipListMap} or another
-	 * implementation from the Google Guava package.
+	 * For example {@link TreeMap}, {@link ConcurrentSkipListMap} or any another
+	 * implementation.
 	 *
 	 * @param map {@code SortedMap} implementation to be used
 	 */

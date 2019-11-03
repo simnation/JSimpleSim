@@ -1,4 +1,4 @@
-/**
+/*
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
@@ -12,12 +12,11 @@
 package org.simplesim.model;
 
 /**
- * Marker interface, the agent state contains the internal information of an {@code AbstractAgent}.<p>
- * An implementing class should contain all variables of an agent, getter and setter method as well as
+ * Marker interface, the agent state contains the internal information of an {@code AbstractAgent}.
+ * <p>
+ * An implementing class should contain all variables of an agent, getter and setter methods as well as
  * a persistence technique to load and save the state. Additionally, there may be an observer pattern
  * or java bean functionality implemented to gain insight of the state during a simulation run.
- * 
- * @author Rene Kuhlemann
  *
  */
 public interface IAgentState {

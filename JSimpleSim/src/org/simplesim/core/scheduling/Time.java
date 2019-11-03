@@ -12,12 +12,13 @@
 package org.simplesim.core.scheduling;
 
 /**
- * This is a calendar class to scale and navigate the simulation's time axis.<p>
+ * Provides time and calendar functionality to scale and navigate the simulation's time axis.
+ * <p>
  * This class serves also as a wrapper around the time format. Currently, ticks
  * are stored as a {@code long} primitive, but the format my be changed because
  * within the simulator, only the {@code Time} wrapper is used.
  *<p>
- * Note: This class is immutable.
+ * This class is immutable and thus tread-safe.
  *
  */
 public final class Time implements Comparable<Time> {

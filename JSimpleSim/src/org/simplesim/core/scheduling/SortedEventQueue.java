@@ -18,24 +18,27 @@ import java.util.List;
  * Sorted list implementation of the {@code IEventQueue} interface.
  * <p>
  * A <i>descending</i> sorted list is used to hold the data, internally stored
- * in an {@code ArrayList}. Look up operations are done by binary search,
+ * in an {@code ArrayList}. Look-up operations are done by binary search,
  * leading to a complexity of O(log n). {@code enqueue()} and {@code dequeue(E)}
  * operations also need to move all elements with a lesser time stamp (max.
  * O(n)). {@code dequeue()}, {@code getMin()} and {@code dequeueAll()} are done
  * in O(1), since the elements with the least time stamp are always placed at
  * the end of the list (descending sorting order).
  * <p>
- * This implementation is well-suited for local event queues, which often are memory-critical
+ * Note: The performance of this queue type declines with the number of entries. Thus, this 
+ * implementation seems better suited for local event queues, which often are memory-critical
  * and generally hold fewer events.
  *
  * @param <E> event type
+ * 
+ * @see HeapEventQueue
  */
-public class SortedEventQueue<E> extends AbstractEventQueue<E, List<EventQueueEntry<E>>> {
+public class SortedEventQueue<E> extends AbstractEventQueue<E,ArrayList<EventQueueEntry<E>>> {
 
 	private static final int DEFAULT_LIST_SIZE=8;
 
 	public SortedEventQueue() {
-		super(new ArrayList<EventQueueEntry<E>>(DEFAULT_LIST_SIZE));
+		super(new ArrayList<>(DEFAULT_LIST_SIZE));
 	}
 
 	/*
@@ -68,7 +71,7 @@ public class SortedEventQueue<E> extends AbstractEventQueue<E, List<EventQueueEn
 	 */
 	@Override
 	public void enqueue(E event, Time time) {
-		getQueue().add(getPosition(time),new EventQueueEntry<>(event,time));
+		getQueue().add(getPosition(time),new EventQueueEntry<>(time,event));
 	}
 
 	/*

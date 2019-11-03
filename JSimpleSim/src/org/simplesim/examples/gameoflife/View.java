@@ -6,8 +6,8 @@
  */
 package org.simplesim.examples.gameoflife;
 
-import static org.simplesim.examples.gameoflife.Application.BOARD_DX;
-import static org.simplesim.examples.gameoflife.Application.BOARD_DY;
+import static org.simplesim.examples.gameoflife.Main.BOARD_DX;
+import static org.simplesim.examples.gameoflife.Main.BOARD_DY;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -17,7 +17,7 @@ import java.awt.image.BufferStrategy;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-import org.simplesim.core.util.Listener;
+import org.simplesim.core.notification.Listener;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.simulator.AbstractSimulator;
 
@@ -38,6 +38,7 @@ public class View extends JFrame implements Listener<AbstractSimulator> {
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		pack();
 		setVisible(true);
+		createBufferStrategy(2);
 		System.out.println(getSize().toString());
 	}
 

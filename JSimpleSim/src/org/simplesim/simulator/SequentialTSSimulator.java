@@ -1,4 +1,4 @@
-/**
+/*
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *

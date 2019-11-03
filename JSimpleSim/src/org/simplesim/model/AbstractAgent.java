@@ -1,4 +1,4 @@
-/**
+/*
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
@@ -33,9 +33,8 @@ import org.simplesim.simulator.SequentialTSSimulator;
  * </ol>
  * <p>
  * Agents are always embedded in an {@link AbstractDomain} for
- * compartmentalization. If implemented, the agent may also refer to the
- * bulletin boards of its parent domain or the root domain
- * ({@link IBulletinBoard}) for additional external information.
+ * compartmentalization. If implemented, the agent may also refer to an information
+ * board of its parent domain or the root domain for additional external information.
  *
  * @param <S> type of the agent state containing all state variables
  * @param <E> type of the events

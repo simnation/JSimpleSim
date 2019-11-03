@@ -1,4 +1,4 @@
-/**
+/*
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
@@ -45,7 +45,7 @@ public final class ConcurrentDESimulator extends SequentialDESimulator {
 		BasicModelEntity.toggleSimulationIsRunning(true);
 		initGlobalEventQueue();
 		setSimulationTime(getGlobalEventQueue().getMin());
-		// used a variable thread pool with a maximum of as many worker threads as cpu cores
+		// used a variable thread pool with as many worker threads as cpu cores
 		final ExecutorService executor=Executors.newWorkStealingPool();
 		final List<Future<Time>> futures=new ArrayList<>();
 		while (getSimulationTime().compareTo(stop)<0) {

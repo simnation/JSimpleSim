@@ -14,7 +14,9 @@ package org.simplesim.core.scheduling;
 /**
  * Provides a coupling between a time stamp and a corresponding event.
  * <p>
- * Note: This class is immutable and thus thread-safe.
+ * This class is immutable and thus thread-safe.
+ * 
+ * @see Time
  *
  */
 final class EventQueueEntry<E> implements Comparable<EventQueueEntry<E>> {
@@ -22,7 +24,7 @@ final class EventQueueEntry<E> implements Comparable<EventQueueEntry<E>> {
 	private final E event; // the event as such
 	private final Time time; // time stamp of the event.
 
-	public EventQueueEntry(E e, Time t) {
+	public EventQueueEntry(Time t, E e) {
 		event=e;
 		time=t;
 	}

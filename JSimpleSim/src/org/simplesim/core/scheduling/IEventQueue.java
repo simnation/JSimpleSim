@@ -11,7 +11,7 @@
  */
 package org.simplesim.core.scheduling;
 
-import java.util.List;;
+import java.util.List;
 
 /**
  * Basic event queue interface for all queue implementations of the scheduling
@@ -21,8 +21,8 @@ import java.util.List;;
  * event simulation, the scheduling of events has been identified as a major
  * bottleneck (taking up to 40% computing time in large simulation models).
  * Thus, this interface is designed to cover all necessary functionality in a
- * minimalistic way. During simulation {@link #enqueue(E, Time)},
- * {@link #dequeueAll(Time)} and {@link #getMin()} are used most often,
+ * minimalistic way. During simulation {@code #enqueue(E, Time)},
+ * {@code #dequeueAll(Time)} and {@code #getMin()} are used most often,
  * presumably. A requeue operation can be done by dequeuing an event and then
  * enqueuing it again with a different time stamp.
  * <p>
@@ -31,9 +31,9 @@ import java.util.List;;
  * the documentation of the event queue you are going to use or synchronize
  * externally.
  * <p>
- * Please note that event queues have (injective) one-to-one mapping: There
- * must not be any two events in the queue that are equal, so there is only one time stamp
- * per event!
+ * Please note that event queues have (injective) one-to-one mapping: There may be 
+ * several events with equal time stamps, but no two events that are equal.
+ * In other words: There must be only one time stamp per event!
  *
  * @param <E> type of events to be stored in the queue
  *

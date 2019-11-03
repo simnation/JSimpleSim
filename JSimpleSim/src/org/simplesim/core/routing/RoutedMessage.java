@@ -1,4 +1,4 @@
-/**
+/*
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
@@ -23,7 +23,7 @@ import org.simplesim.core.routing.Message;
  * is the index of the array whereas the actual number is the id of the agent within the model level. 
  * The level of the root domain is always 0.
  * <p>
- * This class is immutable.
+ * This class is immutable and thus thread-safe.
  *
  */
 public final class RoutedMessage extends Message<int[]> {

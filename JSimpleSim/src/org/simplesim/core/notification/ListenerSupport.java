@@ -7,7 +7,7 @@
  * 	- Rene Kuhlemann - development and initial implementation
  * 
  */
-package org.simplesim.core.util;
+package org.simplesim.core.notification;
 
 import java.util.ArrayList;
 import java.util.List;

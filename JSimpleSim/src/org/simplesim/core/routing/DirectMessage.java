@@ -1,4 +1,4 @@
-/**
+/*
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
@@ -17,10 +17,9 @@ import org.simplesim.model.AbstractAgent;
 /**
  * Message class for using {@link DirectMessageForwarding}. 
  * <p>
- * This class is immutable.
+ * This class is immutable and thus thread-safe.
  *
  */
-
 public final class DirectMessage extends Message<AbstractAgent<?,?>> {
 		
 	public DirectMessage(AbstractAgent<?,?> source, Object  content) {

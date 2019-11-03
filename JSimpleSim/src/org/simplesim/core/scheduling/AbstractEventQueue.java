@@ -11,8 +11,10 @@
  */
 package org.simplesim.core.scheduling;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Provides basic functionality of an event queue to be extended by concrete
@@ -22,7 +24,7 @@ import java.util.Iterator;
  * of a bucket strategy.
  * 
  * @param <E> type of events
- * @param <Q> type of queue
+ * @param <Q> type of collection holding time-event pairs
  * 
  * @see EventQueueEntry
  * 
@@ -37,8 +39,8 @@ abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> i
 	 * @param eq         the event queue, implementing a {@link Collection}
 	 * 
 	 */
-	AbstractEventQueue(Q eq) {
-		queue=eq;
+	AbstractEventQueue(Q q) {
+		queue=q;
 	}
 
 	Q getQueue() {
@@ -63,7 +65,7 @@ abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> i
 	 */
 	@Override
 	public boolean isEmpty() {
-		return queue.isEmpty();
+		return getQueue().isEmpty();
 	}
 
 	/*
@@ -73,7 +75,7 @@ abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> i
 	 */
 	@Override
 	public int size() {
-		return queue.size();
+		return getQueue().size();
 	}
 
 	/*
@@ -102,7 +104,42 @@ abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> i
 	 */
 	@Override
 	public void enqueue(E event, Time time) {
-		getQueue().add(new EventQueueEntry<E>(event,time));
+		getQueue().add(new EventQueueEntry<E>(time,event));
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.simplesim.core.scheduling.IEventQueue#dequeueAll(org.simplesim.core.
+	 * scheduling.Time)
+	 */
+	@Override
+	public List<E> dequeueAll(Time time) {
+		if (time.equals(getMin())) return dequeueAll();
+		final List<E> result=new ArrayList<>();
+		final Iterator<EventQueueEntry<E>> iterator=getQueue().iterator();
+		while (iterator.hasNext()) {
+			final EventQueueEntry<E> entry=iterator.next();
+			if (entry.getTime().equals(time)) {
+				// copy all event queue entries with given time stamp to result list
+				result.add(entry.getEvent());
+				iterator.remove();
+			}
+		}
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.simplesim.core.scheduling.IEventQueue#dequeueAll()
+	 */
+	@Override
+	public List<E> dequeueAll() {
+		final List<E> result=new ArrayList<>();
+		final Time time=getMin(); // remember current time stamp
+		while (!isEmpty()&&time.equals(getMin())) result.add(dequeue());
+		return result;
 	}
 
 	/*
