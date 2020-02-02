@@ -1,21 +1,20 @@
-/**
- * JSimpleSim is a framework to build mutli-agent systems in a quick and easy
- * way.
+/*
+ * SimNation is a multi-agent model to simulate economic systems. It is scalable
+ * and used JSimpleSim as technical backbone for concurrent discrete event
+ * simulation.
  *
  * This software is published as open source and licensed under GNU GPLv3.
+ *
+ * Contributors: - Rene Kuhlemann - development and initial implementation
+ *
  */
 package org.simplesim.examples.gameoflife;
 
 import org.simplesim.core.routing.AbstractPort;
 import org.simplesim.core.routing.DirectMessage;
-import org.simplesim.core.scheduling.IEventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 
-/**
- * @author Rene Kuhlemann
- *
- */
 public final class Cell extends AbstractAgent<CellState, Object> {
 
 	private final AbstractPort inport, outport;
@@ -24,32 +23,12 @@ public final class Cell extends AbstractAgent<CellState, Object> {
 	 * @param addr
 	 */
 	public Cell(int posX, int posY, boolean life) {
-		super();
+		super(null,new CellState());
 		getState().setPosX(posX);
 		getState().setPosY(posY);
 		getState().setLife(life);
 		inport=addSingleInport();
 		outport=addMultiOutport();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.simplesim.model.AbstractAgent#createState()
-	 */
-	@Override
-	protected CellState createState() {
-		return new CellState();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.simplesim.model.AbstractAgent#createInternalEventQueue()
-	 */
-	@Override
-	protected IEventQueue<Object> createLocalEventQueue() {
-		return null; // time step simulation --> no local event queue
 	}
 
 	/*
@@ -78,6 +57,7 @@ public final class Cell extends AbstractAgent<CellState, Object> {
 		return outport;
 	}
 
+	@Override
 	public String getName() {
 		return "cell";
 	}

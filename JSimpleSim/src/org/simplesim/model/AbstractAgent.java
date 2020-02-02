@@ -10,10 +10,9 @@
  */
 package org.simplesim.model;
 
+import org.simplesim.core.scheduling.HeapEventQueue;
 import org.simplesim.core.scheduling.IEventQueue;
-import org.simplesim.core.scheduling.SortedEventQueue;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.simulator.SequentialTSSimulator;
 
 /**
  * Implements all basic functionality of an agent.
@@ -33,8 +32,9 @@ import org.simplesim.simulator.SequentialTSSimulator;
  * </ol>
  * <p>
  * Agents are always embedded in an {@link AbstractDomain} for
- * compartmentalization. If implemented, the agent may also refer to an information
- * board of its parent domain or the root domain for additional external information.
+ * compartmentalization. If implemented, the agent may also refer to an
+ * information board of its parent domain or the root domain for additional
+ * external information.
  *
  * @param <S> type of the agent state containing all state variables
  * @param <E> type of the events
@@ -46,34 +46,44 @@ public abstract class AbstractAgent<S extends IAgentState, E> extends BasicModel
 
 	/** the local event queue of the agent */
 	private final IEventQueue<E> leq;
-
+	
 	/**
-	 * Sets agent identity and creates the internal state and event queue by using
-	 * the protected create methods.
-	 *
-	 * @param address the address of the entity within the model hierarchy (like an
-	 *                IP-address), may be null
+	 * Exception to be thrown if an unknown event occurs is returned from the event queue
 	 */
-	public AbstractAgent(int[] addr) {
-		super(addr);
-		state=createState();
-		leq=createLocalEventQueue();
+	@SuppressWarnings("serial")
+	public static class UnknownEventType extends RuntimeException {
+		public UnknownEventType(String message) {
+			super(message);
+		}
 	}
-
-	public AbstractAgent() {
-		this(null);
+	
+	/**
+	 * Exception to be thrown if an incoming message cannot be handled 
+	 */
+	@SuppressWarnings("serial")
+	public static class UnhandledMessageType extends RuntimeException {
+		public UnhandledMessageType(String message) {
+			super(message);
+		}
 	}
 
 	/**
-	 * Creates the agent state containing all internal variables.
+	 * Sets the agent's local event queue and the internal state.
 	 * <p>
-	 * This method must be overridden in descendant classes to create the individual
-	 * state specific for this agent. This method should not be called from any
-	 * other method than the constructor!
+	 * Note: Generally, a {@link HeapEventQueue} will work best as local event
+	 * queue.
 	 *
-	 * @return a new agent state
+	 * @param queue the local event queue
+	 * @param s     the state of the agent
 	 */
-	protected abstract S createState();
+	public AbstractAgent(IEventQueue<E> queue, S s) {
+		state=s;
+		leq=queue;
+	}
+
+	public AbstractAgent(S s) {
+		this(new HeapEventQueue<E>(),s);
+	}
 
 	/**
 	 * Gets the agent's state containing all internal variables
@@ -83,21 +93,6 @@ public abstract class AbstractAgent<S extends IAgentState, E> extends BasicModel
 	public final S getState() {
 		return state;
 	}
-
-	/**
-	 * Creates a new local event queue for this agent.
-	 * <p>
-	 * This method must be overridden in descendant classes to create the specific
-	 * type of event queue for this agent. This method should not be called from any
-	 * other method than the constructor!
-	 * <p>
-	 * Note: Generally, a {@link SortedEventQueue} will work best as local event
-	 * queue.
-	 *
-	 * @return a new event queue, may be null when using the
-	 *         {@link SequentialTSSimulator}
-	 */
-	protected abstract IEventQueue<E> createLocalEventQueue();
 
 	/**
 	 * Gets the local event queue.
@@ -168,6 +163,22 @@ public abstract class AbstractAgent<S extends IAgentState, E> extends BasicModel
 	 */
 	public final Time doEventSim(Time time) {
 		return doEvent(time);
+	}
+	
+	/**
+	 * Provide logging functionality
+	 * 
+	 * @param time current time stamp
+	 * @param msg additional message to output
+	 */
+	public void log(Time time, String msg) {
+		StringBuffer sb=new StringBuffer();
+		sb.append('[');
+		sb.append(this.getFullName());
+		sb.append(']');
+		sb.append(time.toString());
+		sb.append(msg);
+		System.out.println(sb.toString());
 	}
 
 }

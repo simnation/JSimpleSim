@@ -92,10 +92,12 @@ public abstract class AbstractPort {
 	 * Implements a message forwarding strategy specific for the port class.
 	 * <p>
 	 * Port must be connected to other ports, please check if it is an end point beforehand!
+	 * <p>
+	 * Note: Package visibility, only to be used by an implementation of {@link IMessageForwardingStrategy}
 	 *
 	 * @return list of destination ports that need further forwarding
 	 */
-	public abstract Collection<AbstractPort> copyMessages();
+	abstract Collection<AbstractPort> copyMessages();
 
 	/**
 	 * Clears message queue of this port.

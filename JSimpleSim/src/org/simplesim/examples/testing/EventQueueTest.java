@@ -16,6 +16,7 @@ import org.simplesim.core.scheduling.HeapEventQueue;
 import org.simplesim.core.scheduling.IEventQueue;
 import org.simplesim.core.scheduling.SortedBucketQueue;
 import org.simplesim.core.scheduling.SortedEventQueue;
+import org.simplesim.core.scheduling.MListEventQueue;
 import org.simplesim.core.scheduling.Time;
 
 /**
@@ -27,8 +28,9 @@ import org.simplesim.core.scheduling.Time;
  */
 public class EventQueueTest {
 
-	private static final int maxTime=3*Time.DAY; 	// relevant time interval
-	private static final int countTotal=300000; 	// number of total events in queue
+	private static final int initTime=3*Time.DAY; 	// time interval for generating initial events
+	private static final int aheadTime=Time.DAY;
+	private static final int countTotal=150000; 	// number of total events in queue
 	private static final int countSADE=1000;		// number of events for search and dequeue
 	private static final int countRNE=10000;		// number of events for requeue current event
 	
@@ -37,7 +39,9 @@ public class EventQueueTest {
 		HEAP_BUCKET_QUEUE("Heap bucket queue", new HeapBucketQueue<String>()),
 		SORTED_BUCKET_QUEUE("Sorted bucket queue", new SortedBucketQueue<String>()),
 		HEAP_EVENT_QUEUE("Heap event queue", new HeapEventQueue<String>()),
+		MLIST_EVENT_QUEUE("MList event queue", new MListEventQueue<String>()),
 		SORTED_EVENT_QUEUE("Sorted event queue", new SortedEventQueue<String>());
+				
 
 		private final String name;
 		private final IEventQueue<String> eq;
@@ -72,7 +76,7 @@ public class EventQueueTest {
 		final long startTime=System.nanoTime();
 		for (int index=0; index<countTotal; index++) {
 			final String event=String.format("Event%04x",index);
-			qt.getQueue().enqueue(event,new Time((int) (Math.random()*maxTime)));
+			qt.getQueue().enqueue(event,new Time((int) (Math.random()*initTime)));
 		}
 		return ((System.nanoTime()-startTime)/1000);
 	}
@@ -86,10 +90,11 @@ public class EventQueueTest {
 	 */
 	public long doRequeueNextEvent() {
 		System.gc(); // resetting GC to avoid test distortion by garbage collection
+		qt.getQueue().getMin(); // try getMin(), also fills the tiers in MList 
 		final long startTime=System.nanoTime();
 		for (int index=0; index<countRNE; index++) {
 			final String event=qt.getQueue().dequeue();
-			qt.getQueue().enqueue(event,new Time((int) (Math.random()*maxTime)));
+			qt.getQueue().enqueue(event,new Time(initTime+((int) (Math.random()*aheadTime))));
 		}
 		return ((System.nanoTime()-startTime)/1000);
 	}
@@ -104,9 +109,10 @@ public class EventQueueTest {
 	public long doSearchAndDequeueEvent() {
 		System.gc(); // resetting GC to avoid test distortion by garbage collection
 		final long startTime=System.nanoTime();
-		for (int index=0; index<countSADE; index++) {
+		for (int index=1; index<countSADE; index++) {
 			final String event=String.format("Event%04x",index);
-			if (!qt.getQueue().getTime(event).equals(qt.getQueue().dequeue(event)))
+			if (!qt.getQueue().getTime(event).equals(
+					qt.getQueue().dequeue(event)))
 				System.out.println("Inconsistent event queue!");
 		}
 		return ((System.nanoTime()-startTime)/1000);

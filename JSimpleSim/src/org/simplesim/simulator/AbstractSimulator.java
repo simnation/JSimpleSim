@@ -10,7 +10,6 @@
  */
 package org.simplesim.simulator;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.simplesim.core.notification.Listener;
@@ -28,7 +27,7 @@ import org.simplesim.model.AbstractDomain;
 public abstract class AbstractSimulator {
 
 	// top node of the simulation model
-	private final AbstractDomain root;
+	private final AbstractDomain rootDomain;
 
 	// current simulation time
 	private Time simTime=Time.ZERO;
@@ -39,32 +38,42 @@ public abstract class AbstractSimulator {
 	// the strategy used to forward messages during a simulation run
 	private final IMessageForwardingStrategy mfs;
 
-	// list of all agents processed in the last event cycle
-	private List<AbstractAgent<?, ?>> currentEventList=Collections.emptyList();
-
 	// listeners to notify after all agents of a cycle have been processed
 	private final ListenerSupport<AbstractSimulator> eventsProcessedListeners=new ListenerSupport<>();
-
+	
+	// list of agents processed in current simulation cycle
+	private List<AbstractAgent<?, ?>> currentEventList;
+	
 	/**
-	 *
-	 * @param rt
-	 * @param queue
-	 * @param forwarding
+	 * Exception to be thrown if an invalid state occurs during simulation
 	 */
-	public AbstractSimulator(AbstractDomain rt, IEventQueue<AbstractAgent<?, ?>> queue,
+	@SuppressWarnings("serial")
+	public static class InvalidSimulatorStateException extends RuntimeException {
+		public InvalidSimulatorStateException(String message) {
+			super(message);
+		}
+	}
+	
+	/**
+	 * Constructs a new simulator with given model, queue implementation and messaging strategy
+	 *
+	 * @param root the root domain of the model
+	 * @param queue the queue implementation to use as global event queue
+	 * @param forwarding the strategy to use for message forwarding
+	 */
+	public AbstractSimulator(AbstractDomain root, IEventQueue<AbstractAgent<?, ?>> queue,
 			IMessageForwardingStrategy forwarding) {
-		root=rt;
+		rootDomain=root;
 		geq=queue;
 		mfs=forwarding;
 	}
 
 	/**
-	 * Starts a simulation run.
+	 * Starts a simulation run
 	 *
 	 * @param stop simulation time when the simulation should stop
 	 *
-	 * @exception NullPointerException if the event queue is empty before the stop
-	 *                                 time is reached
+	 * @exception InvalidSimulatorStateException if there is an error during simulation
 	 */
 	public abstract void runSimulation(Time stop);
 	
@@ -72,15 +81,15 @@ public abstract class AbstractSimulator {
 	 * Builds the global event queue by querying the local event queues of all agents within the root model
 	 */
 	protected void initGlobalEventQueue() {
-		for (final AbstractAgent<?, ?> agent : getRoot().listAllAgents(true)) {
+		for (final AbstractAgent<?, ?> agent : getRootDomain().listAllAgents(true)) {
 			final Time tone=agent.getTimeOfNextEvent();
-			if (tone==null) throw new NullPointerException("Local event queue empty in agent "+agent.getFullName());
+			if (tone==null) throw new InvalidSimulatorStateException("Local event queue empty in agent "+agent.getFullName());
 			getGlobalEventQueue().enqueue(agent,tone);
 		}
 	}
 
-	public AbstractDomain getRoot() {
-		return root;
+	public AbstractDomain getRootDomain() {
+		return rootDomain;
 	}
 
 	public Time getSimulationTime() {
@@ -91,14 +100,6 @@ public abstract class AbstractSimulator {
 		simTime=time;
 	}
 
-	public List<AbstractAgent<?, ?>> getCurrentEventList() {
-		return currentEventList;
-	}
-
-	protected void setCurrentEventList(List<AbstractAgent<?, ?>> list) {
-		currentEventList=list;
-	}
-
 	public void registerEventsProcessedListener(Listener<AbstractSimulator> listener) {
 		eventsProcessedListeners.registerListener(listener);
 	}
@@ -107,9 +108,6 @@ public abstract class AbstractSimulator {
 		eventsProcessedListeners.unregisterListener(listener);
 	}
 
-	/**
-	 * 
-	 */
 	protected void hookEventsProcessed() {
 		eventsProcessedListeners.notifyListeners(this);
 	}
@@ -120,6 +118,14 @@ public abstract class AbstractSimulator {
 
 	protected IEventQueue<AbstractAgent<?, ?>> getGlobalEventQueue() {
 		return geq;
+	}
+
+	public List<AbstractAgent<?, ?>> getCurrentEventList() {
+		return currentEventList;
+	}
+
+	public void setCurrentEventList(List<AbstractAgent<?, ?>> currentEventList) {
+		this.currentEventList = currentEventList;
 	}
 
 }

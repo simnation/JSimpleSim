@@ -12,12 +12,13 @@ package org.simplesim.core.routing;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.simplesim.model.BasicModelEntity;
 
 /**
- * Port for routing messages automatically.
+ * Port for automatic message routing.
  * <p>
  * Routing is done by reading the messages' destination descriptions and sending
  * the message along the right connection accordingly. Thus only a
@@ -36,9 +37,13 @@ public final class RoutingPort extends AbstractPort {
 		super(model);
 	}
 
+
 	@Override
 	public void connectTo(AbstractPort port) {
-		destinations.add(port);
+		final int level=getParent().getLevel(); // get hierarchy level of current domain
+		final int index=port.getParent().getAddress()[level]; // 
+		destinations.ensureCapacity(index+1);
+		destinations.set(index,port);
 	}
 
 	@Override
@@ -56,16 +61,14 @@ public final class RoutingPort extends AbstractPort {
 
 	@Override
 	public Collection<AbstractPort> copyMessages() {
-		final List<AbstractPort> result=new ArrayList<>();
+		final Set<AbstractPort> result=new HashSet<>(); // set to ensure no duplicates in destination list
 		while (hasMessages()) {
-			final Message<?> msg=read(); // message is also removed in this step!
-			if (!(msg instanceof RoutedMessage))
-				throw new UnsupportedOperationException(getClass().getSimpleName()+" can only handle RoutedMessages!");
 			final int nxtlvl=getParent().getLevel(); // get index of next hierarchy level, root not indexed
-			final int index=((RoutedMessage) msg).getDestIndex(nxtlvl);
+			final RoutedMessage msg=(RoutedMessage) read(); // message is also removed in this step!
+			final int index=msg.getDestIndex(nxtlvl);
 			final AbstractPort dest=destinations.get(index); // find the right port for forwarding
 			dest.write(msg);
-			if (!result.contains(dest)) result.add(dest); // allow no duplicates in destination list
+			result.add(dest); 
 		}
 		return result;
 	}

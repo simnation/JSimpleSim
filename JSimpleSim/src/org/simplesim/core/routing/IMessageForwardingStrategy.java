@@ -48,8 +48,10 @@ public interface IMessageForwardingStrategy {
 	 */
 	default Collection<AbstractPort> listPortsWithOutgoingMsg(Collection<AbstractAgent<?, ?>> agentList) {
 		final Collection<AbstractPort> result=new ArrayList<>();
-		for (final AbstractAgent<?, ?> agent : agentList)
-			for (final AbstractPort port : agent.getOutports()) if (port.hasMessages()) result.add(port);
+		for (final AbstractAgent<?, ?> agent : agentList) {
+			for (final AbstractPort port : agent.getOutports()) 
+				if (port.hasMessages()) result.add(port);
+		}
 		return result;
 	}
 

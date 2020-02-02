@@ -55,7 +55,7 @@ public final class RecursiveMessageForwarding implements IMessageForwardingStrat
 			destinations.addAll(src.copyMessages());
 		}
 		// make destinations to sources in the next level. If list is empty, all
-		// messages had arrived
+		// messages arrived
 		if (!destinations.isEmpty()) nextLevel(destinations,level+1);
 	}
 

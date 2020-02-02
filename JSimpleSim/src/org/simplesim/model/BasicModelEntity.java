@@ -33,6 +33,8 @@ import org.simplesim.core.routing.SinglePort;
 public abstract class BasicModelEntity {
 
 	private static final int INIT_LEVEL=-2;
+	public static final int ROOT_LEVEL=-1;
+
 
 	/**
 	 * Flag to indicate if the simulation is running. true = simulation runs and
@@ -41,7 +43,7 @@ public abstract class BasicModelEntity {
 	private static boolean simulation_runs=false;
 
 	/** Address in numbers, describing the model's branch within the model tree */
-	private int[] address;
+	private int[] address=null;
 
 	/** Parent entity in model hierarchy. */
 	private AbstractDomain parent=null;
@@ -76,19 +78,6 @@ public abstract class BasicModelEntity {
 	  public UniqueConstraintViolation(String message) {
 	    super(message);
 	  }
-	}
-
-	/**
-	 * Constructor taking the address as initial parameter.
-	 *
-	 * @param address the address of the entity within the model hierarchy, may be null
-	 */
-	public BasicModelEntity(int[] addr) {
-		address=addr;
-	}
-	
-	public BasicModelEntity() {
-		this(null);
 	}
 
 	/**
@@ -167,7 +156,7 @@ public abstract class BasicModelEntity {
 	/**
 	 * Creates and adds a new {@code MultiPort} as outport to the model.
 	 * <p>
-	 * This enables copying messages to various destinations at once.
+	 * This enables to forward the same messages to various destinations at once.
 	 *
 	 * @return reference to the new port for further usage
 	 * 
@@ -246,7 +235,9 @@ public abstract class BasicModelEntity {
 	}
 
 	/**
-	 * Models may be stacked in a hierarchy and thus each entity resides in a domain
+	 * Returns the level of the current domain (submodel) within the model hierarchy
+	 * <p>
+	 * Models may be organized in a hierarchy and thus each entity resides in a domain
 	 * level of the model tree. The level information is generated when the
 	 * getLevel() method is called first. The level of the root node is always 0,
 	 * the "no valid" level value is {@value #INIT_LEVEL}.
@@ -255,7 +246,7 @@ public abstract class BasicModelEntity {
 	 */
 	public final int getLevel() {
 		// if there is no level information yet, re-compute it
-		if (level==INIT_LEVEL) if (parent==null) level=0;
+		if (level==INIT_LEVEL) if (parent==null) level=ROOT_LEVEL;
 		else level=parent.getLevel()+1;
 		return level;
 	}
@@ -277,10 +268,14 @@ public abstract class BasicModelEntity {
 	
 	/**
 	 * Returns the name of this model entity
+	 * <p>
+	 * Returns {@link #toString()} as default, may be overridden in derived classes.
 	 * 
 	 * @return the name of this model entity, may be an empty string but not null
 	 */
-	public abstract String getName();
+	public String getName() {
+		return toString();
+	}
 
 	/**
 	 * Returns the full name of a model, concatenating the names of the parent
@@ -294,8 +289,11 @@ public abstract class BasicModelEntity {
 	public final String getFullName() {
 		if (parent==null) return getName();
 		final StringBuilder sb=new StringBuilder(parent.getFullName());
-		sb.append(".");
+		sb.append('.');
 		sb.append(getName());
+		sb.append('[');
+		sb.append(getAddress()[getLevel()]);
+		sb.append(']');
 		return sb.toString();
 	}
 
@@ -461,8 +459,11 @@ public abstract class BasicModelEntity {
 	 */
 	@Override
 	public String toString() {
-		if (address!=null) return (Integer.toString(address[address.length-1]));
-		return ("");
+		final StringBuffer sb=new StringBuffer(getName());
+		if (address==null) return sb.toString();
+		sb.append('.');
+		sb.append(address[address.length-1]);
+		return sb.toString();
 	}
 
 }

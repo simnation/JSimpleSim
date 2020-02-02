@@ -39,8 +39,9 @@ public class Message<A> {
 		return(dest);
 	}
 	
-	public final Object getContent() {
-		return content;
+	@SuppressWarnings("unchecked")
+	public final <C> C getContent() {
+		return (C) content;
 	};
 
 }

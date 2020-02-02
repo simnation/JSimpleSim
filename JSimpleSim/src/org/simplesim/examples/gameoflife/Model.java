@@ -1,17 +1,18 @@
-/**
- * JSimpleSim is a framework to build mutli-agent systems in a quick and easy
- * way.
+/*
+ * SimNation is a multi-agent model to simulate economic systems. It is scalable
+ * and used JSimpleSim as technical backbone for concurrent discrete event
+ * simulation.
  *
  * This software is published as open source and licensed under GNU GPLv3.
+ *
+ * Contributors: - Rene Kuhlemann - development and initial implementation
+ *
  */
 package org.simplesim.examples.gameoflife;
 
 import org.simplesim.model.AbstractDomain;
 
-/**
- * @author Rene Kuhlemann
- *
- */
+
 public class Model extends AbstractDomain {
 
 	private final Cell world[][];

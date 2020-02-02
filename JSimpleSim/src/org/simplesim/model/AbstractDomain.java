@@ -38,19 +38,6 @@ public abstract class AbstractDomain extends BasicModelEntity {
 	private final List<BasicModelEntity> entities=new ArrayList<>();
 
 	/**
-	 * Creates a new instance of a domain with a given address.
-	 *
-	 * @param addr the address
-	 */
-	public AbstractDomain(int[] addr) {
-		super(addr);
-	}
-
-	public AbstractDomain() {
-		this(null);
-	}
-
-	/**
 	 * Adds the given model to the list of submodels of this coupled model. This
 	 * model should not be added to another coupled model at the same time - however
 	 * this is not checked!
@@ -88,8 +75,7 @@ public abstract class AbstractDomain extends BasicModelEntity {
 	}
 
 	/**
-	 * Returns all atomic submodels (i.e. list of agents) within this
-	 * {@link AbstractDomain}.
+	 * Returns all atomic submodels (i.e. list of agents) within this domain
 	 *
 	 * @param recursive true if listing should be done recursively for agents in all
 	 *                  subdomains, too

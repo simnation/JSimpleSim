@@ -11,7 +11,7 @@
  */
 package org.simplesim.core.routing;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -21,7 +21,7 @@ import org.simplesim.model.AbstractDomain;
 import org.simplesim.model.BasicModelEntity;
 
 /**
- * Port connecting an outport with a single inport.
+ * Port to connect an outport with a single inport.
  * <p>
  * The parent entities of either port may be an {@link AbstractAgent} or an {@link AbstractDomain}
  * 
@@ -31,13 +31,15 @@ import org.simplesim.model.BasicModelEntity;
  */
 public final class SinglePort extends AbstractPort {
 
-	/** Save single destination port in minimal ArrayList because this 
-	 *  is often need in copyMessages().
+	/** Save single destination port in a list with fixed size of one. This 
+	 *  is often needed in copyMessages().
 	 */
-	private final List<AbstractPort> destination=new ArrayList<>(1);
+	private final List<AbstractPort> destination;
 
 	public SinglePort(BasicModelEntity model) {
 		super(model);
+		destination=Arrays.asList(new AbstractPort[1]);
+		destination.set(0,null);
 	}
 
 	/* (non-Javadoc)
@@ -46,7 +48,7 @@ public final class SinglePort extends AbstractPort {
 	@Override
 	public void connectTo(AbstractPort port) {
 		if (!isEndPoint()) throw new PortConnectionException("Connection of SinglePort alread in use in "+getParent().getFullName());
-		destination.add(port);
+		destination.set(0,port);
 	}
 
 	/* (non-Javadoc)
@@ -56,7 +58,7 @@ public final class SinglePort extends AbstractPort {
 	public void disconnect(AbstractPort port) {
 		if (!isConnectedTo(port)) throw new PortConnectionException(
 				"Cannot disconnect from a port that has never been connected in "+getParent().getFullName());
-		destination.clear();
+		destination.set(0,null);
 	}
 
 	/* (non-Javadoc)
@@ -64,7 +66,7 @@ public final class SinglePort extends AbstractPort {
 	 */
 	@Override
 	public boolean isEndPoint() {
-		return destination.isEmpty();
+		return destination.get(0)==null;
 	}
 
 	/* (non-Javadoc)

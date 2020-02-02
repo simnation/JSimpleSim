@@ -61,7 +61,7 @@ public final class Main {
 		final AbstractSimulator simulator=new ConcurrentTSSimulator(model,new DirectMessageForwarding());
 		// add observer
 		simulator.registerEventsProcessedListener(view);
-		simulator.runSimulation(new Time(3000));
+		simulator.runSimulation(Time.INFINITY);
 		view.close();
 	}
 

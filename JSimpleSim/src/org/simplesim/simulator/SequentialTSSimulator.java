@@ -18,7 +18,13 @@ import org.simplesim.model.AbstractDomain;
 import org.simplesim.model.BasicModelEntity;
 
 /**
- * To be documented
+ * Simulator for sequential time step simulation
+ * <p>
+ * This simulator calls all agents of a model at equidistant time steps. The
+ * {@code doEventSim} method of the agents is called sequentially every
+ * {@code timeStep}.
+ * <p>
+ * This implementation is especially useful to run cellular automata.
  *
  */
 public class SequentialTSSimulator extends AbstractSimulator {
@@ -42,8 +48,9 @@ public class SequentialTSSimulator extends AbstractSimulator {
 	@Override
 	public void runSimulation(Time stop) {
 		BasicModelEntity.toggleSimulationIsRunning(true);
-		setCurrentEventList(getRoot().listAllAgents(true));
-		setSimulationTime(Time.getZero());
+		// list of all agents processed in the last event cycle
+		setCurrentEventList(getRootDomain().listAllAgents(true));
+		setSimulationTime(Time.ZERO);
 		while (getSimulationTime().compareTo(stop)<0) {
 			// part I: process all current events by calling the agents' doEvent method
 			// in time step, iterate over ALL agents, ignore time of next event

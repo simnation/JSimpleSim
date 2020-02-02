@@ -25,7 +25,12 @@ import org.simplesim.model.AbstractDomain;
 import org.simplesim.model.BasicModelEntity;
 
 /**
- * To be documented
+ * Simulator for concurrent time step simulation
+ * <p>
+ * This simulator calls all agents of a model at equidistant time steps. The {@code doEventSim} method
+ * of the agents is called in a concurrent mode and with no specific oder every {@code timeStep}.
+ * <p>
+ * This implementation is especially useful to run cellular automata.
  *
  */
 public final class ConcurrentTSSimulator extends SequentialTSSimulator {
@@ -45,16 +50,16 @@ public final class ConcurrentTSSimulator extends SequentialTSSimulator {
 	@Override
 	public void runSimulation(Time stop) {
 		BasicModelEntity.toggleSimulationIsRunning(true);
-		setCurrentEventList(getRoot().listAllAgents(true));
+		final List<AbstractAgent<?, ?>> currentEventList=getRootDomain().listAllAgents(true);
 		// used a variable thread pool with a maximum of as many worker threads as cpu
 		// cores		
 		final ExecutorService executor=Executors.newWorkStealingPool();
 		final List<Future<?>> futures=new ArrayList<>();
-		setSimulationTime(Time.getZero());
+		setSimulationTime(Time.ZERO);
 		while (getSimulationTime().compareTo(stop)<0) {
 			// part I: process all current events by calling the agents' doEvent method
 			// in time step, iterate over ALL agents, ignore time of next event
-			for (final AbstractAgent<?, ?> agent : getCurrentEventList())
+			for (final AbstractAgent<?, ?> agent : currentEventList)
 				futures.add(executor.submit(() -> agent.doEventSim(getSimulationTime())));
 			// wait until all threads have finished
 			try {
@@ -63,7 +68,7 @@ public final class ConcurrentTSSimulator extends SequentialTSSimulator {
 				exception.printStackTrace();
 			}
 			// part II: do the message forwarding
-			getMessageForwardingStrategy().forwardMessages(getCurrentEventList());
+			getMessageForwardingStrategy().forwardMessages(currentEventList);
 			futures.clear();
 			hookEventsProcessed();
 			// part III: add the time step
