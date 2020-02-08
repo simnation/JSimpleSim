@@ -15,7 +15,6 @@ import org.simplesim.core.routing.RecursiveMessageForwarding;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
-import org.simplesim.model.BasicModelEntity;
 
 /**
  * Simulator for sequential time step simulation
@@ -47,22 +46,22 @@ public class SequentialTSSimulator extends AbstractSimulator {
 
 	@Override
 	public void runSimulation(Time stop) {
-		BasicModelEntity.toggleSimulationIsRunning(true);
 		// list of all agents processed in the last event cycle
 		setCurrentEventList(getRootDomain().listAllAgents(true));
 		setSimulationTime(Time.ZERO);
 		while (getSimulationTime().compareTo(stop)<0) {
+			AbstractAgent.toggleSimulationIsRunning(true);
 			// part I: process all current events by calling the agents' doEvent method
 			// in time step, iterate over ALL agents, ignore time of next event
 			for (final AbstractAgent<?, ?> agent : getCurrentEventList()) agent.doEventSim(getSimulationTime());
 			// part II: do the message forwarding
 			getMessageForwardingStrategy().forwardMessages(getCurrentEventList());
+			AbstractAgent.toggleSimulationIsRunning(false);
 			hookEventsProcessed();
 			// part III: add the time step
 			setSimulationTime(getSimulationTime().add(getTimeStep()));
 			// System.out.println("Simulation time is "+getSimulationTime().toString());
 		}
-		BasicModelEntity.toggleSimulationIsRunning(false);
 	}
 
 	public Time getTimeStep() {

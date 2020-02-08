@@ -17,7 +17,6 @@ import org.simplesim.core.scheduling.IEventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
-import org.simplesim.model.BasicModelEntity;
 
 /**
  * Concurrent simulator for discrete event models using multiple threads 
@@ -60,10 +59,10 @@ public class SequentialDESimulator extends AbstractSimulator {
 	 */
 	@Override
 	public void runSimulation(Time stop) {
-		BasicModelEntity.toggleSimulationIsRunning(true);
 		initGlobalEventQueue();
 		setSimulationTime(getGlobalEventQueue().getMin());
 		while (getSimulationTime().compareTo(stop)<0) {
+			AbstractAgent.toggleSimulationIsRunning(true);
 			// part I: process all current events by calling the agents' doEvent method
 			// and enqueue the next events of the agents
 			setCurrentEventList(getGlobalEventQueue().dequeueAll());
@@ -79,11 +78,11 @@ public class SequentialDESimulator extends AbstractSimulator {
 			}
 			// part II: do the message forwarding
 			getMessageForwardingStrategy().forwardMessages(getCurrentEventList());
+			AbstractAgent.toggleSimulationIsRunning(false);
 			hookEventsProcessed();
 			setSimulationTime(getGlobalEventQueue().getMin());
 			// System.out.println("Simulation time is "+getSimulationTime().toString());
 		}
-		BasicModelEntity.toggleSimulationIsRunning(false);
 	}
 
 }

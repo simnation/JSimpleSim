@@ -1,13 +1,7 @@
 /*
- * JSimpleSim is a framework to build multi-agent systems in a quick and easy
- * way.
- *
- * This software is published as open source and licensed under the terms of GNU
- * GPLv3.
- * 
- * Contributors:
- * 	- Rene Kuhlemann - development and initial implementation
- * 
+ * JSimpleSim is a framework to build multi-agent systems in a quick and easy way. This software is published as open
+ * source and licensed under the terms of GNU GPLv3. Contributors: - Rene Kuhlemann - development and initial
+ * implementation
  */
 package org.simplesim.model;
 
@@ -15,12 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.simplesim.core.routing.AbstractPort;
-import org.simplesim.core.routing.MultiPort;
-import org.simplesim.core.routing.SinglePort;
 
 /**
- * Provides basic functionality needed by all entities within the simulation
- * model.
+ * Provides basic functionality needed by all entities within the simulation model.
  * <p>
  * In more detail, that is:
  * <ul>
@@ -28,38 +19,28 @@ import org.simplesim.core.routing.SinglePort;
  * <li>managing in- and outports
  * <li>utility methods (model level, naming, {@code toString}, {@code equals})
  * </ul>
- *
  */
 public abstract class BasicModelEntity {
 
 	private static final int INIT_LEVEL=-2;
 	public static final int ROOT_LEVEL=-1;
-
-
-	/**
-	 * Flag to indicate if the simulation is running. true = simulation runs and
-	 * changes of the model are forbidden
-	 */
-	private static boolean simulation_runs=false;
-
-	/** Address in numbers, describing the model's branch within the model tree */
-	private int[] address=null;
+	private static final int DEFAULT_PORT_LIST_SIZE=1;
 
 	/** Parent entity in model hierarchy. */
 	private AbstractDomain parent=null;
 
-	/**
-	 * List of in and out ports. Each model can have an unlimited number of unique
-	 * ports.
-	 */
-	private final List<AbstractPort> inports=new ArrayList<>(4);
+	/** List of inports */
+	private List<AbstractPort> inports=null;
 
-	/** The out ports. */
-	private final List<AbstractPort> outports=new ArrayList<>(4);
+	/** List of outports */
+	private List<AbstractPort> outports=null;
 
+	/** Address in numbers, describing the model's branch within the model tree */
+	private int[] address=null;
+	
 	/** The level in the hierarchy the model is located at. */
 	private int level=INIT_LEVEL;
-	
+
 	/**
 	 * Exception to be thrown if an invalid operation occurs when adding or removing a port.
 	 */
@@ -69,15 +50,15 @@ public abstract class BasicModelEntity {
 			super(message);
 		}
 	}
-	
-	/** 
+
+	/**
 	 * Exception to be thrown if a duplicate object is used where only a unique one is allowed.
 	 */
 	@SuppressWarnings("serial")
 	public static class UniqueConstraintViolation extends RuntimeException {
-	  public UniqueConstraintViolation(String message) {
-	    super(message);
-	  }
+		public UniqueConstraintViolation(String message) {
+			super(message);
+		}
 	}
 
 	/**
@@ -85,42 +66,13 @@ public abstract class BasicModelEntity {
 	 *
 	 * @param port the port to add
 	 * @return reference to the new port for further usage
-	 *
 	 * @throws OperationNotAllowedException if the simulation is running
 	 * @throws NotUniqueException           if the same port is added twice
 	 */
-	public final AbstractPort addInport(AbstractPort port) {
-		return addPort(inports,port);
-	}
-
-	/**
-	 * Creates and adds a new {@code SinglePort} as inport to the model.
-	 * <p>
-	 * Use this to create an inport for an {@code AbstractAgent} or to build a
-	 * connection into an {@code AbstractDomain}.
-	 *
-	 * @return reference to the new port for further usage
-	 *
-	 * @throws OperationNotAllowedException if the simulation is running
-	 * @throws NotUniqueException           if the same port is added twice
-	 */
-	public final SinglePort addSingleInport() {
-		return (SinglePort) addInport(new SinglePort(this));
-	}
-
-	/**
-	 * Creates and adds a new {@code MultiPort} as inport to the model.
-	 * <p>
-	 * Note: This only makes sense if the entity is an {@code AbstractDomain} and if
-	 * messages have to be copied to various destinations within this domain
-	 *
-	 * @return reference to the new port for further usage
-	 * 
-	 * @throws OperationNotAllowedException if the simulation is running
-	 * @throws NotUniqueException           if the same port is added twice
-	 */
-	public final MultiPort addMultiInport() {
-		return (MultiPort) addInport(new MultiPort(this));
+	@SuppressWarnings("unchecked")
+	public final <P extends AbstractPort> P addInport(P port) {
+		if (inports==null) setInportList(new ArrayList<>(DEFAULT_PORT_LIST_SIZE));
+		return (P) addPort(inports,port);
 	}
 
 	/**
@@ -130,50 +82,13 @@ public abstract class BasicModelEntity {
 	 *
 	 * @param port the port to add
 	 * @return reference to the new port for further usage
-	 *
 	 * @throws OperationNotAllowedException if the simulation is running
 	 * @throws NotUniqueException           if the same port is added twice
 	 */
-	public final AbstractPort addOutport(AbstractPort port) {
-		return addPort(outports,port);
-	}
-
-	/**
-	 * Creates and adds a new {@code SinglePort} as outport to the model.
-	 * <p>
-	 * Use this to create an outport for an {@code AbstractAgent} or to build a
-	 * connection into an {@code AbstractDomain}.
-	 *
-	 * @return reference to the new port for further usage
-	 * 
-	 * @throws OperationNotAllowedException if the simulation is running
-	 * @throws NotUniqueException           if the same port is added twice
-	 */
-	public final SinglePort addSingleOutport() {
-		return (SinglePort) addOutport(new SinglePort(this));
-	}
-
-	/**
-	 * Creates and adds a new {@code MultiPort} as outport to the model.
-	 * <p>
-	 * This enables to forward the same messages to various destinations at once.
-	 *
-	 * @return reference to the new port for further usage
-	 * 
-	 * @throws OperationNotAllowedException if the simulation is running
-	 * @throws NotUniqueException           if the same port is added twice
-	 */
-	public final MultiPort addMultiOutport() {
-		return (MultiPort) addOutport(new MultiPort(this));
-	}
-
-	/** private utility method to add port to port lists */
-	private AbstractPort addPort(List<AbstractPort> portList, AbstractPort port) {
-		if (isSimulationRunning())
-			throw new UnsupportedOperationException("Tried to add a port during a simulation run in "+getFullName());
-		if (portList.contains(port)) throw new UniqueConstraintViolation("A port may not be added twice to the same model!");
-		portList.add(port);
-		return port;
+	@SuppressWarnings("unchecked")
+	public final <P extends AbstractPort> P addOutport(P port) {
+		if (outports==null) setOutportList(new ArrayList<>(DEFAULT_PORT_LIST_SIZE));
+		return (P) addPort(outports,port);
 	}
 
 	/**
@@ -195,6 +110,15 @@ public abstract class BasicModelEntity {
 	}
 
 	/**
+	 * Looks up an indexed port from the inport list.
+	 *
+	 * @return the indexed inport
+	 */
+	public final AbstractPort getInport(int index) {
+		return inports.get(index);
+	}
+
+	/**
 	 * Returns the number of outports.
 	 *
 	 * @return number of outports
@@ -213,34 +137,20 @@ public abstract class BasicModelEntity {
 	}
 
 	/**
-	 * Removes all inports from this entity
-	 * <p>
+	 * Looks up an indexed port from the outport list.
 	 *
-	 * Note: Ports have to be disconnected before! There is no check for a
-	 * simulation run! Use of this method may crash the simulation!
+	 * @return the indexed outport
 	 */
-	public final void removeInports() {
-		inports.clear();
+	public final AbstractPort getOutport(int index) {
+		return outports.get(index);
 	}
 
 	/**
-	 * Removes all outports from this entity
+	 * Returns the level of the current domain within the model hierarchy
 	 * <p>
-	 *
-	 * Note: Ports have to be disconnected before! There is no check for a
-	 * simulation run! Use of this method may crash the simulation!
-	 */
-	public final void removeOutports() {
-		outports.clear();
-	}
-
-	/**
-	 * Returns the level of the current domain (submodel) within the model hierarchy
-	 * <p>
-	 * Models may be organized in a hierarchy and thus each entity resides in a domain
-	 * level of the model tree. The level information is generated when the
-	 * getLevel() method is called first. The level of the root node is always 0,
-	 * the "no valid" level value is {@value #INIT_LEVEL}.
+	 * Models may be organized in a hierarchy, so that each entity resides in a definite domain level of the model tree.
+	 * The level information is generated when the getLevel() method is called first. The level of the root node is
+	 * always {@value #ROOT_LEVEL}, the "no valid" level value is {@value #INIT_LEVEL}.
 	 *
 	 * @return the level of this entity in the model hierarchy
 	 */
@@ -254,23 +164,20 @@ public abstract class BasicModelEntity {
 	/**
 	 * Gets the entity address. Can be null.
 	 * <p>
-	 *
-	 * Note: The address of the root domain is {@code int[0]}. Another dimension has
-	 * to be added per model level. The value of each dimension is the index within
-	 * the corresponding level.
+	 * Note: The address of the root domain is {@code int[0]}. Another dimension has to be added per model level. The
+	 * value of each dimension is the index within the corresponding level.
 	 *
 	 * @return the address
 	 */
 	public final int[] getAddress() {
 		return address;
 	}
-	
-	
+
 	/**
 	 * Returns the name of this model entity
 	 * <p>
 	 * Returns {@link #toString()} as default, may be overridden in derived classes.
-	 * 
+	 *
 	 * @return the name of this model entity, may be an empty string but not null
 	 */
 	public String getName() {
@@ -278,11 +185,9 @@ public abstract class BasicModelEntity {
 	}
 
 	/**
-	 * Returns the full name of a model, concatenating the names of the parent
-	 * entities.
+	 * Returns the full name of a model, concatenating the names of the parent entities.
 	 * <p>
-	 * Example: If A and B are parents of this entity and this entity is named C,
-	 * then the full name is A.B.C
+	 * Example: If A and B are parents of this entity and this entity is named C, then the full name is A.B.C
 	 *
 	 * @return the full name of this entity
 	 */
@@ -291,9 +196,6 @@ public abstract class BasicModelEntity {
 		final StringBuilder sb=new StringBuilder(parent.getFullName());
 		sb.append('.');
 		sb.append(getName());
-		sb.append('[');
-		sb.append(getAddress()[getLevel()]);
-		sb.append(']');
 		return sb.toString();
 	}
 
@@ -313,7 +215,7 @@ public abstract class BasicModelEntity {
 	 */
 	public final boolean hasExternalInput() {
 		for (final AbstractPort port : getInports()) if (port.hasMessages()) return true;
-		return false; // if we get here no port with a pending message has been found
+		return false; // if we get here, no port with a pending message has been found
 	}
 
 	/**
@@ -340,7 +242,6 @@ public abstract class BasicModelEntity {
 	 * Checks whether the given port is either an in- or an outport of this entity
 	 *
 	 * @param port the port to be tested
-	 *
 	 * @return true if the port is inport or outport in this entity
 	 */
 	public final boolean hasPort(AbstractPort port) {
@@ -348,10 +249,45 @@ public abstract class BasicModelEntity {
 	}
 
 	/**
+	 * Sets the address of this model. Should only be used internally when changing the model.
+	 * <p>
+	 * Note: The address of the root domain is {@code int[0]}. Another dimension has to be added per model level. The
+	 * value of each dimension is the index within the corresponding level.
+	 *
+	 * @param addr address as branching code
+	 */
+	public final void setAddress(int[] addr) {
+		address=addr;
+		resetLevel();
+	}
+
+	/**
+	 * Used internally for updating cached values if the structure changes (e.g. model is moved to another parent)
+	 */
+	public final void resetLevel() {
+		level=INIT_LEVEL;
+	}
+
+	/**
+	 * Resets the entity's address based on its position in the model structure.
+	 * <p>
+	 * Uses the parent's address and an additional index given by the caller. This method should
+	 * be called if the structure changes (e.g. this entity is moved to another domain) It can also be use to initialize
+	 * the address.
+	 *
+	 * @param index the new index value of this entity
+	 */
+	public void resetAddress(int index) {
+		final int[] pAddr=getParent().getAddress();
+		if ((address==null)||(address.length!=pAddr.length+1)) address=new int[pAddr.length+1];
+		for (int i=0; i<pAddr.length; i++) address[i]=pAddr[i];
+		address[pAddr.length]=index;
+	}
+
+	/**
 	 * Removes an existing inport from the model.<br>
 	 *
 	 * @param port the port
-	 *
 	 * @throws OperationNotAllowedException if the simulation is running
 	 * @throws InvalidPortException         if the port is unknown
 	 */
@@ -363,7 +299,6 @@ public abstract class BasicModelEntity {
 	 * Removes an existing outport from the model.<br>
 	 *
 	 * @param port the port
-	 *
 	 * @throws OperationNotAllowedException if the simulation is running
 	 * @throws InvalidPortException         if the port is unknown
 	 */
@@ -372,39 +307,33 @@ public abstract class BasicModelEntity {
 	}
 
 	private void removePort(List<AbstractPort> portList, AbstractPort port) {
-		if (simulation_runs)
-			throw new UnsupportedOperationException("Tried to remove a port during a simulation run in "+getFullName());
+		if (AbstractAgent.isSimulationRunning())
+			throw new UnsupportedOperationException("Tried to remove a port during simulation cycle in "+getFullName());
 		if (!portList.remove(port))
 			throw new InvalidPortException("Tried to remove an unknown port from agent in "+getFullName());
 	}
 
-	/**
-	 * Sets the status of simulation run.<br>
-	 * Static method and variable to be accessible for all entities of the
-	 * simulation model
-	 *
-	 * @param toggle the status of the simulation, {@code true} means simulation is
-	 *               running
-	 */
-	public static final void toggleSimulationIsRunning(boolean toggle) {
-		BasicModelEntity.simulation_runs=toggle;
+	/** private utility method to add port to port lists */
+	private AbstractPort addPort(List<AbstractPort> portList, AbstractPort port) {
+		if (AbstractAgent.isSimulationRunning())
+			throw new UnsupportedOperationException("Tried to add a port during a simulation run in "+getFullName());
+		if (portList.contains(port))
+			throw new UniqueConstraintViolation("A port may not be added twice to the same model!");
+		portList.add(port);
+		return port;
 	}
 
-	/**
-	 * Gets the status of simulation run.<br>
-	 * Static method and variable to be accessible for all entities of the
-	 * simulation model
-	 *
-	 * @return current simulation status, {@code true} means simulation is running
-	 */
-	public static final boolean isSimulationRunning() {
-		return BasicModelEntity.simulation_runs;
+	final void setInportList(List<AbstractPort> list) {
+		inports=list;
+	}
+
+	final void setOutportList(List<AbstractPort> list) {
+		outports=list;
 	}
 
 	/**
 	 * Sets the parent for this model.
 	 * <p>
-	 *
 	 * Note: Using this during a simulation run may crash the simulation!
 	 *
 	 * @param parent which should become the parent of this model
@@ -413,39 +342,14 @@ public abstract class BasicModelEntity {
 		parent=par;
 		// any updating which is related to setting a new parent must be done in
 		// the reset method - this method is overwritten in descendant classes
-		reset();
-	}
-
-	/**
-	 * Sets the address of this model. Should only be used internally when changing
-	 * the model.
-	 * <p>
-	 * Note: The address of the root domain is {@code int[0]}. Another dimension has
-	 * to be added per model level. The value of each dimension is the index within
-	 * the corresponding level.
-	 *
-	 * @param addr address as branching code
-	 */
-	public final void setAddress(int[] addr) {
-		address=addr;
-		reset();
-	}
-
-	/**
-	 * Used internally for updating cached values if the structure changes (e.g.
-	 * model is moved to another parent)
-	 */
-	public final void reset() {
-		level=INIT_LEVEL;
+		resetLevel();
 	}
 
 	/**
 	 * Tests if two model entities are equal (equality by identity)
 	 *
 	 * @param other entity to be compared with this one
-	 *
 	 * @return true if both entities are identical
-	 *
 	 */
 	@Override
 	public boolean equals(Object other) {
@@ -454,7 +358,6 @@ public abstract class BasicModelEntity {
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

@@ -1,18 +1,15 @@
 /*
- * SimNation is a multi-agent model to simulate economic systems. It is scalable
- * and used JSimpleSim as technical backbone for concurrent discrete event
- * simulation.
- *
- * This software is published as open source and licensed under GNU GPLv3.
- *
+ * JSimpleSim is a framework to build multi-agent systems in a quick and easy way. This software is published as open
+ * source and licensed under the terms of GNU GPLv3.
+ * 
  * Contributors: - Rene Kuhlemann - development and initial implementation
- *
  */
 package org.simplesim.examples.elevator;
 
 import java.util.Random;
 
 import org.simplesim.core.routing.AbstractPort;
+import org.simplesim.core.routing.SinglePort;
 import org.simplesim.core.routing.DirectMessage;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.examples.elevator.Model.Request;
@@ -47,8 +44,8 @@ public final class Visitor extends AbstractAgent<VisitorState, Visitor.EVENT> {
 		super(new VisitorState());
 		setAddress(new int[1]);
 		getAddress()[0]=addr;
-		inport=addSingleInport();
-		outport=addSingleOutport();
+		inport=addInport(new SinglePort(this));
+		outport=addOutport(new SinglePort(this));
 		getState().setCurrentLevel(Model.LOBBY);
 		getState().setActivity(ACTIVITY.waiting);
 		getState().setSatisfaction(0);
@@ -81,7 +78,7 @@ public final class Visitor extends AbstractAgent<VisitorState, Visitor.EVENT> {
 	private void waitForElevator(Time time) {
 		if (getInport().hasMessages()) {	
 			// message from elevator agent: visitor arrived at destination floor
-			final Request request=getInport().read().getContent();
+			final Request request=getInport().poll().getContent();
 			getState().setCurrentLevel(request.destinationFloor); // set new floor
 			getState().setSatisfaction(assessTravelExperience(request)); // evaluate elevator ride
 			if ((time.getTicks()>=END_WORK)&&(getState().getCurrentLevel()==Model.LOBBY)) 

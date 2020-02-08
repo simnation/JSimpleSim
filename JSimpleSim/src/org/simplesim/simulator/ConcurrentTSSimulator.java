@@ -22,7 +22,6 @@ import org.simplesim.core.routing.RecursiveMessageForwarding;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
-import org.simplesim.model.BasicModelEntity;
 
 /**
  * Simulator for concurrent time step simulation
@@ -49,17 +48,17 @@ public final class ConcurrentTSSimulator extends SequentialTSSimulator {
 
 	@Override
 	public void runSimulation(Time stop) {
-		BasicModelEntity.toggleSimulationIsRunning(true);
-		final List<AbstractAgent<?, ?>> currentEventList=getRootDomain().listAllAgents(true);
+		setCurrentEventList(getRootDomain().listAllAgents(true));
 		// used a variable thread pool with a maximum of as many worker threads as cpu
 		// cores		
 		final ExecutorService executor=Executors.newWorkStealingPool();
 		final List<Future<?>> futures=new ArrayList<>();
 		setSimulationTime(Time.ZERO);
 		while (getSimulationTime().compareTo(stop)<0) {
+			AbstractAgent.toggleSimulationIsRunning(true);
 			// part I: process all current events by calling the agents' doEvent method
 			// in time step, iterate over ALL agents, ignore time of next event
-			for (final AbstractAgent<?, ?> agent : currentEventList)
+			for (final AbstractAgent<?, ?> agent : getCurrentEventList())
 				futures.add(executor.submit(() -> agent.doEventSim(getSimulationTime())));
 			// wait until all threads have finished
 			try {
@@ -68,7 +67,8 @@ public final class ConcurrentTSSimulator extends SequentialTSSimulator {
 				exception.printStackTrace();
 			}
 			// part II: do the message forwarding
-			getMessageForwardingStrategy().forwardMessages(currentEventList);
+			getMessageForwardingStrategy().forwardMessages(getCurrentEventList());
+			AbstractAgent.toggleSimulationIsRunning(false);
 			futures.clear();
 			hookEventsProcessed();
 			// part III: add the time step
@@ -76,7 +76,6 @@ public final class ConcurrentTSSimulator extends SequentialTSSimulator {
 			// System.out.println("Simulation time is "+getSimulationTime().toString());
 		}
 		executor.shutdown();
-		BasicModelEntity.toggleSimulationIsRunning(false);
 	}
 
 }

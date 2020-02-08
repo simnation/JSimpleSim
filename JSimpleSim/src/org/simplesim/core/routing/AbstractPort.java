@@ -47,7 +47,7 @@ public abstract class AbstractPort {
 	 * Exception to be thrown if there is an error in port handling
 	 */
 	@SuppressWarnings("serial")
-	static class PortConnectionException extends RuntimeException {
+	protected static class PortConnectionException extends RuntimeException {
 		public PortConnectionException(String message) {
 			super(message);
 		}
@@ -74,14 +74,14 @@ public abstract class AbstractPort {
 	public abstract void disconnect(AbstractPort target);
 
 	/**
-	 * Returns if the port is the end point of a connection.
+	 * Tests if the port is the end point of a connection.
 	 * 
 	 * @return true if it is end point (destination port)
 	 */
 	public abstract boolean isEndPoint();
 
 	/**
-	 * Returns if the port is connected to another one.
+	 * Tests if the port is connected to another one.
 	 * 
 	 * @param port the port to test
 	 * @return true if this port is connected to the other port
@@ -93,11 +93,11 @@ public abstract class AbstractPort {
 	 * <p>
 	 * Port must be connected to other ports, please check if it is an end point beforehand!
 	 * <p>
-	 * Note: Package visibility, only to be used by an implementation of {@link IMessageForwardingStrategy}
+	 * Note: Only to be used by an implementation of {@link IMessageForwardingStrategy}
 	 *
 	 * @return list of destination ports that need further forwarding
 	 */
-	abstract Collection<AbstractPort> copyMessages();
+	protected abstract Collection<AbstractPort> copyMessages();
 
 	/**
 	 * Clears message queue of this port.
@@ -129,7 +129,7 @@ public abstract class AbstractPort {
 	 *
 	 * @return last element in message list or null if list is empty
 	 */
-	public final Message<?> read() {
+	public final Message<?> poll() {
 		if (!hasMessages()) return null;
 		return messages.remove(countMessages()-1);
 	}

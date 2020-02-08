@@ -1,12 +1,8 @@
 /*
- * SimNation is a multi-agent model to simulate economic systems. It is scalable
- * and used JSimpleSim as technical backbone for concurrent discrete event
- * simulation.
- *
- * This software is published as open source and licensed under GNU GPLv3.
- *
+ * JSimpleSim is a framework to build multi-agent systems in a quick and easy way. This software is published as open
+ * source and licensed under the terms of GNU GPLv3.
+ * 
  * Contributors: - Rene Kuhlemann - development and initial implementation
- *
  */
 package org.simplesim.examples.elevator;
 
@@ -18,6 +14,7 @@ import java.util.Map;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.core.routing.AbstractPort;
 import org.simplesim.core.routing.DirectMessage;
+import org.simplesim.core.routing.SinglePort;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.examples.elevator.Model.Request;
 import static org.simplesim.examples.elevator.Model.UP;
@@ -59,7 +56,7 @@ public final class Elevator extends AbstractAgent<ElevatorState, Elevator.EVENT>
 		super(new ElevatorState());
 		setAddress(new int[1]);
 		getAddress()[0]=addr;
-		inport=addSingleInport();
+		inport=addInport(new SinglePort(this));
 		for (int floor=Model.LOBBY; floor<=Model.MAX_FLOOR; floor++) {
 			getState().setQueue(floor,new LinkedList<>());
 			getState().setButton(floor,IDLE);
@@ -274,7 +271,7 @@ public final class Elevator extends AbstractAgent<ElevatorState, Elevator.EVENT>
 
 	private void processMessages() {
 		while (getInport().hasMessages()) {
-			final Request request=getInport().read().getContent();
+			final Request request=getInport().poll().getContent();
 			final int floor=request.startingFloor;
 			int direction=UP; // is passenger's destination up or down?
 			if (request.isGoingDown()) direction=DOWN;
@@ -292,7 +289,7 @@ public final class Elevator extends AbstractAgent<ElevatorState, Elevator.EVENT>
 	}
 
 	public AbstractPort addOutport(Visitor visitor) {
-		final AbstractPort port=addSingleOutport();
+		final AbstractPort port=addOutport(new SinglePort(this));
 		outport.put(visitor,port);
 		return port;
 	}

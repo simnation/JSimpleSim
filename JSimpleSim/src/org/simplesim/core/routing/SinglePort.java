@@ -34,11 +34,10 @@ public final class SinglePort extends AbstractPort {
 	/** Save single destination port in a list with fixed size of one. This 
 	 *  is often needed in copyMessages().
 	 */
-	private final List<AbstractPort> destination;
+	private final List<AbstractPort> destination=Arrays.asList(new AbstractPort[1]);
 
 	public SinglePort(BasicModelEntity model) {
 		super(model);
-		destination=Arrays.asList(new AbstractPort[1]);
 		destination.set(0,null);
 	}
 

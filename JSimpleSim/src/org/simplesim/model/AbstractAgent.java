@@ -10,9 +10,13 @@
  */
 package org.simplesim.model;
 
+import java.util.concurrent.ConcurrentLinkedDeque;
+
+import org.simplesim.core.dynamic.ChangeRequest;
 import org.simplesim.core.scheduling.HeapEventQueue;
 import org.simplesim.core.scheduling.IEventQueue;
 import org.simplesim.core.scheduling.Time;
+import org.simplesim.simulator.DynamicDecorator;
 
 /**
  * Implements all basic functionality of an agent.
@@ -46,6 +50,12 @@ public abstract class AbstractAgent<S extends IAgentState, E> extends BasicModel
 
 	/** the local event queue of the agent */
 	private final IEventQueue<E> leq;
+	
+	/** Queue for model change requests, only used by dynamic simulators. */
+	private final static ConcurrentLinkedDeque<ChangeRequest> queue=new ConcurrentLinkedDeque<>();
+	
+	/** Flag to indicate if the simulation is running. */
+	private static boolean simulationIsRunning=false;
 	
 	/**
 	 * Exception to be thrown if an unknown event occurs is returned from the event queue
@@ -179,6 +189,55 @@ public abstract class AbstractAgent<S extends IAgentState, E> extends BasicModel
 		sb.append(time.toString());
 		sb.append(msg);
 		System.out.println(sb.toString());
+	}
+
+	/**
+	 * Sets the status of simulation run.<br>
+	 * Static method and variable to be accessible for all entities of the simulation model
+	 *
+	 * @param toggle the status of the simulation, {@code true} means simulation is running
+	 */
+	public static final void toggleSimulationIsRunning(boolean toggle) {
+		simulationIsRunning=toggle;
+	}
+
+	/**
+	 * Gets the status of simulation run.<br>
+	 * Static method and variable to be accessible for all entities of the simulation model
+	 *
+	 * @return current simulation status, {@code true} means simulation is running
+	 */
+	public static final boolean isSimulationRunning() {
+		return simulationIsRunning;
+	}
+	
+	/**
+	 * Add a model change request to the queue
+	 * <p>
+	 * Change request are processed by a dynamic simulator after each simulation cycle. Has no effect when using other
+	 * simulator implementations.
+	 * <p>
+	 * This method is thread-safe.
+	 *
+	 * @param cr the request
+	 * @see DynamicDecorator
+	 */
+	public static void addModelChangeRequest(ChangeRequest cr) {
+		queue.add(cr);
+	}
+
+	/**
+	 * Removes first model change request in queue
+	 * <p>
+	 * Should only be used by a dynamic simulator implementation and by an agent
+	 * <p>
+	 * This method is thread-safe.
+	 *
+	 * @param sim the simulator instance
+	 * @return next model change request or null if queue is empty
+	 */
+	public static ChangeRequest pollModelChangeRequest() {
+		return queue.poll();
 	}
 
 }

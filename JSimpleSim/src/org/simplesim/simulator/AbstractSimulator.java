@@ -24,7 +24,7 @@ import org.simplesim.model.AbstractDomain;
  * Implements the core functionality of a simulator.
  *
  */
-public abstract class AbstractSimulator {
+public abstract class AbstractSimulator implements ISimulator {
 
 	// top node of the simulation model
 	private final AbstractDomain rootDomain;
@@ -124,8 +124,8 @@ public abstract class AbstractSimulator {
 		return currentEventList;
 	}
 
-	public void setCurrentEventList(List<AbstractAgent<?, ?>> currentEventList) {
-		this.currentEventList = currentEventList;
+	protected void setCurrentEventList(List<AbstractAgent<?, ?>> list) {
+		currentEventList=list;
 	}
 
 }

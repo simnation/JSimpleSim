@@ -1,17 +1,14 @@
 /*
- * SimNation is a multi-agent model to simulate economic systems. It is scalable
- * and used JSimpleSim as technical backbone for concurrent discrete event
- * simulation.
- *
- * This software is published as open source and licensed under GNU GPLv3.
- *
+ * JSimpleSim is a framework to build multi-agent systems in a quick and easy way. This software is published as open
+ * source and licensed under the terms of GNU GPLv3.
+ * 
  * Contributors: - Rene Kuhlemann - development and initial implementation
- *
  */
-package org.simplesim.examples.elevator;
+package org.simplesim.examples.elevator2;
 
 import org.simplesim.core.routing.AbstractPort;
 import org.simplesim.core.routing.Message;
+import org.simplesim.core.routing.SinglePort;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.IAgentState;
@@ -34,8 +31,8 @@ public abstract class SimpleAgent<S extends IAgentState,E> extends AbstractAgent
 	public SimpleAgent(S state, int[] addr) {
 		super(state);
 		setAddress(addr);
-		inport=addSingleInport();
-		outport=addSingleOutport();
+		inport=addInport(new SinglePort(this));
+		outport=addOutport(new SinglePort(this));
 	}
 
 	@Override
@@ -90,7 +87,7 @@ public abstract class SimpleAgent<S extends IAgentState,E> extends AbstractAgent
 
 	@SuppressWarnings("unchecked")
 	private void processMessages() {
-		while (getInport().hasMessages()) handleMessage(((Message<int[]>) (getInport().read())));
+		while (getInport().hasMessages()) handleMessage(((Message<int[]>) (getInport().poll())));
 	}
 
 	private void processEvents(Time time) {

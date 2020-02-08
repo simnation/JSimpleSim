@@ -1,17 +1,15 @@
 /*
- * SimNation is a multi-agent model to simulate economic systems. It is scalable
- * and used JSimpleSim as technical backbone for concurrent discrete event
- * simulation.
- *
- * This software is published as open source and licensed under GNU GPLv3.
- *
+ * JSimpleSim is a framework to build multi-agent systems in a quick and easy way. This software is published as open
+ * source and licensed under the terms of GNU GPLv3.
+ * 
  * Contributors: - Rene Kuhlemann - development and initial implementation
- *
  */
 package org.simplesim.examples.gameoflife;
 
 import org.simplesim.core.routing.AbstractPort;
 import org.simplesim.core.routing.DirectMessage;
+import org.simplesim.core.routing.MultiPort;
+import org.simplesim.core.routing.SinglePort;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 
@@ -27,8 +25,8 @@ public final class Cell extends AbstractAgent<CellState, Object> {
 		getState().setPosX(posX);
 		getState().setPosY(posY);
 		getState().setLife(life);
-		inport=addSingleInport();
-		outport=addMultiOutport();
+		inport=addInport(new SinglePort(this));
+		outport=addOutport(new MultiPort(this));
 	}
 
 	/*
@@ -41,7 +39,7 @@ public final class Cell extends AbstractAgent<CellState, Object> {
 	protected Time doEvent(Time time) {
 		if (getInport().hasMessages()) {
 			int neighbours=0;
-			while (getInport().hasMessages()) if ((Boolean) getInport().read().getContent()) neighbours++;
+			while (getInport().hasMessages()) if ((Boolean) getInport().poll().getContent()) neighbours++;
 			final boolean life=(getState().isLife()&&(neighbours==2))||(neighbours==3);
 			if (life!=getState().isLife()) getState().setLife(life);
 		}
