@@ -27,7 +27,7 @@ import org.simplesim.simulator.DynamicDecorator;
  * <ol>
  * <li>read the messages from the inports
  * ({@link org.simplesim.core.routing.Message})
- * <li>modify the agent's state ({@link IAgentState})
+ * <li>modify the agent's state ({@link AgentState})
  * <li>compute output and write messages to other entities to the outports
  * <li>add events to the internal event queue if necessary
  * ({@link org.simplesim.core.scheduling.IEventQueue})
@@ -43,7 +43,7 @@ import org.simplesim.simulator.DynamicDecorator;
  * @param <S> type of the agent state containing all state variables
  * @param <E> type of the events
  */
-public abstract class AbstractAgent<S extends IAgentState, E> extends BasicModelEntity {
+public abstract class AbstractAgent<S extends AgentState, E> extends BasicModelEntity {
 
 	/** the internal state of the agent */
 	private final S state;
@@ -153,7 +153,7 @@ public abstract class AbstractAgent<S extends IAgentState, E> extends BasicModel
 	 *
 	 * @return time of the next event (tone)
 	 *
-	 * @see IAgentState
+	 * @see AgentState
 	 * @see IBulletinBoard
 	 * @see org.simplesim.core.scheduling.Time Time
 	 * @see org.simplesim.core.scheduling.IEventQueue IEventQueue

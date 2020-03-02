@@ -1,8 +1,7 @@
 /*
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy way. This software is published as open
- * source and licensed under the terms of GNU GPLv3.
- * 
- * Contributors: - Rene Kuhlemann - development and initial implementation
+ * source and licensed under the terms of GNU GPLv3. Contributors: - Rene Kuhlemann - development and initial
+ * implementation
  */
 package org.simplesim.simulator;
 
@@ -19,16 +18,17 @@ import org.simplesim.model.AbstractDomain;
  * <p>
  * This class wraps any other simulator implementation and registers itself as {@code EventsProcessedListener} to be
  * called after each simulation cycle. Communication of the agents' change requests is done by a static and thread-safe
- * queue within the {@code DynamicAgent} class. Changes are done by concrete implementations of the {@code ChangeRequest}
- * interface. So, agents prepare and organize the change process whereas the the various change request implementations
- * are responsible for the conduct of the specified model change. This class ensures the processing of the change requests.
+ * queue within the {@code AbstractAgent} class. Changes are done by concrete implementations of the
+ * {@code ChangeRequest} interface. So, agents prepare and organize the change process whereas the the various change
+ * request implementations are responsible for the conduct of the specified model change. This class ensures the
+ * processing of the change requests.
  * <p>
- * To use model change functionality, active agents must be derived from {@code DynamicAgent} class.
+ * To use model change functionality, agents have to issue change request via {@code AbstractAgent#addModelChangeRequest(ChangeRequest)} class.
  *
  * @see ChangeRequest
- * @see DynamicAgent
+ * @see AbstractAgent
  */
-public class DynamicDecorator implements ISimulator {
+public class DynamicDecorator implements Simulator {
 
 	/* the encapsulated simulator */
 	private final AbstractSimulator simulator;
@@ -51,7 +51,7 @@ public class DynamicDecorator implements ISimulator {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.simplesim.simulator.ISimulator#runSimulation(org.simplesim.core.scheduling.Time)
+	 * @see org.simplesim.simulator.Simulator#runSimulation(org.simplesim.core.scheduling.Time)
 	 */
 	@Override
 	public void runSimulation(Time stop) {
@@ -60,7 +60,7 @@ public class DynamicDecorator implements ISimulator {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.simplesim.simulator.ISimulator#getRootDomain()
+	 * @see org.simplesim.simulator.Simulator#getRootDomain()
 	 */
 	@Override
 	public AbstractDomain getRootDomain() {
@@ -69,7 +69,7 @@ public class DynamicDecorator implements ISimulator {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.simplesim.simulator.ISimulator#getSimulationTime()
+	 * @see org.simplesim.simulator.Simulator#getSimulationTime()
 	 */
 	@Override
 	public Time getSimulationTime() {
@@ -78,7 +78,7 @@ public class DynamicDecorator implements ISimulator {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.simplesim.simulator.ISimulator#getCurrentEventList()
+	 * @see org.simplesim.simulator.Simulator#getCurrentEventList()
 	 */
 	@Override
 	public List<AbstractAgent<?, ?>> getCurrentEventList() {
@@ -87,7 +87,7 @@ public class DynamicDecorator implements ISimulator {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.simplesim.simulator.ISimulator#registerEventsProcessedListener(org.simplesim.core.notification.Listener)
+	 * @see org.simplesim.simulator.Simulator#registerEventsProcessedListener(org.simplesim.core.notification.Listener)
 	 */
 	@Override
 	public void registerEventsProcessedListener(Listener<AbstractSimulator> listener) {
@@ -97,7 +97,7 @@ public class DynamicDecorator implements ISimulator {
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * org.simplesim.simulator.ISimulator#unregisterEventsProcessedListener(org.simplesim.core.notification.Listener)
+	 * org.simplesim.simulator.Simulator#unregisterEventsProcessedListener(org.simplesim.core.notification.Listener)
 	 */
 	@Override
 	public void unregisterEventsProcessedListener(Listener<AbstractSimulator> listener) {

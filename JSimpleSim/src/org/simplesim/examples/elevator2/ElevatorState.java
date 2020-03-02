@@ -4,11 +4,12 @@
  * 
  * Contributors: - Rene Kuhlemann - development and initial implementation
  */
-package org.simplesim.examples.elevator;
+package org.simplesim.examples.elevator2;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import org.simplesim.examples.elevator2.Request;
 import org.simplesim.model.AgentState;
 
 /**
@@ -20,10 +21,10 @@ public final class ElevatorState implements AgentState {
 	private int currentFloor;
 	private int destinationFloor;
 	private int direction;
-	final private List<Request> cabin=new LinkedList<>();
+	private final List<Request> cabin=new LinkedList<>();
 	@SuppressWarnings("unchecked")
-	final private List<Request> queue[]=new List[Model.MAX_FLOOR+1]; // lobby=0, floor 1=1
-	final private int button[]=new int[Model.MAX_FLOOR+1]; 
+	final private List<Request> queue[]=new List[Building.MAX_FLOOR+1]; // lobby=0, floor 1=1
+	private final int button[]=new int[Building.MAX_FLOOR+1]; 
 	
 	public int getCurrentFloor() {
 		return currentFloor;

@@ -33,7 +33,7 @@ public class Main {
 		final AbstractSimulator simulator=new SequentialDESimulator(model,new DirectMessageForwarding());
 		// add observer
 		simulator.registerEventsProcessedListener(view);
-		simulator.runSimulation(new Time(24*Time.HOUR));
+		simulator.runSimulation(new Time(12*Time.HOUR));
 		view.close();
 	}
 

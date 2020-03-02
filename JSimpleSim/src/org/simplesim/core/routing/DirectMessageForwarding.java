@@ -17,11 +17,11 @@ import org.simplesim.model.AbstractAgent;
  * <p>
  * Connects agents <i>directly</i>, without taking care of a model hierarchy.
  * <p>
- * Use this implementation of a {@code IMessageForwardingStrategy} for graphs,
+ * Use this implementation of a {@code ForwardingStrategy} for graphs,
  * intermeshed networks and when there is no need for a model hierarchy.
  *
  */
-public final class DirectMessageForwarding implements IMessageForwardingStrategy {
+public final class DirectMessageForwarding implements ForwardingStrategy {
 
 	/*
 	 * (non-Javadoc)
@@ -37,7 +37,7 @@ public final class DirectMessageForwarding implements IMessageForwardingStrategy
 		final Collection<AbstractPort> sources=listPortsWithOutgoingMsg(agentList);
 		// part II: do forwarding of messages, only one Step because of the direct
 		// connections
-		for (final AbstractPort src : sources) destinations.addAll(src.copyMessages());
+		for (final AbstractPort src : sources) destinations.addAll(src.forwardMessages());
 		// Only one copy cycle because there should be only direct connections
 	}
 

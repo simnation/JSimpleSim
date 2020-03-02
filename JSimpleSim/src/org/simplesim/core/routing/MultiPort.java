@@ -58,7 +58,7 @@ public final class MultiPort extends AbstractPort {
 	}
 
 	@Override
-	public Collection<AbstractPort> copyMessages() {
+	public Collection<AbstractPort> forwardMessages() {
 		if (!hasMessages()) return Collections.emptyList();
 		for (final AbstractPort dest : destinations) dest.writeAll(this.readAll());
 		clearMessages();

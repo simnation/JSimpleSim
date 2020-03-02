@@ -10,12 +10,28 @@
  */
 package org.simplesim.examples.elevator2;
 
-import org.simplesim.model.AbstractDomain;
+import org.simplesim.model.RoutingDomain;
 
 /**
  * 
  *
  */
-public final class Floor extends AbstractDomain {
+public final class Floor extends RoutingDomain {
+	
+	private final int floor;
+	
+	public Floor(int l) {
+		super();
+		floor=l;
+	}
+	
+	public int getFloor() {
+		return floor;
+	}
+	
+	@Override
+	public String getName() {
+		return "Floor";
+	}
 
 }

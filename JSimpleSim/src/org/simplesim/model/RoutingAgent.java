@@ -8,6 +8,8 @@ package org.simplesim.model;
 
 import java.util.Collections;
 
+import org.simplesim.core.routing.AbstractPort;
+import org.simplesim.core.routing.RoutedMessage;
 import org.simplesim.core.routing.SinglePort;
 import org.simplesim.core.scheduling.IEventQueue;
 
@@ -15,7 +17,7 @@ import org.simplesim.core.scheduling.IEventQueue;
  * 
  *
  */
-public abstract class RoutingAgent<S extends IAgentState, E>  extends AbstractAgent<S, E> {
+public abstract class RoutingAgent<S extends AgentState, E>  extends AbstractAgent<S, E> {
 
 	/**
 	 * @param queue
@@ -38,6 +40,14 @@ public abstract class RoutingAgent<S extends IAgentState, E>  extends AbstractAg
 	private void init() {
 		setInportList(Collections.singletonList(new SinglePort(this)));
 		setOutportList(Collections.singletonList(new SinglePort(this)));
+	}
+	
+	public AbstractPort getOutport() {
+		return getOutport(0);
+	}
+	
+	public AbstractPort getInport() {
+		return getInport(0);
 	}
 
 	

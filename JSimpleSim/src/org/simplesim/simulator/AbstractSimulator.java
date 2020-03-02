@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.simplesim.core.notification.Listener;
 import org.simplesim.core.notification.ListenerSupport;
-import org.simplesim.core.routing.IMessageForwardingStrategy;
+import org.simplesim.core.routing.ForwardingStrategy;
 import org.simplesim.core.scheduling.IEventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
@@ -24,7 +24,7 @@ import org.simplesim.model.AbstractDomain;
  * Implements the core functionality of a simulator.
  *
  */
-public abstract class AbstractSimulator implements ISimulator {
+public abstract class AbstractSimulator implements Simulator {
 
 	// top node of the simulation model
 	private final AbstractDomain rootDomain;
@@ -36,7 +36,7 @@ public abstract class AbstractSimulator implements ISimulator {
 	private final IEventQueue<AbstractAgent<?, ?>> geq;
 
 	// the strategy used to forward messages during a simulation run
-	private final IMessageForwardingStrategy mfs;
+	private final ForwardingStrategy mfs;
 
 	// listeners to notify after all agents of a cycle have been processed
 	private final ListenerSupport<AbstractSimulator> eventsProcessedListeners=new ListenerSupport<>();
@@ -62,7 +62,7 @@ public abstract class AbstractSimulator implements ISimulator {
 	 * @param forwarding the strategy to use for message forwarding
 	 */
 	public AbstractSimulator(AbstractDomain root, IEventQueue<AbstractAgent<?, ?>> queue,
-			IMessageForwardingStrategy forwarding) {
+			ForwardingStrategy forwarding) {
 		rootDomain=root;
 		geq=queue;
 		mfs=forwarding;
@@ -112,7 +112,7 @@ public abstract class AbstractSimulator implements ISimulator {
 		eventsProcessedListeners.notifyListeners(this);
 	}
 
-	protected IMessageForwardingStrategy getMessageForwardingStrategy() {
+	protected ForwardingStrategy getMessageForwardingStrategy() {
 		return mfs;
 	}
 

@@ -93,11 +93,11 @@ public abstract class AbstractPort {
 	 * <p>
 	 * Port must be connected to other ports, please check if it is an end point beforehand!
 	 * <p>
-	 * Note: Only to be used by an implementation of {@link IMessageForwardingStrategy}
+	 * Note: Only to be used by an implementation of {@link ForwardingStrategy}
 	 *
 	 * @return list of destination ports that need further forwarding
 	 */
-	protected abstract Collection<AbstractPort> copyMessages();
+	protected abstract Collection<AbstractPort> forwardMessages();
 
 	/**
 	 * Clears message queue of this port.

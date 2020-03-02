@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.simplesim.core.routing.IMessageForwardingStrategy;
+import org.simplesim.core.routing.ForwardingStrategy;
 import org.simplesim.core.scheduling.IEventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
@@ -36,7 +36,7 @@ public final class ConcurrentDESimulator extends SequentialDESimulator {
 	 * @param forwarding the strategy to use for message forwarding
 	 */
 	public ConcurrentDESimulator(AbstractDomain model, IEventQueue<AbstractAgent<?, ?>> queue,
-			IMessageForwardingStrategy forwarding) {
+			ForwardingStrategy forwarding) {
 		super(model,queue,forwarding);
 	}
 
@@ -44,7 +44,7 @@ public final class ConcurrentDESimulator extends SequentialDESimulator {
 		super(root);
 	}
 
-	public ConcurrentDESimulator(AbstractDomain root, IMessageForwardingStrategy forwarding) {
+	public ConcurrentDESimulator(AbstractDomain root, ForwardingStrategy forwarding) {
 		super(root,forwarding);
 	}
 

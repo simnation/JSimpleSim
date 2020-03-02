@@ -8,8 +8,6 @@ package org.simplesim.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.plaf.basic.BasicEditorPaneUI;
-
 /**
  * Implements all basic functionality of a domain.
  * <p>
@@ -25,6 +23,8 @@ import javax.swing.plaf.basic.BasicEditorPaneUI;
  * @see <a href="https://en.wikipedia.org/wiki/Composite_pattern">Reference for composite pattern</a>
  */
 public abstract class AbstractDomain extends BasicModelEntity {
+
+	public static final int ROOT_ADDRESS[]=new int[0];
 
 	/** set of child entities (agents or domains). */
 	private final List<BasicModelEntity> entityList=new ArrayList<>();
@@ -105,10 +105,13 @@ public abstract class AbstractDomain extends BasicModelEntity {
 	public final boolean containsEntity(BasicModelEntity model) {
 		return getEntityList().contains(model);
 	}
-	
+
+	public final BasicModelEntity getDomainEntity(int index) {
+		return getEntityList().get(index);
+	}
+
 	List<BasicModelEntity> getEntityList() {
 		return entityList;
 	}
-
 
 }

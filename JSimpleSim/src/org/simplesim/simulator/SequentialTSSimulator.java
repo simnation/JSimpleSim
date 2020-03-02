@@ -10,8 +10,8 @@
  */
 package org.simplesim.simulator;
 
-import org.simplesim.core.routing.IMessageForwardingStrategy;
-import org.simplesim.core.routing.RecursiveMessageForwarding;
+import org.simplesim.core.routing.ForwardingStrategy;
+import org.simplesim.core.routing.DefaultMessageForwarding;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
@@ -31,17 +31,17 @@ public class SequentialTSSimulator extends AbstractSimulator {
 	// the constant time step, no event queue
 	private final Time timeStep;
 
-	public SequentialTSSimulator(AbstractDomain rt, Time step, IMessageForwardingStrategy forwarding) {
+	public SequentialTSSimulator(AbstractDomain rt, Time step, ForwardingStrategy forwarding) {
 		super(rt,null,forwarding);
 		timeStep=step;
 	}
 
-	public SequentialTSSimulator(AbstractDomain root, IMessageForwardingStrategy forwarding) {
+	public SequentialTSSimulator(AbstractDomain root, ForwardingStrategy forwarding) {
 		this(root,new Time(Time.MINUTE),forwarding);
 	}
 
 	public SequentialTSSimulator(AbstractDomain root) {
-		this(root,new Time(Time.MINUTE),new RecursiveMessageForwarding());
+		this(root,new Time(Time.MINUTE),new DefaultMessageForwarding());
 	}
 
 	@Override

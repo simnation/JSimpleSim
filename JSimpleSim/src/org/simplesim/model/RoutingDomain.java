@@ -40,13 +40,16 @@ public abstract class RoutingDomain extends AbstractDomain {
 	 * The operation modus is similar to a {@link MulitPort}, but the messages is only forward to ONE port of the
 	 * destination list, <i>not</i> all.
 	 * <p>
-	 * Note: This implementation references directly to the {@code entityList} of its parent domain and has no list of
+	 * Note 1: This implementation references directly to the {@code entityList} of its parent domain and has no list of
 	 * connected ports of it own. This facilitates handling of model changes.
+	 * <p>
+	 * Note 2: This implementation should only be used for forwarding down the model hierarchy. For forwarding up
+	 * use a {@link SinglePort}.
 	 */
 	private class RoutingPort extends AbstractPort {
 
-		public RoutingPort(BasicModelEntity model) {
-			super(model);
+		public RoutingPort(BasicModelEntity parent) {
+			super(parent);
 		}
 
 		@Override
@@ -65,12 +68,12 @@ public abstract class RoutingDomain extends AbstractDomain {
 		}
 
 		@Override
-		protected Collection<AbstractPort> copyMessages() {
+		protected Collection<AbstractPort> forwardMessages() {
 			final Set<AbstractPort> result=new HashSet<>(); // set to ensure no duplicates in destination list
 			while (hasMessages()) {
 				final RoutedMessage msg=(RoutedMessage) poll(); // message is also removed in this step!
-				final int index=msg.getDestIndex(getLevel()); // index corresponding to level in model
-				final BasicModelEntity entity=getEntityList().get(index); // find the right entity for forwarding
+				final int index=msg.getDestIndex(getLevel()); // destination index corresponding to entity level in model
+				final BasicModelEntity entity=getDomainEntity(index); // find the right entity for forwarding
 				final AbstractPort dest=entity.getInport(0); // find the right port for forwarding
 				dest.write(msg);
 				result.add(dest);
@@ -89,6 +92,16 @@ public abstract class RoutingDomain extends AbstractDomain {
 		setInportList(Collections.singletonList(new RoutingPort(this)));
 		setOutportList(Collections.singletonList(new SinglePort(this)));
 	}
+	
+	/**
+	 * Defines the domain as root domain of the model.
+	 * <p>
+	 * Should be called from the constructor of the derived class or during model building. Can only be called once.
+	 */
+	public void setAsRootDomain() {
+		setAddress(ROOT_ADDRESS);
+		getOutport().connectTo(getInport());
+	}
 
 	/**
 	 * Adds the given entity to this domain.
@@ -103,6 +116,7 @@ public abstract class RoutingDomain extends AbstractDomain {
 	@Override
 	public final void addEntity(BasicModelEntity entity) {
 		super.addEntity(entity);
+		entity.getOutport(0).connectTo(getOutport()); // establish connection towards domain root
 		entity.resetAddress(countDomainEntities()-1); // reset addresses in entity and its children
 	}
 
@@ -121,14 +135,15 @@ public abstract class RoutingDomain extends AbstractDomain {
 		if (start==-1) return null; // unknown entity
 		getEntityList().remove(start);
 		entity.setParent(null);
+		entity.getOutport(0).disconnect(getOutport()); // remove connection towards domain root
 		for (int index=start; index<countDomainEntities(); index++) {
-			getEntityList().get(index).resetAddress(index);
+			getDomainEntity(index).resetAddress(index);
 		}
 		return entity;
 	}
 
 	/**
-	 * Used internally for updating the entity's address
+	 * Updates this entity's address after model changes
 	 * <p>
 	 * This method can be use to initialize the address. It should be called always if the structure changes (e.g. this
 	 * entity is moved to another domain)
@@ -141,8 +156,17 @@ public abstract class RoutingDomain extends AbstractDomain {
 		super.resetAddress(value); // update address of this domain
 		// recursively update addresses of all child entities
 		for (int index=0; index<countDomainEntities(); index++) {
-			getEntityList().get(index).resetAddress(index);
+			getDomainEntity(index).resetAddress(index);
 		}
 	}
+	
+	public AbstractPort getInport() {
+		return getInport(0);
+	}
+	
+	public AbstractPort getOutport() {
+		return getOutport(0);
+	}
+	
 
 }

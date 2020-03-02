@@ -22,8 +22,8 @@ import org.simplesim.core.routing.AbstractPort;
  */
 public abstract class BasicModelEntity {
 
-	private static final int INIT_LEVEL=-2;
-	public static final int ROOT_LEVEL=-1;
+	public static final int ROOT_LEVEL=0;
+	private static final int INIT_LEVEL=Integer.MIN_VALUE;
 	private static final int DEFAULT_PORT_LIST_SIZE=1;
 
 	/** Parent entity in model hierarchy. */
@@ -156,8 +156,10 @@ public abstract class BasicModelEntity {
 	 */
 	public final int getLevel() {
 		// if there is no level information yet, re-compute it
-		if (level==INIT_LEVEL) if (parent==null) level=ROOT_LEVEL;
-		else level=parent.getLevel()+1;
+		if (level==INIT_LEVEL) {
+			if (parent==null) level=ROOT_LEVEL;
+			else level=parent.getLevel()+1;
+		}
 		return level;
 	}
 
@@ -176,12 +178,12 @@ public abstract class BasicModelEntity {
 	/**
 	 * Returns the name of this model entity
 	 * <p>
-	 * Returns {@link #toString()} as default, may be overridden in derived classes.
+	 * Returns an empty string as default, may be overridden in derived classes.
 	 *
 	 * @return the name of this model entity, may be an empty string but not null
 	 */
 	public String getName() {
-		return toString();
+		return "";
 	}
 
 	/**
@@ -196,6 +198,8 @@ public abstract class BasicModelEntity {
 		final StringBuilder sb=new StringBuilder(parent.getFullName());
 		sb.append('.');
 		sb.append(getName());
+		if ((getAddress()==null)||(getAddress().length==0)) return sb.toString();
+		sb.append(getAddress()[parent.getLevel()]);
 		return sb.toString();
 	}
 
@@ -278,10 +282,12 @@ public abstract class BasicModelEntity {
 	 * @param index the new index value of this entity
 	 */
 	public void resetAddress(int index) {
+		resetLevel();
 		final int[] pAddr=getParent().getAddress();
 		if ((address==null)||(address.length!=pAddr.length+1)) address=new int[pAddr.length+1];
-		for (int i=0; i<pAddr.length; i++) address[i]=pAddr[i];
-		address[pAddr.length]=index;
+		int i=0;
+		for (; i<pAddr.length; i++) address[i]=pAddr[i];
+		address[i]=index; //i==pAddr.length
 	}
 
 	/**
@@ -362,11 +368,7 @@ public abstract class BasicModelEntity {
 	 */
 	@Override
 	public String toString() {
-		final StringBuffer sb=new StringBuffer(getName());
-		if (address==null) return sb.toString();
-		sb.append('.');
-		sb.append(address[address.length-1]);
-		return sb.toString();
+		return getFullName();
 	}
 
 }

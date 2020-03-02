@@ -20,15 +20,15 @@ import org.simplesim.model.AbstractAgent;
  * Interface for various strategies to forward messages during simulation
  *
  */
-public interface IMessageForwardingStrategy {
+public interface ForwardingStrategy {
 
 	/**
-	 * Exception to be thrown if a port incompatible for the forwarding strategy is
-	 * encountered.
+	 * Exception to be thrown if there is an error in the process of message forwarding 
+	 * 
 	 */
 	@SuppressWarnings("serial")
-	static class PortTypeMismatchException extends RuntimeException {
-		public PortTypeMismatchException(String message) {
+	static class ForwardingFailureException extends RuntimeException {
+		public ForwardingFailureException(String message) {
 			super(message);
 		}
 	}

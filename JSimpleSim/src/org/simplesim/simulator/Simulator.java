@@ -18,7 +18,7 @@ import org.simplesim.simulator.AbstractSimulator.InvalidSimulatorStateException;
  * Basic simulator functionality
  *
  */
-public interface ISimulator {
+public interface Simulator {
 
 	/**
 	 * Starts a simulation run

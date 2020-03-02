@@ -4,9 +4,9 @@
  * 
  * Contributors: - Rene Kuhlemann - development and initial implementation
  */
-package org.simplesim.examples.elevator;
+package org.simplesim.examples.elevator2;
 
-import org.simplesim.examples.elevator.Visitor.ACTIVITY;
+import org.simplesim.examples.elevator2.Visitor.ACTIVITY;
 import org.simplesim.model.AgentState;
 
 /**
@@ -15,17 +15,9 @@ import org.simplesim.model.AgentState;
  */
 public final class VisitorState implements AgentState {
 	
-	private int currentLevel;
 	private int satisfaction;
 	private ACTIVITY activity;
 	
-	public int getCurrentLevel() {
-		return currentLevel;
-	}
-	
-	public void setCurrentLevel(int value) {
-		this.currentLevel = value;
-	}
 
 	public int getSatisfaction() {
 		return satisfaction;

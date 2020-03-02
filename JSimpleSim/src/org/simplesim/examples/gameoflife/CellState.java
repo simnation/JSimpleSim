@@ -6,9 +6,9 @@
  */
 package org.simplesim.examples.gameoflife;
 
-import org.simplesim.model.IAgentState;
+import org.simplesim.model.AgentState;
 
-public class CellState implements IAgentState {
+public class CellState implements AgentState {
 
 	private int posX, posY;
 	private boolean life;

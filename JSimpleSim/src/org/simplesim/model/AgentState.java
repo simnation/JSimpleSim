@@ -19,6 +19,6 @@ package org.simplesim.model;
  * or java bean functionality implemented to gain insight of the state during a simulation run.
  *
  */
-public interface IAgentState {
+public interface AgentState {
  
 }

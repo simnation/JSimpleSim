@@ -80,7 +80,7 @@ public final class SinglePort extends AbstractPort {
 	 * @see org.simplesim.core.routing.AbstractPort#copyMessages()
 	 */
 	@Override
-	public Collection<AbstractPort> copyMessages() {
+	public Collection<AbstractPort> forwardMessages() {
 		if (!hasMessages()) return Collections.emptyList();
 		getConnection().writeAll(this.readAll());
 		clearMessages();
