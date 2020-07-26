@@ -5,7 +5,7 @@
  * This software is published as open source and licensed under the terms of GNU
  * GPLv3.
  */
-package org.simplesim.core.routing;
+package org.simplesim.core.messaging;
 
 import java.util.ArrayList;
 import java.util.Collection;

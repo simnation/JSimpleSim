@@ -18,7 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
 import org.simplesim.core.notification.Listener;
-import org.simplesim.examples.elevator.Model;
+import org.simplesim.examples.elevator.StaticModelMain;
 import org.simplesim.examples.elevator2.Visitor.ACTIVITY;
 import org.simplesim.model.BasicModelEntity;
 import org.simplesim.simulator.AbstractSimulator;
@@ -105,7 +105,7 @@ public class View extends JFrame implements Listener<AbstractSimulator> {
 	 *
 	 */
 	private void prepareModel() {
-		for (int floor=0; floor<=Model.MAX_FLOOR; floor++) {
+		for (int floor=0; floor<=StaticModelMain.MAX_FLOOR; floor++) {
 			waiting.get(floor).clear();
 			working.get(floor).clear();
 		}

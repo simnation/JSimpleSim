@@ -9,7 +9,7 @@
  * 	- Rene Kuhlemann - development and initial implementation
  * 
  */
-package org.simplesim.core.routing;
+package org.simplesim.core.messaging;
 
 import java.util.ArrayList;
 import java.util.Collection;

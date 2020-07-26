@@ -5,8 +5,8 @@
  */
 package org.simplesim.examples.elevator2;
 
-import org.simplesim.core.routing.ForwardingStrategy;
-import org.simplesim.core.routing.RoutedMessageForwarding;
+import org.simplesim.core.messaging.ForwardingStrategy;
+import org.simplesim.core.messaging.RoutedMessageForwarding;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.simulator.AbstractSimulator;
 import org.simplesim.simulator.ConcurrentDESimulator;
@@ -40,7 +40,7 @@ public class Main {
 		final Simulator simulator=new DynamicDecorator(new SequentialDESimulator(model,fs));
 		// add observer
 		simulator.registerEventsProcessedListener(view);
-		simulator.runSimulation(new Time(12*Time.HOUR));
+		simulator.runSimulation(new Time(12*Time.TICKS_PER_HOUR));
 		view.close();
 	}
 

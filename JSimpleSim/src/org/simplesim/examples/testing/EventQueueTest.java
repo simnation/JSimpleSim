@@ -13,14 +13,14 @@ import java.util.TreeMap;
 import org.simplesim.core.scheduling.HashedBucketQueue;
 import org.simplesim.core.scheduling.HeapBucketQueue;
 import org.simplesim.core.scheduling.HeapEventQueue;
-import org.simplesim.core.scheduling.IEventQueue;
+import org.simplesim.core.scheduling.EventQueue;
 import org.simplesim.core.scheduling.SortedBucketQueue;
 import org.simplesim.core.scheduling.SortedEventQueue;
-import org.simplesim.core.scheduling.MListEventQueue;
+import org.simplesim.core.scheduling.MultiLevelQueue;
 import org.simplesim.core.scheduling.Time;
 
 /**
- * Performance test and comparison of various implementations of {@code IEventQueue}
+ * Performance test and comparison of various implementations of {@code EventQueue}
  * <p>
  * All methods of the event queue are tested and evaluated. The size of the queue and number of test
  * are adjusted by changing the {@code countXXX} constants.
@@ -28,25 +28,25 @@ import org.simplesim.core.scheduling.Time;
  */
 public class EventQueueTest {
 
-	private static final int initTime=3*Time.DAY; 	// time interval for generating initial events
-	private static final int aheadTime=Time.DAY;
-	private static final int countTotal=150000; 	// number of total events in queue
+	private static final int countTotal=160000; 	// number of total events in queue
 	private static final int countSADE=1000;		// number of events for search and dequeue
-	private static final int countRNE=10000;		// number of events for requeue current event
+	private static final int countRNE=5000;		// number of events for requeue current event
+	private static final int initTime=countTotal>>4; 	// time interval for generating initial events
+	private static final int aheadTime=initTime>>1;
 	
 	private enum QUEUE_TYPE {
-		HASHED_BUCKET_QUEUE("Hashed bucket queue", new HashedBucketQueue<String>()),
+		//HASHED_BUCKET_QUEUE("Hashed bucket queue", new HashedBucketQueue<String>()),
 		HEAP_BUCKET_QUEUE("Heap bucket queue", new HeapBucketQueue<String>()),
 		SORTED_BUCKET_QUEUE("Sorted bucket queue", new SortedBucketQueue<String>()),
 		HEAP_EVENT_QUEUE("Heap event queue", new HeapEventQueue<String>()),
-		MLIST_EVENT_QUEUE("MList event queue", new MListEventQueue<String>()),
+		MLIST_EVENT_QUEUE("MList event queue", new MultiLevelQueue<String>()),
 		SORTED_EVENT_QUEUE("Sorted event queue", new SortedEventQueue<String>());
 				
 
 		private final String name;
-		private final IEventQueue<String> eq;
+		private final EventQueue<String> eq;
 
-		private QUEUE_TYPE(String name, IEventQueue<String> eq) {
+		private QUEUE_TYPE(String name, EventQueue<String> eq) {
 			this.name=name;
 			this.eq=eq;
 		}
@@ -55,7 +55,7 @@ public class EventQueueTest {
 			return name;
 		}
 
-		public IEventQueue<String> getQueue() {
+		public EventQueue<String> getQueue() {
 			return eq;
 		}
 

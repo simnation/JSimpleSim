@@ -1,60 +1,27 @@
 /*
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy way. This software is published as open
- * source and licensed under the terms of GNU GPLv3.
- * 
- * Contributors: - Rene Kuhlemann - development and initial implementation
+ * source and licensed under the terms of GNU GPLv3. Contributors: - Rene Kuhlemann - development and initial
+ * implementation
  */
 package org.simplesim.examples.gameoflife;
 
-import org.simplesim.model.AgentState;
+import org.simplesim.model.State;
 
-public class CellState implements AgentState {
+public class CellState implements State {
 
-	private int posX, posY;
-	private boolean life;
+	private int posX, posY; // the cell position
+	private boolean life;   // is it alive?
 
-	public CellState() {
-	}
+	public int getPosX() { return posX; }
 
-	/**
-	 * @return the posX
-	 */
-	public int getPosX() {
-		return posX;
-	}
+	public int getPosY() { return posY; }
 
-	/**
-	 * @return the posY
-	 */
-	public int getPosY() {
-		return posY;
-	}
+	void setPosX(int x) { posX=x; }
 
-	/**
-	 * @param posY the posY to set
-	 */
-	void setPosX(int x) {
-		posX=x;
-	}
+	void setPosY(int y) { posY=y; }
 
-	/**
-	 * @param posY the posY to set
-	 */
-	void setPosY(int y) {
-		posY=y;
-	}
+	public boolean isLife() { return life; }
 
-	/**
-	 * @return the life
-	 */
-	public boolean isLife() {
-		return life;
-	}
+	public void setLife(boolean value) { life=value; }
 
-	/**
-	 * @param life the life to set
-	 */
-	public void setLife(boolean newLife) {
-		life=newLife;
-	}
 }

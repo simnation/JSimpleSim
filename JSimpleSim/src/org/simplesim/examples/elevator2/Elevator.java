@@ -8,14 +8,13 @@ package org.simplesim.examples.elevator2;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import org.simplesim.core.routing.RoutedMessage;
+import org.simplesim.core.messaging.RoutedMessage;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.examples.elevator2.Request;
 import org.simplesim.model.RoutingAgent;
 
 /**
  * Elevator agent implementing a simple planning strategy
- * <p>
  * <ul>
  * <li>If there is any request in direction of movement with the same direction, go to the nearest one.
  * <li>If there is any other request in direction of movement, go to the farthest one.
@@ -30,9 +29,9 @@ public final class Elevator extends RoutingAgent<ElevatorState, Elevator.EVENT> 
 
 	public final static String NAME="Elevator";
 
-	public final static int SPEED=2*Time.SECOND; // travel time to get from one floor to the next one
-	public final static int DOOR_TIME=2*3*Time.SECOND; // time to open AND close the doors
-	public final static int CHANGE_TIME=2*Time.SECOND; // time per visitor entering OR leaving the elevator
+	public final static int SPEED=2*Time.TICKS_PER_SECOND; // travel time to get from one floor to the next one
+	public final static int DOOR_TIME=2*3*Time.TICKS_PER_SECOND; // time to open AND close the doors
+	public final static int CHANGE_TIME=2*Time.TICKS_PER_SECOND; // time per visitor entering OR leaving the elevator
 
 	private static final int CAPACITY=16; // maximum passenger capacity
 	private static final int NONE=Integer.MIN_VALUE; // return value for no request found
@@ -40,7 +39,7 @@ public final class Elevator extends RoutingAgent<ElevatorState, Elevator.EVENT> 
 	public static final int DOWN=0b01;
 	public static final int UP=0b10;
 	private static final int UPDOWN=UP|DOWN;
-	private static final Time IDLE_TIME=new Time(30*Time.SECOND); // time to check for requests when idle
+	private static final Time IDLE_TIME=new Time(30*Time.TICKS_PER_SECOND); // time to check for requests when idle
 
 	public Elevator() {
 		super(new ElevatorState());

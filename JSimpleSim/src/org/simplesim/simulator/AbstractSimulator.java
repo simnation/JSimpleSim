@@ -12,10 +12,10 @@ package org.simplesim.simulator;
 
 import java.util.List;
 
+import org.simplesim.core.messaging.ForwardingStrategy;
 import org.simplesim.core.notification.Listener;
 import org.simplesim.core.notification.ListenerSupport;
-import org.simplesim.core.routing.ForwardingStrategy;
-import org.simplesim.core.scheduling.IEventQueue;
+import org.simplesim.core.scheduling.EventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
@@ -33,7 +33,7 @@ public abstract class AbstractSimulator implements Simulator {
 	private Time simTime=Time.ZERO;
 
 	// the global event queue of the simulation
-	private final IEventQueue<AbstractAgent<?, ?>> geq;
+	private final EventQueue<AbstractAgent<?, ?>> geq;
 
 	// the strategy used to forward messages during a simulation run
 	private final ForwardingStrategy mfs;
@@ -61,7 +61,7 @@ public abstract class AbstractSimulator implements Simulator {
 	 * @param queue the queue implementation to use as global event queue
 	 * @param forwarding the strategy to use for message forwarding
 	 */
-	public AbstractSimulator(AbstractDomain root, IEventQueue<AbstractAgent<?, ?>> queue,
+	public AbstractSimulator(AbstractDomain root, EventQueue<AbstractAgent<?, ?>> queue,
 			ForwardingStrategy forwarding) {
 		rootDomain=root;
 		geq=queue;
@@ -116,7 +116,7 @@ public abstract class AbstractSimulator implements Simulator {
 		return mfs;
 	}
 
-	protected IEventQueue<AbstractAgent<?, ?>> getGlobalEventQueue() {
+	protected EventQueue<AbstractAgent<?, ?>> getGlobalEventQueue() {
 		return geq;
 	}
 

@@ -3,7 +3,7 @@
  * source and licensed under the terms of GNU GPLv3. Contributors: - Rene Kuhlemann - development and initial
  * implementation
  */
-package org.simplesim.core.routing;
+package org.simplesim.core.messaging;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,11 +23,11 @@ import org.simplesim.model.RoutingDomain;
  * Then forwarding starts at the bottom most port and works its way up to the root. In a second step, messages are
  * copied in the root node of the model tree. In a third step, messages are forwarded top-down in a similar way.
  * <p>
- * Choose this strategy if you have a model with long message pipelines across several domains. In each level, all
- * relevant port will be accumulation and messages are forwarded in one step to the next level. So, each port is only 
- * visited once.
+ * Note: This strategy only works with models using the routing concept.
  * 
+ * @see RoutingDomain
  * @see DefaultMessageForwarding
+ * 
  */
 public final class RoutedMessageForwarding implements ForwardingStrategy {
 

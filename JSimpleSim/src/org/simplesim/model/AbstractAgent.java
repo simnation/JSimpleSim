@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 import org.simplesim.core.dynamic.ChangeRequest;
 import org.simplesim.core.scheduling.HeapEventQueue;
-import org.simplesim.core.scheduling.IEventQueue;
+import org.simplesim.core.scheduling.EventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.simulator.DynamicDecorator;
 
@@ -26,30 +26,33 @@ import org.simplesim.simulator.DynamicDecorator;
  * by the following five steps:
  * <ol>
  * <li>read the messages from the inports
- * ({@link org.simplesim.core.routing.Message})
- * <li>modify the agent's state ({@link AgentState})
+ * ({@link org.simplesim.core.messaging.Message})
+ * <li>modify the agent's state ({@link State})
  * <li>compute output and write messages to other entities to the outports
  * <li>add events to the internal event queue if necessary
- * ({@link org.simplesim.core.scheduling.IEventQueue})
+ * ({@link org.simplesim.core.scheduling.EventQueue})
  * <li>return the time of the next local event
  * ({@link org.simplesim.core.scheduling.Time})
  * </ol>
  * <p>
- * Agents are always embedded in an {@link AbstractDomain} for
+ * Agents are always embedded in an {@code AbstractDomain} for
  * compartmentalization. If implemented, the agent may also refer to an
  * information board of its parent domain or the root domain for additional
  * external information.
  *
  * @param <S> type of the agent state containing all state variables
  * @param <E> type of the events
+ * 
+ * @see AbstractDomain
+ * @see EventQueue
  */
-public abstract class AbstractAgent<S extends AgentState, E> extends BasicModelEntity {
+public abstract class AbstractAgent<S extends State, E> extends BasicModelEntity {
 
 	/** the internal state of the agent */
 	private final S state;
 
 	/** the local event queue of the agent */
-	private final IEventQueue<E> leq;
+	private final EventQueue<E> leq;
 	
 	/** Queue for model change requests, only used by dynamic simulators. */
 	private final static ConcurrentLinkedDeque<ChangeRequest> queue=new ConcurrentLinkedDeque<>();
@@ -57,23 +60,10 @@ public abstract class AbstractAgent<S extends AgentState, E> extends BasicModelE
 	/** Flag to indicate if the simulation is running. */
 	private static boolean simulationIsRunning=false;
 	
-	/**
-	 * Exception to be thrown if an unknown event occurs is returned from the event queue
-	 */
 	@SuppressWarnings("serial")
 	public static class UnknownEventType extends RuntimeException {
-		public UnknownEventType(String message) {
-			super(message);
-		}
-	}
-	
-	/**
-	 * Exception to be thrown if an incoming message cannot be handled 
-	 */
-	@SuppressWarnings("serial")
-	public static class UnhandledMessageType extends RuntimeException {
-		public UnhandledMessageType(String message) {
-			super(message);
+		public UnknownEventType(String msg) {
+			super(msg);
 		}
 	}
 
@@ -86,7 +76,7 @@ public abstract class AbstractAgent<S extends AgentState, E> extends BasicModelE
 	 * @param queue the local event queue
 	 * @param s     the state of the agent
 	 */
-	public AbstractAgent(IEventQueue<E> queue, S s) {
+	public AbstractAgent(EventQueue<E> queue, S s) {
 		state=s;
 		leq=queue;
 	}
@@ -111,7 +101,7 @@ public abstract class AbstractAgent<S extends AgentState, E> extends BasicModelE
 	 *
 	 * @return the local event queue
 	 */
-	protected final IEventQueue<E> getEventQueue() {
+	protected final EventQueue<E> getEventQueue() {
 		return leq;
 	}
 
@@ -153,12 +143,11 @@ public abstract class AbstractAgent<S extends AgentState, E> extends BasicModelE
 	 *
 	 * @return time of the next event (tone)
 	 *
-	 * @see AgentState
-	 * @see IBulletinBoard
-	 * @see org.simplesim.core.scheduling.Time Time
-	 * @see org.simplesim.core.scheduling.IEventQueue IEventQueue
-	 * @see org.simplesim.core.routing.Message Message
-	 * @see org.simplesim.core.routing.AbstractPort AbstractPort
+	 * @see State
+	 * @see Time
+	 * @see org.simplesim.core.scheduling.EventQueue EventQueue
+	 * @see org.simplesim.core.messaging.Message Message
+	 * @see org.simplesim.core.messaging.AbstractPort AbstractPort
 	 */
 	protected abstract Time doEvent(Time time);
 
@@ -233,7 +222,6 @@ public abstract class AbstractAgent<S extends AgentState, E> extends BasicModelE
 	 * <p>
 	 * This method is thread-safe.
 	 *
-	 * @param sim the simulator instance
 	 * @return next model change request or null if queue is empty
 	 */
 	public static ChangeRequest pollModelChangeRequest() {

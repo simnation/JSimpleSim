@@ -8,20 +8,43 @@ package org.simplesim.examples.gameoflife;
 
 import org.simplesim.model.AbstractDomain;
 
-
 public class Model extends AbstractDomain {
 
 	private final Cell world[][];
+	private final int width, height;
 
-	public Model(int dx, int dy) {
-		super();
-		world=new Cell[dx][dy];
-		setAddress(new int[0]);
-		// create cells and add to model ==> no connection yet!
-		for (int y=0; y<dy; y++) for (int x=0; x<dx; x++) {
+	public Model(int w, int h) {
+		width=w;
+		height=h;
+		world=new Cell[width][height];
+	}
+	
+	public void createCells(double lifeProbability) {
+		for (int y=0; y<height; y++) for (int x=0; x<width; x++) {
 			final Cell cell=new Cell(x,y,false);
+			cell.getState().setLife(Math.random()<lifeProbability);
 			world[x][y]=cell;
 			addEntity(cell);
+		}
+	}
+	
+	public void connectCells() {
+		for (int y=0; y<height; y++) for (int x=0; x<width; x++) {
+			int left, right, up, down;
+			if (x==0) left=width-1; else left=x-1;
+			if (x==(width-1)) right=0; else right=x+1;
+			if (y==0) down=height-1; else down=y-1;
+			if (y==(height-1)) up=0; else up=y+1;
+			// connect cell outport with inport of neighbor - clockwise
+			final Cell cell=getCell(x,y);
+			cell.getOutport().connectTo(getCell(x,up).getInport());
+			cell.getOutport().connectTo(getCell(right,up).getInport());
+			cell.getOutport().connectTo(getCell(right,y).getInport());
+			cell.getOutport().connectTo(getCell(right,down).getInport());
+			cell.getOutport().connectTo(getCell(x,down).getInport());
+			cell.getOutport().connectTo(getCell(left,down).getInport());
+			cell.getOutport().connectTo(getCell(left,y).getInport());
+			cell.getOutport().connectTo(getCell(left,up).getInport());
 		}
 	}
 

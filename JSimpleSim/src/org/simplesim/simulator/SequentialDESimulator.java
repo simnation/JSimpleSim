@@ -10,10 +10,10 @@
  */
 package org.simplesim.simulator;
 
-import org.simplesim.core.routing.ForwardingStrategy;
-import org.simplesim.core.routing.DefaultMessageForwarding;
 import org.simplesim.core.scheduling.HeapEventQueue;
-import org.simplesim.core.scheduling.IEventQueue;
+import org.simplesim.core.messaging.DefaultMessageForwarding;
+import org.simplesim.core.messaging.ForwardingStrategy;
+import org.simplesim.core.scheduling.EventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
@@ -36,7 +36,7 @@ public class SequentialDESimulator extends AbstractSimulator {
 	 * @param queue the queue implementation to use as global event queue
 	 * @param forwarding the strategy to use for message forwarding
 	 */
-	public SequentialDESimulator(AbstractDomain root, IEventQueue<AbstractAgent<?, ?>> queue,
+	public SequentialDESimulator(AbstractDomain root, EventQueue<AbstractAgent<?, ?>> queue,
 			ForwardingStrategy forwarding) {
 		super(root,queue,forwarding);
 	}
@@ -49,7 +49,7 @@ public class SequentialDESimulator extends AbstractSimulator {
 		this(root,new HeapEventQueue<AbstractAgent<?, ?>>(),forwarding);
 	}
 	
-	public SequentialDESimulator(AbstractDomain root, IEventQueue<AbstractAgent<?, ?>> queue) {
+	public SequentialDESimulator(AbstractDomain root, EventQueue<AbstractAgent<?, ?>> queue) {
 		this(root,queue,new DefaultMessageForwarding());
 	}
 

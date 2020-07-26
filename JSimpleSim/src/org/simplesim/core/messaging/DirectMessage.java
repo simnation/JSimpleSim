@@ -9,9 +9,9 @@
  * 	- Rene Kuhlemann - development and initial implementation
  * 
  */
-package org.simplesim.core.routing;
+package org.simplesim.core.messaging;
 
-import org.simplesim.core.routing.Message;
+import org.simplesim.core.messaging.Message;
 import org.simplesim.model.AbstractAgent;
 
 /**

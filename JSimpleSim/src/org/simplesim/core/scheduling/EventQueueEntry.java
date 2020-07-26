@@ -21,9 +21,9 @@ package org.simplesim.core.scheduling;
  */
 final class EventQueueEntry<E> implements Comparable<EventQueueEntry<E>> {
 
-	private final E event; // the event as such
 	private final Time time; // time stamp of the event.
-
+	private final E event; // the event as such
+	
 	public EventQueueEntry(Time t, E e) {
 		event=e;
 		time=t;

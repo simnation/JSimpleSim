@@ -6,10 +6,10 @@
  */
 package org.simplesim.examples.gameoflife;
 
-import org.simplesim.core.routing.AbstractPort;
-import org.simplesim.core.routing.DirectMessage;
-import org.simplesim.core.routing.MultiPort;
-import org.simplesim.core.routing.SinglePort;
+import org.simplesim.core.messaging.AbstractPort;
+import org.simplesim.core.messaging.DirectMessage;
+import org.simplesim.core.messaging.MultiPort;
+import org.simplesim.core.messaging.SinglePort;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 
@@ -17,9 +17,6 @@ public final class Cell extends AbstractAgent<CellState, Object> {
 
 	private final AbstractPort inport, outport;
 
-	/**
-	 * @param addr
-	 */
 	public Cell(int posX, int posY, boolean life) {
 		super(null,new CellState());
 		getState().setPosX(posX);
@@ -29,35 +26,25 @@ public final class Cell extends AbstractAgent<CellState, Object> {
 		outport=addOutport(new MultiPort(this));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.simplesim.model.AbstractAgent#doEvent(org.simplesim.core.scheduling.Time)
-	 */
 	@Override
 	protected Time doEvent(Time time) {
 		if (getInport().hasMessages()) {
 			int neighbours=0;
-			while (getInport().hasMessages()) if ((Boolean) getInport().poll().getContent()) neighbours++;
-			final boolean life=(getState().isLife()&&(neighbours==2))||(neighbours==3);
-			if (life!=getState().isLife()) getState().setLife(life);
+			while (getInport().hasMessages()) {
+				if ((Boolean) getInport().poll().getContent()) neighbours++;
+			}
+			if ((getState().isLife()&&(neighbours==2))||(neighbours==3)) getState().setLife(true);
+			else getState().setLife(false);
 		}
 		getOutport().write(new DirectMessage(this,getState().isLife()));
 		return null;
 	}
 
-	public AbstractPort getInport() {
-		return inport;
-	}
+	public AbstractPort getInport() { return inport; }
 
-	public AbstractPort getOutport() {
-		return outport;
-	}
+	public AbstractPort getOutport() { return outport; }
 
 	@Override
-	public String getName() {
-		return "cell";
-	}
+	public String getName() { return "cell"; }
 
 }

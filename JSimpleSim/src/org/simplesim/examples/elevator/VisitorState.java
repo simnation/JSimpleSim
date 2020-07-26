@@ -1,38 +1,27 @@
 /*
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy way. This software is published as open
- * source and licensed under the terms of GNU GPLv3.
- * 
- * Contributors: - Rene Kuhlemann - development and initial implementation
+ * source and licensed under the terms of GNU GPLv3. Contributors: - Rene Kuhlemann - development and initial
+ * implementation
  */
 package org.simplesim.examples.elevator;
 
-import org.simplesim.examples.elevator.Visitor.ACTIVITY;
-import org.simplesim.model.AgentState;
+import org.simplesim.examples.elevator.StaticVisitor.ACTIVITY;
+import org.simplesim.model.State;
 
 /**
  * The visitors state
- *
  */
-public final class VisitorState implements AgentState {
-	
-	private int currentLevel;
-	private int satisfaction;
+public final class VisitorState implements State {
+
+	private int currentFloor;
 	private ACTIVITY activity;
-	
-	public int getCurrentLevel() {
-		return currentLevel;
-	}
-	
-	public void setCurrentLevel(int value) {
-		this.currentLevel = value;
+
+	public int getCurrentFloor() {
+		return currentFloor;
 	}
 
-	public int getSatisfaction() {
-		return satisfaction;
-	}
-
-	public void setSatisfaction(int value) {
-		this.satisfaction = value;
+	public void setCurrentFloor(int value) {
+		currentFloor=value;
 	}
 
 	public ACTIVITY getActivity() {
@@ -40,9 +29,7 @@ public final class VisitorState implements AgentState {
 	}
 
 	public void setActivity(ACTIVITY value) {
-		this.activity = value;
+		activity=value;
 	}
-
-	
 
 }

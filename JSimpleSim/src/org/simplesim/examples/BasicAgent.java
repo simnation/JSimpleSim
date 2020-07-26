@@ -4,14 +4,14 @@
  * 
  * Contributors: - Rene Kuhlemann - development and initial implementation
  */
-package org.simplesim.examples.testing;
+package org.simplesim.examples;
 
-import org.simplesim.core.routing.AbstractPort;
-import org.simplesim.core.routing.Message;
-import org.simplesim.core.routing.SinglePort;
+import org.simplesim.core.messaging.AbstractPort;
+import org.simplesim.core.messaging.Message;
+import org.simplesim.core.messaging.SinglePort;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
-import org.simplesim.model.AgentState;
+import org.simplesim.model.State;
 
 /**
  * Base class for agents providing common functionality and variables
@@ -24,11 +24,11 @@ import org.simplesim.model.AgentState;
  * @param E type of events
  *
  */
-public abstract class SimpleAgent<S extends AgentState,E> extends AbstractAgent<S, E> {
+public abstract class BasicAgent<S extends State,E> extends AbstractAgent<S, E> {
 
 	private final AbstractPort inport, outport;
 
-	public SimpleAgent(S state, int[] addr) {
+	public BasicAgent(S state, int[] addr) {
 		super(state);
 		setAddress(addr);
 		inport=addInport(new SinglePort(this));
@@ -53,7 +53,6 @@ public abstract class SimpleAgent<S extends AgentState,E> extends AbstractAgent<
 	/**
 	 * Handles a due event.
 	 *
-	 * @param <E>   the type of the event
 	 * @param event the event as such (containing also additional information)
 	 * @param time  the time stamp of the event
 	 */

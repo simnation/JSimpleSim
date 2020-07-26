@@ -9,7 +9,7 @@
  * 	- Rene Kuhlemann - development and initial implementation
  * 
  */
-package org.simplesim.core.routing;
+package org.simplesim.core.messaging;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,7 +29,7 @@ import org.simplesim.model.BasicModelEntity;
  *
  * @see SinglePort
  * @see MultiPort
- * @see RoutingPort
+ * @see org.simplesim.model.RoutingDomain.RoutingPort RoutingPort
  */
 public abstract class AbstractPort {
 
@@ -137,7 +137,7 @@ public abstract class AbstractPort {
 	/**
 	 * Returns the message queue.
 	 * <p>
-	 * Elements must be removed manually (for example by calling the {@link #clear} method)
+	 * Elements must be removed manually by calling the {@link #clearMessages()} method
 	 *
 	 * @return the message queue
 	 */

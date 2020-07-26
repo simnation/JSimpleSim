@@ -29,7 +29,7 @@ import java.util.List;
  * @see EventQueueEntry
  * 
  */
-abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> implements IEventQueue<E> {
+abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> implements EventQueue<E> {
 
 	private final Q queue; // the queue as subclass of a Collection
 	
@@ -50,7 +50,7 @@ abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> i
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.simplesim.core.scheduling.IEventQueue#getTime(java.lang.Object)
+	 * @see org.simplesim.core.scheduling.EventQueue#getTime(java.lang.Object)
 	 */
 	@Override
 	public Time getTime(E event) {
@@ -61,7 +61,7 @@ abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> i
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.simplesim.core.scheduling.IEventQueue#isEmpty()
+	 * @see org.simplesim.core.scheduling.EventQueue#isEmpty()
 	 */
 	@Override
 	public boolean isEmpty() {
@@ -71,7 +71,7 @@ abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> i
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.simplesim.core.scheduling.IEventQueue#size()
+	 * @see org.simplesim.core.scheduling.EventQueue#size()
 	 */
 	@Override
 	public int size() {
@@ -81,7 +81,7 @@ abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> i
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.simplesim.core.scheduling.IEventQueue#dequeue(java.lang.Object)
+	 * @see org.simplesim.core.scheduling.EventQueue#dequeue(java.lang.Object)
 	 */
 	@Override
 	public Time dequeue(E event) {
@@ -99,7 +99,7 @@ abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> i
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.simplesim.core.scheduling.IEventQueue#enqueue(java.lang.Object,
+	 * @see org.simplesim.core.scheduling.EventQueue#enqueue(java.lang.Object,
 	 * org.simplesim.core.scheduling.Time)
 	 */
 	@Override
@@ -110,7 +110,7 @@ abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> i
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.simplesim.core.scheduling.IEventQueue#dequeueAll(org.simplesim.core.
+	 * @see org.simplesim.core.scheduling.EventQueue#dequeueAll(org.simplesim.core.
 	 * scheduling.Time)
 	 */
 	@Override
@@ -132,7 +132,7 @@ abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> i
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.simplesim.core.scheduling.IEventQueue#dequeueAll()
+	 * @see org.simplesim.core.scheduling.EventQueue#dequeueAll()
 	 */
 	@Override
 	public List<E> dequeueAll() {

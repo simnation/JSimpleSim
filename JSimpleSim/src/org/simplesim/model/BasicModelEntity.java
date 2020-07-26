@@ -8,7 +8,9 @@ package org.simplesim.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.simplesim.core.routing.AbstractPort;
+import javax.naming.OperationNotSupportedException;
+
+import org.simplesim.core.messaging.AbstractPort;
 
 /**
  * Provides basic functionality needed by all entities within the simulation model.
@@ -55,8 +57,8 @@ public abstract class BasicModelEntity {
 	 * Exception to be thrown if a duplicate object is used where only a unique one is allowed.
 	 */
 	@SuppressWarnings("serial")
-	public static class UniqueConstraintViolation extends RuntimeException {
-		public UniqueConstraintViolation(String message) {
+	public static class UniqueConstraintViolationException extends RuntimeException {
+		public UniqueConstraintViolationException(String message) {
 			super(message);
 		}
 	}
@@ -64,10 +66,11 @@ public abstract class BasicModelEntity {
 	/**
 	 * Adds a new inport to the model.
 	 *
+	 * @param <P> class of port
 	 * @param port the port to add
 	 * @return reference to the new port for further usage
-	 * @throws OperationNotAllowedException if the simulation is running
-	 * @throws NotUniqueException           if the same port is added twice
+	 * @throws UnsupportedOperationException if the simulation is running
+	 * @throws UniqueConstraintViolationException   if the same port is added twice
 	 */
 	@SuppressWarnings("unchecked")
 	public final <P extends AbstractPort> P addInport(P port) {
@@ -80,10 +83,11 @@ public abstract class BasicModelEntity {
 	 * <p>
 	 * Addition will fail if the same object is already used as a port.
 	 *
+	 * @param <P> class of port
 	 * @param port the port to add
 	 * @return reference to the new port for further usage
-	 * @throws OperationNotAllowedException if the simulation is running
-	 * @throws NotUniqueException           if the same port is added twice
+	 * @throws UnsupportedOperationException if the simulation is running
+	 * @throws UniqueConstraintViolationException if the same port is added twice
 	 */
 	@SuppressWarnings("unchecked")
 	public final <P extends AbstractPort> P addOutport(P port) {
@@ -112,6 +116,7 @@ public abstract class BasicModelEntity {
 	/**
 	 * Looks up an indexed port from the inport list.
 	 *
+	 * @param index the of the port in the list of inports
 	 * @return the indexed inport
 	 */
 	public final AbstractPort getInport(int index) {
@@ -139,6 +144,7 @@ public abstract class BasicModelEntity {
 	/**
 	 * Looks up an indexed port from the outport list.
 	 *
+	 * @param index the of the port in the list of inports
 	 * @return the indexed outport
 	 */
 	public final AbstractPort getOutport(int index) {
@@ -291,24 +297,24 @@ public abstract class BasicModelEntity {
 	}
 
 	/**
-	 * Removes an existing inport from the model.<br>
+	 * Removes an existing inport from the model.
 	 *
 	 * @param port the port
-	 * @throws OperationNotAllowedException if the simulation is running
+	 * @throws UnsupportedOperationException if the simulation is running
 	 * @throws InvalidPortException         if the port is unknown
 	 */
-	public final void removeInport(AbstractPort port) {
+	public final void removeInport(AbstractPort port) throws UnsupportedOperationException, InvalidPortException {
 		removePort(inports,port);
 	}
 
 	/**
-	 * Removes an existing outport from the model.<br>
+	 * Removes an existing outport from the model.
 	 *
 	 * @param port the port
-	 * @throws OperationNotAllowedException if the simulation is running
+	 * @throws UnsupportedOperationException if the simulation is running
 	 * @throws InvalidPortException         if the port is unknown
 	 */
-	public final void removeOutport(AbstractPort port) {
+	public final void removeOutport(AbstractPort port) throws UnsupportedOperationException, InvalidPortException {
 		removePort(outports,port);
 	}
 
@@ -324,7 +330,7 @@ public abstract class BasicModelEntity {
 		if (AbstractAgent.isSimulationRunning())
 			throw new UnsupportedOperationException("Tried to add a port during a simulation run in "+getFullName());
 		if (portList.contains(port))
-			throw new UniqueConstraintViolation("A port may not be added twice to the same model!");
+			throw new UniqueConstraintViolationException("A port may not be added twice to the same model!");
 		portList.add(port);
 		return port;
 	}

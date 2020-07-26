@@ -9,7 +9,7 @@
  * 	- Rene Kuhlemann - development and initial implementation
  * 
  */
-package org.simplesim.core.routing;
+package org.simplesim.core.messaging;
 
 /**
  * Base class for messages that are sent from one port to another.

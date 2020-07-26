@@ -1,25 +1,17 @@
 /*
- * JSimpleSim is a framework to build multi-agent systems in a quick and easy
- * way.
- *
- * This software is published as open source and licensed under the terms of GNU
- * GPLv3.
- *
- * Contributors: - Rene Kuhlemann - development and initial implementation
- *
+ * JSimpleSim is a framework to build multi-agent systems in a quick and easy way. This software is published as open
+ * source and licensed under the terms of GNU GPLv3. Contributors: - Rene Kuhlemann - development and initial
+ * implementation
  */
 package org.simplesim.core.scheduling;
 
 /**
- * Provides time and calendar functionality to scale and navigate the
- * simulation's time axis.
+ * Provides time and calendar functionality to scale and navigate the simulation's time axis.
  * <p>
- * This class serves also as a wrapper around the time format. Currently, ticks
- * are stored as a {@code long} primitive, but the format my be changed because
- * within the simulator, only the {@code Time} wrapper is used.
+ * Ticks are stored as {@code long} primitive. A time scale is provided, standardized with one second set to one. The
+ * scale may be changed because within the simulator, only the {@code Time} wrapper is used.
  * <p>
  * This class is immutable and thus tread safe.
- *
  */
 public final class Time implements Comparable<Time> {
 
@@ -33,20 +25,26 @@ public final class Time implements Comparable<Time> {
 	public static final int DAYS_PER_YEAR=DAYS_PER_MONTH*MONTHS_PER_YEAR; // =360
 
 	// as a result, duration of hours, days, months...
-	public static final int SECOND=1;
-	public static final int MINUTE=SECOND*SECONDS_PER_MINUTE; // calibrating to one, so an integer can even represent fractions of hours
-	public static final int HOUR=MINUTES_PER_HOUR*MINUTE;
-	public static final int DAY=HOURS_PER_DAY*HOUR;
-	public static final int WEEK=DAYS_PER_WEEK*DAY;
-	public static final int MONTH=DAYS_PER_MONTH*DAY;
-	public static final int YEAR=MONTHS_PER_YEAR*MONTH;
+	public static final int TICKS_PER_SECOND=1;
+	public static final int TICKS_PER_MINUTE=TICKS_PER_SECOND*SECONDS_PER_MINUTE;
+	public static final int TICKS_PER_HOUR=MINUTES_PER_HOUR*TICKS_PER_MINUTE;
+	public static final int TICKS_PER_DAY=HOURS_PER_DAY*TICKS_PER_HOUR;
+	public static final int TICKS_PER_WEEK=DAYS_PER_WEEK*TICKS_PER_DAY;
+	public static final int TICKS_PER_MONTH=DAYS_PER_MONTH*TICKS_PER_DAY;
+	public static final int TICKS_PER_YEAR=MONTHS_PER_YEAR*TICKS_PER_MONTH;
 
 	public static final Time ZERO=new Time(0);
+	public static final Time SECOND=new Time(TICKS_PER_SECOND);
+	public static final Time MINUTE=new Time(TICKS_PER_MINUTE);
+	public static final Time HOUR=new Time(TICKS_PER_HOUR);
+	public static final Time DAY=new Time(TICKS_PER_DAY);
+	public static final Time MONTH=new Time(TICKS_PER_MONTH);
+	public static final Time YEAR=new Time(TICKS_PER_YEAR);
 	public static final Time INFINITY=new Time(Long.MAX_VALUE);
 
 	/**
-	 * This is an immutable class, so ticks are final (multiple references to a
-	 * changing time instance are prone to hard to find bugs)
+	 * This is an immutable class, so ticks are final (multiple references to a changing time instance are prone to hard
+	 * to find bugs)
 	 */
 	private final long ticks;
 
@@ -60,7 +58,8 @@ public final class Time implements Comparable<Time> {
 	}
 
 	public Time(int year, int month, int day, int hour, int min, int sec) {
-		this((year*YEAR)+(month*MONTH)+(day*DAY)+(hour*HOUR)+(min*MINUTE)+(sec*SECOND));
+		this((year*TICKS_PER_YEAR)+(month*TICKS_PER_MONTH)+(day*TICKS_PER_DAY)+(hour*TICKS_PER_HOUR)
+				+(min*TICKS_PER_MINUTE)+(sec*TICKS_PER_SECOND));
 	}
 
 	public long getTicks() {
@@ -83,56 +82,28 @@ public final class Time implements Comparable<Time> {
 		return sub(time.getTicks());
 	}
 
-	public long seconds() {
-		return seconds(getTicks());
-	}
-	
-	public long minutes() {
-		return minutes(getTicks());
+	public int seconds() {
+		return (int) ((getTicks()%TICKS_PER_MINUTE)/TICKS_PER_SECOND);
 	}
 
-	public long hours() {
-		return hours(getTicks());
+	public int minutes() {
+		return (int) ((getTicks()%TICKS_PER_HOUR)/TICKS_PER_MINUTE);
 	}
 
-	public long days() {
-		return days(getTicks());
+	public int hours() {
+		return (int) ((getTicks()%TICKS_PER_DAY)/TICKS_PER_HOUR);
 	}
 
-	public long months() {
-		return months(getTicks());
+	public int days() {
+		return (int) ((getTicks()%TICKS_PER_MONTH)/TICKS_PER_DAY);
 	}
 
-	public long years() {
-		return years(getTicks());
+	public int months() {
+		return (int) ((getTicks()%TICKS_PER_YEAR)/TICKS_PER_MONTH);
 	}
 
-	public static String toString(long time) {
-		return new Time(time).toString();
-	}
-
-	public static int seconds(long ticks) {
-		return (int) ((ticks%MINUTE)/SECOND);
-	}
-	
-	public static int minutes(long ticks) {
-		return (int) ((ticks%HOUR)/MINUTE);
-	}
-
-	public static int hours(long ticks) {
-		return (int) ((ticks%DAY)/HOUR);
-	}
-
-	public static int days(long ticks) {
-		return (int) ((ticks%MONTH)/DAY);
-	}
-
-	public static int months(long ticks) {
-		return (int) ((ticks%YEAR)/MONTH);
-	}
-
-	public static int years(long ticks) {
-		return (int) (ticks/YEAR);
+	public int years() {
+		return (int) (getTicks()/TICKS_PER_YEAR);
 	}
 
 	@Override

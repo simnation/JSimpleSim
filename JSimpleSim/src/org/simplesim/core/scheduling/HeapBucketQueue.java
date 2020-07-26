@@ -54,7 +54,7 @@ public final class HeapBucketQueue<E> extends AbstractBucketQueue<E, HashMap<Tim
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#dequeue(java.lang.Object)
+	 * @see org.simplesim.core.scheduling.EventQueue#dequeue(java.lang.Object)
 	 */
 	@Override
 	public Time dequeue(E event) {
@@ -78,7 +78,7 @@ public final class HeapBucketQueue<E> extends AbstractBucketQueue<E, HashMap<Tim
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#dequeue()
+	 * @see org.simplesim.core.scheduling.EventQueue#dequeue()
 	 */
 	@Override
 	public E dequeue() {
@@ -110,7 +110,7 @@ public final class HeapBucketQueue<E> extends AbstractBucketQueue<E, HashMap<Tim
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#dequeueAll(org.simplesim.core.
+	 * @see org.simplesim.core.scheduling.EventQueue#dequeueAll(org.simplesim.core.
 	 * scheduling.Time)
 	 */
 	@Override
@@ -132,7 +132,7 @@ public final class HeapBucketQueue<E> extends AbstractBucketQueue<E, HashMap<Tim
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#dequeueAll()
+	 * @see org.simplesim.core.scheduling.EventQueue#dequeueAll()
 	 */
 	@Override
 	public List<E> dequeueAll() {
@@ -146,7 +146,7 @@ public final class HeapBucketQueue<E> extends AbstractBucketQueue<E, HashMap<Tim
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#getMin()
+	 * @see org.simplesim.core.scheduling.EventQueue#getMin()
 	 */
 	@Override
 	public Time getMin() {

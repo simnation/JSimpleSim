@@ -10,13 +10,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.simplesim.examples.elevator2.Request;
-import org.simplesim.model.AgentState;
+import org.simplesim.model.State;
 
 /**
  * 
  *
  */
-public final class ElevatorState implements AgentState {
+public final class ElevatorState implements State {
 
 	private int currentFloor;
 	private int destinationFloor;

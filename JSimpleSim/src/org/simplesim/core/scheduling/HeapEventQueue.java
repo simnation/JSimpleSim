@@ -13,7 +13,7 @@ package org.simplesim.core.scheduling;
 import java.util.PriorityQueue;
 
 /**
- * Priority queue implementation of the {@code IEventQueue} interface.
+ * Priority queue implementation of the {@code EventQueue} interface.
  * <p>
  * Adapter class wrapping a {@code PriorityQueue} to hold the data, internally
  * stored in a binary heap structure. Most operations are done in O(log n), but
@@ -41,7 +41,7 @@ public class HeapEventQueue<E> extends AbstractEventQueue<E, PriorityQueue<Event
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#getMin()
+	 * @see org.simplesim.core.scheduling.EventQueue#getMin()
 	 */
 	@Override
 	public Time getMin() {
@@ -51,7 +51,7 @@ public class HeapEventQueue<E> extends AbstractEventQueue<E, PriorityQueue<Event
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#dequeue()
+	 * @see org.simplesim.core.scheduling.EventQueue#dequeue()
 	 */
 	@Override
 	public E dequeue() {

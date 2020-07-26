@@ -5,22 +5,19 @@
  * This software is published as open source and licensed under the terms of GNU
  * GPLv3.
  */
-package org.simplesim.core.routing;
+package org.simplesim.core.messaging;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import org.simplesim.model.AbstractAgent;
-import org.simplesim.model.AbstractDomain;
 
 /**
  * Recursive version of a {@code ForwardingStrategy}.
  * <p>
  * This implementation starts at all outports with messages and works its way through 
- * the connected ports. Whereas the {@link IterativeMessageForwarding} accumulates messages
- * prior to forwarding, with this strategy some ports may be called twice.
+ * the connected ports. With this strategy some ports may be called several times.
  * <p>
- * This implementation generally should work with all types of ports but might be less efficient than others.
+ * This implementation generally should work with all types of ports but might be less efficient than more specialized strategies.
  * 
  */
 public final class DefaultMessageForwarding implements ForwardingStrategy {

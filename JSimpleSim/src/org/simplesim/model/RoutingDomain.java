@@ -10,9 +10,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.simplesim.core.routing.AbstractPort;
-import org.simplesim.core.routing.RoutedMessage;
-import org.simplesim.core.routing.SinglePort;
+import org.simplesim.core.messaging.AbstractPort;
+import org.simplesim.core.messaging.RoutedMessage;
+import org.simplesim.core.messaging.SinglePort;
 
 /**
  * Implements a domain suited for automatic message routing by using the message's address tag.
@@ -26,6 +26,8 @@ import org.simplesim.core.routing.SinglePort;
  * <li>list all agents in this domain and its subdomains
  * </ul>
  *
+ * @see RoutingAgent
+ * @see org.simplesim.core.messaging.RoutedMessage RoutedMessage
  * @see <a href="https://en.wikipedia.org/wiki/Composite_pattern">Reference for composite pattern</a>
  */
 public abstract class RoutingDomain extends AbstractDomain {
@@ -37,7 +39,7 @@ public abstract class RoutingDomain extends AbstractDomain {
 	 * connection accordingly. Thus only a {@link RoutedMessage} can be handled by this port since it contains
 	 * additional address information.
 	 * <p>
-	 * The operation modus is similar to a {@link MulitPort}, but the messages is only forward to ONE port of the
+	 * The operation modus is similar to a {@link org.simplesim.core.messaging.MultiPort MultiPort}, but the messages is only forward to <i>one</i> port of the
 	 * destination list, <i>not</i> all.
 	 * <p>
 	 * Note 1: This implementation references directly to the {@code entityList} of its parent domain and has no list of
@@ -46,7 +48,7 @@ public abstract class RoutingDomain extends AbstractDomain {
 	 * Note 2: This implementation should only be used for forwarding down the model hierarchy. For forwarding up
 	 * use a {@link SinglePort}.
 	 */
-	private class RoutingPort extends AbstractPort {
+	protected class RoutingPort extends AbstractPort {
 
 		public RoutingPort(BasicModelEntity parent) {
 			super(parent);
@@ -110,7 +112,7 @@ public abstract class RoutingDomain extends AbstractDomain {
 	 * during a simulation cycle.
 	 *
 	 * @param entity the model to be added
-	 * @throws NotUniqueException   if the entity is already part of this domain
+	 * @throws UniqueConstraintViolationException if the entity is already part of this domain
 	 * @throws NullPointerException if entity is null
 	 */
 	@Override
@@ -148,7 +150,6 @@ public abstract class RoutingDomain extends AbstractDomain {
 	 * This method can be use to initialize the address. It should be called always if the structure changes (e.g. this
 	 * entity is moved to another domain)
 	 *
-	 * @param pAddr address array of the parent entity
 	 * @param value the new index value of this entity
 	 */
 	@Override

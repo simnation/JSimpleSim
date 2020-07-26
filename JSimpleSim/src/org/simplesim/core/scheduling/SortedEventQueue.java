@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Sorted list implementation of the {@code IEventQueue} interface.
+ * Sorted list implementation of the {@code EventQueue} interface.
  * <p>
  * A <i>descending</i> sorted list is used to hold the data, internally stored
  * in an {@code ArrayList}. Look-up operations are done by binary search,
@@ -44,7 +44,7 @@ public class SortedEventQueue<E> extends AbstractEventQueue<E,ArrayList<EventQue
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#getMin()
+	 * @see org.simplesim.core.scheduling.EventQueue#getMin()
 	 */
 	@Override
 	public Time getMin() {
@@ -54,7 +54,7 @@ public class SortedEventQueue<E> extends AbstractEventQueue<E,ArrayList<EventQue
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#dequeue()
+	 * @see org.simplesim.core.scheduling.EventQueue#dequeue()
 	 */
 	@Override
 	public E dequeue() {
@@ -71,13 +71,13 @@ public class SortedEventQueue<E> extends AbstractEventQueue<E,ArrayList<EventQue
 	 */
 	@Override
 	public void enqueue(E event, Time time) {
-		getQueue().add(getPosition(time),new EventQueueEntry<>(time,event));
+		getQueue().add(getPosition(time),new EventQueueEntry<E>(time,event));
 	}
 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#dequeueAll(org.simplesim.core.
+	 * @see org.simplesim.core.scheduling.EventQueue#dequeueAll(org.simplesim.core.
 	 * scheduling.Time)
 	 */
 	@Override
@@ -89,7 +89,7 @@ public class SortedEventQueue<E> extends AbstractEventQueue<E,ArrayList<EventQue
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#dequeueAll()
+	 * @see org.simplesim.core.scheduling.EventQueue#dequeueAll()
 	 */
 	@Override
 	public List<E> dequeueAll() {
@@ -109,8 +109,7 @@ public class SortedEventQueue<E> extends AbstractEventQueue<E,ArrayList<EventQue
 		final List<E> result=new ArrayList<>();
 		for (int index=pos; index>=0; index--) {
 			if (!getQueue().get(index).getTime().equals(time)) break;
-			final EventQueueEntry<E> entry=getQueue().remove(index);
-			result.add(entry.getEvent());
+			result.add(getQueue().remove(index).getEvent());
 		}
 		return result;
 	}

@@ -8,7 +8,7 @@ package org.simplesim.examples.elevator2;
 import java.util.Random;
 
 import org.simplesim.core.dynamic.DomainChangeRequest;
-import org.simplesim.core.routing.RoutedMessage;
+import org.simplesim.core.messaging.RoutedMessage;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.RoutingAgent;
 
@@ -28,13 +28,13 @@ public final class Visitor extends RoutingAgent<VisitorState, Visitor.EVENT> {
 
 	public final static String NAME="Visitor";
 
-	private final static int START_DAY=1*Time.HOUR;
-	private final static int START_WORK=2*Time.HOUR;
-	private final static int END_WORK=9*Time.HOUR;
-	private final static int MAX_SOJOURN_TIME=3*Time.HOUR;
-	private final static int ACCEPTABLE_WAITING_TIME=3*Time.MINUTE;
+	private final static int START_DAY=1*Time.TICKS_PER_HOUR;
+	private final static int START_WORK=2*Time.TICKS_PER_HOUR;
+	private final static int END_WORK=9*Time.TICKS_PER_HOUR;
+	private final static int MAX_SOJOURN_TIME=3*Time.TICKS_PER_HOUR;
+	private final static int ACCEPTABLE_WAITING_TIME=3*Time.TICKS_PER_MINUTE;
 
-	private final static Time WAITING_PERIOD=new Time(10*Time.SECOND);
+	private final static Time WAITING_PERIOD=new Time(10*Time.TICKS_PER_SECOND);
 
 	private final Random random=new Random();
 
@@ -74,8 +74,7 @@ public final class Visitor extends RoutingAgent<VisitorState, Visitor.EVENT> {
 			final Request request=getInport().poll().getContent();
 			getState().setSatisfaction(assessTravelExperience(request)); // evaluate elevator ride
 			final Floor dest=Building.getInstance().getFloor(request.destinationFloor);
-			final DomainChangeRequest cr=new DomainChangeRequest(this,dest);
-			addModelChangeRequest(cr);
+			addModelChangeRequest(new DomainChangeRequest(this,dest));
 			
 			if ((time.getTicks()>=END_WORK)&&(request.destinationFloor==Building.LOBBY))
 				getEventQueue().enqueue(EVENT.goHome,Time.INFINITY); // work is over, going home

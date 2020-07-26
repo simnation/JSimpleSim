@@ -38,7 +38,7 @@ import java.util.List;
  * @param <E> type of events to be stored in the queue
  *
  */
-public interface IEventQueue<E> {
+public interface EventQueue<E> {
 
 	/**
 	 * Gets the minimal time stamp.
@@ -112,8 +112,8 @@ public interface IEventQueue<E> {
 	 * @return a list containing all events with the minimum time stamp or an empty
 	 *         list if the event queue is empty.
 	 * 
-	 * @see #getMin()
-	 * @see {@link #dequeueAll(Time)}
+	 * @see getMin()
+	 * @see dequeueAll(Time)
 	 */
 	List<E> dequeueAll();
 

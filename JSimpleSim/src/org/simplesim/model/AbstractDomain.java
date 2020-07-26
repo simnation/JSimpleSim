@@ -36,12 +36,12 @@ public abstract class AbstractDomain extends BasicModelEntity {
 	 * during a simulation cycle.
 	 *
 	 * @param entity the model to be added
-	 * @throws NotUniqueException   if the entity is already part of this domain
+	 * @throws UniqueConstraintViolationException   if the entity is already part of this domain
 	 * @throws NullPointerException if entity is null
 	 */
 	public void addEntity(BasicModelEntity entity) {
 		if (entity==null) throw new NullPointerException("Cannot add null pointer to domain "+getFullName());
-		if (containsEntity(entity)) throw new UniqueConstraintViolation(
+		if (containsEntity(entity)) throw new UniqueConstraintViolationException(
 				"Model "+entity.toString()+" added twice to domain "+this.getFullName());
 		entity.setParent(this);
 		getEntityList().add(entity);

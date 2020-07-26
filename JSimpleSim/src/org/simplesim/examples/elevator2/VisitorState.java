@@ -7,13 +7,13 @@
 package org.simplesim.examples.elevator2;
 
 import org.simplesim.examples.elevator2.Visitor.ACTIVITY;
-import org.simplesim.model.AgentState;
+import org.simplesim.model.State;
 
 /**
  * The visitors state
  *
  */
-public final class VisitorState implements AgentState {
+public final class VisitorState implements State {
 	
 	private int satisfaction;
 	private ACTIVITY activity;

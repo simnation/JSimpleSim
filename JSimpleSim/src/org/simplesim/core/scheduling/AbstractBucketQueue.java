@@ -30,7 +30,7 @@ import java.util.Map;
  * @param <E> type of events
  * @param <M> type of map used for time to bucket mapping
  */
-abstract class AbstractBucketQueue<E, M extends Map<Time, List<E>>> implements IEventQueue<E> {
+abstract class AbstractBucketQueue<E, M extends Map<Time, List<E>>> implements EventQueue<E> {
 
 	/** the collection of buckets organized as a map: time --> bucket */
 	private final M map;
@@ -57,7 +57,7 @@ abstract class AbstractBucketQueue<E, M extends Map<Time, List<E>>> implements I
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#getTime(java.lang.Object)
+	 * @see org.simplesim.core.scheduling.EventQueue#getTime(java.lang.Object)
 	 */
 	@Override
 	public Time getTime(E event) {
@@ -71,7 +71,7 @@ abstract class AbstractBucketQueue<E, M extends Map<Time, List<E>>> implements I
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#dequeue(java.lang.Object)
+	 * @see org.simplesim.core.scheduling.EventQueue#dequeue(java.lang.Object)
 	 */
 	@Override
 	public Time dequeue(E event) {
@@ -90,7 +90,7 @@ abstract class AbstractBucketQueue<E, M extends Map<Time, List<E>>> implements I
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#isEmpty()
+	 * @see org.simplesim.core.scheduling.EventQueue#isEmpty()
 	 */
 	@Override
 	public boolean isEmpty() {
@@ -100,7 +100,7 @@ abstract class AbstractBucketQueue<E, M extends Map<Time, List<E>>> implements I
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#size()
+	 * @see org.simplesim.core.scheduling.EventQueue#size()
 	 */
 	@Override
 	public int size() {
@@ -110,7 +110,7 @@ abstract class AbstractBucketQueue<E, M extends Map<Time, List<E>>> implements I
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#enqueue(java.lang.Object,
+	 * @see org.simplesim.core.scheduling.EventQueue#enqueue(java.lang.Object,
 	 * org.simplesim.core.scheduling.Time)
 	 */
 	@Override
@@ -127,7 +127,7 @@ abstract class AbstractBucketQueue<E, M extends Map<Time, List<E>>> implements I
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#dequeue()
+	 * @see org.simplesim.core.scheduling.EventQueue#dequeue()
 	 */
 	@Override
 	public E dequeue() {
@@ -144,7 +144,7 @@ abstract class AbstractBucketQueue<E, M extends Map<Time, List<E>>> implements I
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#dequeueAll(org.simplesim.core.
+	 * @see org.simplesim.core.scheduling.EventQueue#dequeueAll(org.simplesim.core.
 	 * scheduling.Time)
 	 */
 	@Override
@@ -158,7 +158,7 @@ abstract class AbstractBucketQueue<E, M extends Map<Time, List<E>>> implements I
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#dequeueAll()
+	 * @see org.simplesim.core.scheduling.EventQueue#dequeueAll()
 	 */
 	@Override
 	public List<E> dequeueAll() {

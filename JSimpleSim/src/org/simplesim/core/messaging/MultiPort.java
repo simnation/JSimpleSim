@@ -9,7 +9,7 @@
  * 	- Rene Kuhlemann - development and initial implementation
  * 
  */
-package org.simplesim.core.routing;
+package org.simplesim.core.messaging;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +19,7 @@ import java.util.List;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
 import org.simplesim.model.BasicModelEntity;
-import static org.simplesim.model.BasicModelEntity.UniqueConstraintViolation;
+import static org.simplesim.model.BasicModelEntity.UniqueConstraintViolationException;
 
 
 /**
@@ -41,7 +41,7 @@ public final class MultiPort extends AbstractPort {
 
 	@Override
 	public void connectTo(AbstractPort port) {
-		if (destinations.contains(port)) throw new UniqueConstraintViolation("MultiPort in "+this.getParent().getFullName()
+		if (destinations.contains(port)) throw new UniqueConstraintViolationException("MultiPort in "+this.getParent().getFullName()
 				+" may not be connected twice to "+port.getParent().getFullName());
 		destinations.add(port);
 	}

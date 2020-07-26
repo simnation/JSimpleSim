@@ -6,7 +6,7 @@
  */
 package org.simplesim.core.dynamic;
 
-import org.simplesim.core.routing.AbstractPort;
+import org.simplesim.core.messaging.AbstractPort;
 
 /**
  * Request to connect two ports.

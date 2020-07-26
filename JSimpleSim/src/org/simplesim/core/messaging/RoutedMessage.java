@@ -9,14 +9,14 @@
  * 	- Rene Kuhlemann - development and initial implementation
  * 
  */
-package org.simplesim.core.routing;
+package org.simplesim.core.messaging;
 
-import org.simplesim.core.routing.Message;
+import org.simplesim.core.messaging.Message;
 
 /**
  * Special message class for using auto routing.
  * <p>
- * If using a {@link RoutingPort} to use the routing functionality, messages have to be derived
+ * If using a {@link org.simplesim.model.RoutingDomain.RoutingPort RoutingPort} to use the routing functionality, messages have to be derived
  * from this class.
  * <p>
  * The addresses describe the model's branch within the model tree as int arrays. The level of the tree

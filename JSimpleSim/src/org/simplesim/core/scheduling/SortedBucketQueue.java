@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 /**
  * Event queue backed by a {@code TreeMap} with each bucket containing events of
  * equal time stamps
- * </p>
+ * <p>
  * Note: This queue type performs best for dequeuing <i>all</i> events
  * with minimal time stamp ({@link #dequeueAll()}). It is well suited for a
  * global event queue and has a performance similar to the {@code HeapBucketQueue}.
@@ -53,7 +53,7 @@ public final class SortedBucketQueue<E> extends AbstractBucketQueue<E,SortedMap<
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#getMin()
+	 * @see org.simplesim.core.scheduling.EventQueue#getMin()
 	 */
 	@Override
 	public Time getMin() {

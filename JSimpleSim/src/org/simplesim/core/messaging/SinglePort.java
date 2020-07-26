@@ -9,7 +9,7 @@
  * 	- Rene Kuhlemann - development and initial implementation
  * 
  */
-package org.simplesim.core.routing;
+package org.simplesim.core.messaging;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,7 +42,7 @@ public final class SinglePort extends AbstractPort {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.simplesim.core.routing.AbstractPort#connectTo(org.simplesim.core.routing.AbstractPort)
+	 * @see org.simplesim.core.messaging.AbstractPort#connectTo(org.simplesim.core.messaging.AbstractPort)
 	 */
 	@Override
 	public void connectTo(AbstractPort port) {
@@ -51,7 +51,7 @@ public final class SinglePort extends AbstractPort {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.simplesim.core.routing.AbstractPort#disconnect(org.simplesim.core.routing.AbstractPort)
+	 * @see org.simplesim.core.messaging.AbstractPort#disconnect(org.simplesim.core.messaging.AbstractPort)
 	 */
 	@Override
 	public void disconnect(AbstractPort port) {
@@ -61,7 +61,7 @@ public final class SinglePort extends AbstractPort {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.simplesim.core.routing.AbstractPort#isEndPoint()
+	 * @see org.simplesim.core.messaging.AbstractPort#isEndPoint()
 	 */
 	@Override
 	public boolean isEndPoint() {
@@ -69,7 +69,7 @@ public final class SinglePort extends AbstractPort {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.simplesim.core.routing.AbstractPort#isConnectedTo(org.simplesim.core.routing.AbstractPort)
+	 * @see org.simplesim.core.messaging.AbstractPort#isConnectedTo(org.simplesim.core.messaging.AbstractPort)
 	 */
 	@Override
 	public boolean isConnectedTo(AbstractPort port) {
@@ -77,7 +77,7 @@ public final class SinglePort extends AbstractPort {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.simplesim.core.routing.AbstractPort#copyMessages()
+	 * @see org.simplesim.core.messaging.AbstractPort#copyMessages()
 	 */
 	@Override
 	public Collection<AbstractPort> forwardMessages() {

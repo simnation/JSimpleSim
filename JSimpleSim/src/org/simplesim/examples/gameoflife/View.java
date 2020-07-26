@@ -6,9 +6,6 @@
  */
 package org.simplesim.examples.gameoflife;
 
-import static org.simplesim.examples.gameoflife.Main.BOARD_DX;
-import static org.simplesim.examples.gameoflife.Main.BOARD_DY;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -21,18 +18,14 @@ import org.simplesim.core.notification.Listener;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.simulator.AbstractSimulator;
 
-/**
- * 
- *
- */
 @SuppressWarnings("serial")
 public class View extends JFrame implements Listener<AbstractSimulator> {
 
 	public static final int CELL_SIZE=5;
 
-	public View(String title) {
+	public View(String title, int width, int height) {
 		super(title);
-		final Dimension size=new Dimension(CELL_SIZE*BOARD_DX,CELL_SIZE*BOARD_DY);
+		final Dimension size=new Dimension(CELL_SIZE*width,CELL_SIZE*height);
 		setPreferredSize(size);
 		setSize(size);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

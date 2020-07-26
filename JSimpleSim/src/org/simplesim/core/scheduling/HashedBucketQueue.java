@@ -41,7 +41,7 @@ public final class HashedBucketQueue<E> extends AbstractBucketQueue<E,HashMap<Ti
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.simplesim.core.scheduling.IEventQueue#getMin()
+	 * @see org.simplesim.core.scheduling.EventQueue#getMin()
 	 */
 	@Override
 	public Time getMin() {
