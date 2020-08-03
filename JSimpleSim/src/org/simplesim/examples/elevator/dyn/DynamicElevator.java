@@ -3,20 +3,20 @@
  * source and licensed under the terms of GNU GPLv3. Contributors: - Rene Kuhlemann - development and initial
  * implementation
  */
-package org.simplesim.examples.elevator;
+package org.simplesim.examples.elevator.dyn;
 
-import static org.simplesim.examples.elevator.Limits.LOBBY;
-import static org.simplesim.examples.elevator.Limits.START_DAY;
-import static org.simplesim.examples.elevator.Request.UP;
+import static org.simplesim.examples.elevator.core.Limits.LOBBY;
+import static org.simplesim.examples.elevator.core.Limits.START_DAY;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.simplesim.core.messaging.AbstractPort;
-import org.simplesim.core.messaging.DirectMessage;
-import org.simplesim.core.messaging.SinglePort;
+import org.simplesim.core.messaging.RoutedMessage;
 import org.simplesim.core.scheduling.Time;
+import org.simplesim.examples.elevator.core.Elevator;
+import org.simplesim.examples.elevator.core.ElevatorState;
+import org.simplesim.examples.elevator.core.ElevatorStrategy;
+import org.simplesim.examples.elevator.core.Limits;
+import org.simplesim.examples.elevator.core.Request;
 import org.simplesim.model.AbstractAgent;
+import org.simplesim.model.RoutingAgent;
 
 /**
  * Elevator agent implementing a simple planning strategy
@@ -26,18 +26,15 @@ import org.simplesim.model.AbstractAgent;
  * <li>If there is no other request in direction of movement, change direction.
  * </ul>
  */
-public final class StaticElevator extends AbstractAgent<ElevatorState, Elevator.EVENT> implements Elevator {
+public final class DynamicElevator extends RoutingAgent<ElevatorState, Elevator.EVENT> implements Elevator {
 
 	private final ElevatorStrategy strategy;
-	private final AbstractPort inport;
-	private final Map<StaticVisitor, AbstractPort> outport=new HashMap<>(); // one outport per connected visitor
 
-	public StaticElevator() {
+	public DynamicElevator() {
 		super(new ElevatorState());
-		inport=addInport(new SinglePort(this));
 		getState().setCurrentFloor(LOBBY);
 		getState().setDestinationFloor(LOBBY);
-		getState().setDirection(UP);
+		getState().setDirection(Limits.IDLE);
 		strategy=new ElevatorStrategy(this);
 		enqueueEvent(EVENT.idle,START_DAY);
 	}
@@ -55,7 +52,6 @@ public final class StaticElevator extends AbstractAgent<ElevatorState, Elevator.
 			break;
 		default:
 			throw new UnknownEventType("Unknown event type occured in ElevatorStrategy");
-
 		}
 		return getTimeOfNextEvent();
 	}
@@ -79,8 +75,8 @@ public final class StaticElevator extends AbstractAgent<ElevatorState, Elevator.
 	 * org.simplesim.examples.elevator.Request)
 	 */
 	@Override
-	public void sendMessage(StaticVisitor recipient, Request content) {
-		getOutport(recipient).write(new DirectMessage(this,content));
+	public void sendMessage(AbstractAgent<?, ?> recipient, Request content) {
+		getOutport().write(new RoutedMessage(this.getAddress(),recipient.getAddress(),content));
 	}
 
 	/*
@@ -93,23 +89,9 @@ public final class StaticElevator extends AbstractAgent<ElevatorState, Elevator.
 		getEventQueue().enqueue(event,time);
 	}
 
-	public AbstractPort getInport() {
-		return inport;
-	}
-
-	public AbstractPort getOutport(StaticVisitor visitor) {
-		return outport.get(visitor);
-	}
-
-	public AbstractPort addOutport(StaticVisitor visitor) {
-		final AbstractPort port=addOutport(new SinglePort(this));
-		outport.put(visitor,port);
-		return port;
-	}
-
 	@Override
 	public String getName() {
-		return "Elevator";
+		return "DynamicElevator";
 	}
 
 }

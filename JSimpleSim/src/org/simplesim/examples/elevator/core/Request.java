@@ -4,28 +4,25 @@
  * 
  * Contributors: - Rene Kuhlemann - development and initial implementation
  */
-package org.simplesim.examples.elevator;
+package org.simplesim.examples.elevator.core;
 
 import org.simplesim.core.scheduling.Time;
+import org.simplesim.model.AbstractAgent;
 
 /**
  * Content of messages for elevator and visitor (submodels)
  */
 public class Request implements Comparable<Request> {
 	
-	// constant for elevator's direction
-	public static final int IDLE=0b00;
-	public static final int UP=0b10;
-	public static final int DOWN=0b01;
-	public static final int UPDOWN=UP|DOWN;
+
 	
-	private final StaticVisitor visitor;
+	private final AbstractAgent<?,?> visitor;
 	private final int startingFloor; // origin
 	private final int destinationFloor; // destination floor
 	private final Time requestTime; // time of request (button pressed in starting floor)
 	private Time arrivalTime; // time of arrival in destination floor
 
-	public Request(StaticVisitor v, int start, int dest, Time currTime) {
+	public Request(AbstractAgent<?,?> v, int start, int dest, Time currTime) {
 		visitor=v;
 		startingFloor=start;
 		destinationFloor=dest;
@@ -33,7 +30,7 @@ public class Request implements Comparable<Request> {
 		arrivalTime=null;
 	}
 	
-	public StaticVisitor getVisitor() {
+	public AbstractAgent<?,?> getVisitor() {
 		return visitor;
 	}
 
@@ -66,9 +63,9 @@ public class Request implements Comparable<Request> {
 	}
 	
 	public int getDirection() {
-		if (isGoingUp()) return UP;
-		else if (isGoingDown()) return DOWN;
-		return IDLE;
+		if (isGoingUp()) return Limits.UP;
+		else if (isGoingDown()) return Limits.DOWN;
+		return Limits.IDLE;
 	}
 	
 	public Time getTravelTime() {

@@ -3,45 +3,40 @@
  * source and licensed under the terms of GNU GPLv3. Contributors: - Rene Kuhlemann - development and initial
  * implementation
  */
-package org.simplesim.examples.elevator;
+package org.simplesim.examples.elevator.dyn;
 
-import static org.simplesim.examples.elevator.Limits.END_WORK;
-import static org.simplesim.examples.elevator.Limits.IDLE_TIME;
-import static org.simplesim.examples.elevator.Limits.LOBBY;
-import static org.simplesim.examples.elevator.Limits.MAX_FLOOR;
-import static org.simplesim.examples.elevator.Limits.START_DAY;
-import static org.simplesim.examples.elevator.Limits.START_WORK;
+import static org.simplesim.examples.elevator.core.Limits.END_WORK;
+import static org.simplesim.examples.elevator.core.Limits.IDLE_TIME;
+import static org.simplesim.examples.elevator.core.Limits.LOBBY;
+import static org.simplesim.examples.elevator.core.Limits.MAX_FLOOR;
+import static org.simplesim.examples.elevator.core.Limits.START_DAY;
+import static org.simplesim.examples.elevator.core.Limits.START_WORK;
 
 import java.util.Random;
 
-import org.simplesim.core.messaging.AbstractPort;
-import org.simplesim.core.messaging.DirectMessage;
-import org.simplesim.core.messaging.SinglePort;
+import org.simplesim.core.dynamic.DomainChangeRequest;
+import org.simplesim.core.messaging.RoutedMessage;
 import org.simplesim.core.scheduling.Time;
+import org.simplesim.examples.elevator.core.Limits;
+import org.simplesim.examples.elevator.core.Request;
+import org.simplesim.examples.elevator.core.Visitor;
+import org.simplesim.examples.elevator.core.VisitorState;
+import org.simplesim.examples.elevator.core.VisitorState.ACTIVITY;
 import org.simplesim.model.AbstractAgent;
+import org.simplesim.model.RoutingAgent;
 
 /**
  *
  *
  */
-public final class StaticVisitor extends AbstractAgent<VisitorState, StaticVisitor.EVENT> {
+public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.EVENT> implements Visitor {
 
-	enum EVENT {
-		changeFloor, waiting, goHome
-	}
-
-	enum ACTIVITY {
-		waiting, working
-	}
-
-	private final AbstractPort inport, outport;
 	private static final Random random=new Random();
+	private final DynamicModel building;
 
-	public StaticVisitor() {
+	public DynamicVisitor(DynamicModel model) {
 		super(new VisitorState());
-		inport=addInport(new SinglePort(this));
-		outport=addOutport(new SinglePort(this));
-		getState().setCurrentFloor(LOBBY);
+		building=model;
 		getState().setActivity(ACTIVITY.waiting);
 		// init arrival time at lobby with a random value before start of work
 		final Time time=START_DAY.add(random.nextInt((int) (START_WORK.getTicks()-START_DAY.getTicks())));
@@ -72,7 +67,11 @@ public final class StaticVisitor extends AbstractAgent<VisitorState, StaticVisit
 		if (getInport().hasMessages()) {
 			// message from elevator agent: visitor arrived at destination floor
 			final Request request=getInport().poll().getContent();
-			getState().setCurrentFloor(request.getDestinationFloor()); // set new floor
+
+			// request model change to new floor
+			final Floor dest=building.getFloor(request.getDestinationFloor());
+			addModelChangeRequest(new DomainChangeRequest(this,dest));
+
 			if ((time.compareTo(END_WORK)>=1)&&(request.getDestinationFloor()==LOBBY))
 				getEventQueue().enqueue(EVENT.goHome,Time.INFINITY); // work is over, going home
 			// go to another floor after staying here for a random time period
@@ -84,34 +83,34 @@ public final class StaticVisitor extends AbstractAgent<VisitorState, StaticVisit
 		else getEventQueue().enqueue(EVENT.waiting,time.add(IDLE_TIME));
 	}
 
+	@Override
+	public int getCurrentFloor() {
+		return ((Floor) getParent()).getFloor();
+	}
+
 	/**
 	 * Go randomly to an other floor
 	 *
 	 * @param time
 	 */
 	private void changeFloor(Time time) {
-		int destination=getState().getCurrentFloor();
+		int destination=getCurrentFloor();
 		if (time.compareTo(END_WORK)>=0) destination=LOBBY; // go to lobby after end of work
-		else while (destination==getState().getCurrentFloor()) destination=1+random.nextInt(MAX_FLOOR);
-		// create request
-		final Request request=new Request(this,getState().getCurrentFloor(),destination,time);
-		// send message to elevator, equals pushing the elevator button
-		getOutport().write(new DirectMessage(this,request)); // send request to elevator
+		else while (destination==getCurrentFloor()) destination=1+random.nextInt(MAX_FLOOR);
+		sendRequest(building.getElevator(),destination,time);
 		getState().setActivity(ACTIVITY.waiting);
-		getEventQueue().enqueue(EVENT.waiting,time.add(IDLE_TIME)); // wait for elevator
+		getEventQueue().enqueue(EVENT.waiting,time.add(IDLE_TIME));
 	}
 
-	public AbstractPort getInport() {
-		return inport;
-	}
-
-	public AbstractPort getOutport() {
-		return outport;
+	private void sendRequest(AbstractAgent<?, ?> dest, int destination, Time time) {
+		final Request request=new Request(this,getCurrentFloor(),destination,time);
+		final RoutedMessage msg=new RoutedMessage(this.getAddress(),dest.getAddress(),request);
+		getOutport().write(msg); // send request to elevator
 	}
 
 	@Override
 	public String getName() {
-		return "visitor";
+		return "DynamicVisitor";
 	}
 
 }

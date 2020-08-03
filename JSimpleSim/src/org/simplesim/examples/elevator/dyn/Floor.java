@@ -8,12 +8,12 @@
  * 	- Rene Kuhlemann - development and initial implementation
  * 
  */
-package org.simplesim.examples.elevator2;
+package org.simplesim.examples.elevator.dyn;
 
 import org.simplesim.model.RoutingDomain;
 
 /**
- * 
+ * The Floor class models one story of the building and contains the level of the floor
  *
  */
 public final class Floor extends RoutingDomain {
@@ -31,7 +31,7 @@ public final class Floor extends RoutingDomain {
 	
 	@Override
 	public String getName() {
-		return "Floor";
+		return "Floor"+getFloor();
 	}
 
 }

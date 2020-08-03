@@ -4,7 +4,7 @@
  * 
  * Contributors: - Rene Kuhlemann - development and initial implementation
  */
-package org.simplesim.examples.elevator;
+package org.simplesim.examples.elevator.core;
 
 import org.simplesim.core.scheduling.Time;
 
@@ -30,5 +30,11 @@ public final class Limits {
 	public static final int MAX_STAY_TIME=3*Time.TICKS_PER_HOUR; // max. stay on a floor
 	
 	public static final Time IDLE_TIME=new Time(30*Time.TICKS_PER_SECOND); // time to check for requests when idle
+	
+	// constant for elevator's direction
+	public static final int IDLE=0b00;
+	public static final int UP=0b10;
+	public static final int DOWN=0b01;
+	public static final int UPDOWN=UP|DOWN;
 	
 }

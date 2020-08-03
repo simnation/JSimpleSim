@@ -3,21 +3,21 @@
  * source and licensed under the terms of GNU GPLv3. Contributors: - Rene Kuhlemann - development and initial
  * implementation
  */
-package org.simplesim.examples.elevator;
+package org.simplesim.examples.elevator.core;
 
-import static org.simplesim.examples.elevator.Limits.LOBBY;
-import static org.simplesim.examples.elevator.Limits.MAX_FLOOR;
-import static org.simplesim.examples.elevator.Request.DOWN;
-import static org.simplesim.examples.elevator.Request.IDLE;
-import static org.simplesim.examples.elevator.Request.UP;
-import static org.simplesim.examples.elevator.Request.UPDOWN;
+import static org.simplesim.examples.elevator.core.Limits.LOBBY;
+import static org.simplesim.examples.elevator.core.Limits.MAX_FLOOR;
+import static org.simplesim.examples.elevator.core.Limits.DOWN;
+import static org.simplesim.examples.elevator.core.Limits.IDLE;
+import static org.simplesim.examples.elevator.core.Limits.UP;
+import static org.simplesim.examples.elevator.core.Limits.UPDOWN;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.examples.elevator.Elevator.EVENT;
+import org.simplesim.examples.elevator.core.Elevator.EVENT;
 
 /**
  *

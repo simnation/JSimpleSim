@@ -3,14 +3,12 @@
  * source and licensed under the terms of GNU GPLv3. Contributors: - Rene Kuhlemann - development and initial
  * implementation
  */
-package org.simplesim.examples.elevator;
+package org.simplesim.examples.elevator.core;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-
-import static org.simplesim.examples.elevator.Limits.MAX_FLOOR;
 
 import org.simplesim.model.State;
 
@@ -25,14 +23,14 @@ public final class ElevatorState implements State {
 	private int direction;
 	private final List<Request> cabin=new LinkedList<>();
 	private final List<Queue<Request>> queueList=new ArrayList<>(); // lobby=0, floor N=N
-	private final int arrivals[]=new int[MAX_FLOOR+1];
-	private final int button[]=new int[MAX_FLOOR+1];
+	private final int arrivals[]=new int[Limits.MAX_FLOOR+1];
+	private final int button[]=new int[Limits.MAX_FLOOR+1];
 
 	public ElevatorState() {
-		for (int floor=0; floor<=MAX_FLOOR; floor++) {
+		for (int floor=0; floor<=Limits.MAX_FLOOR; floor++) {
 			queueList.add(new LinkedList<Request>());
 			setArrivals(floor,0);
-			setButton(floor,Request.IDLE);
+			setButton(floor,Limits.IDLE);
 		}
 	}
 
@@ -75,7 +73,7 @@ public final class ElevatorState implements State {
 	public void setDirection(int value) {
 		direction=value;
 	}
-	
+
 	public int getArrivals(int floor) {
 		return arrivals[floor];
 	}

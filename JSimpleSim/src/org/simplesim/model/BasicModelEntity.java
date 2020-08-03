@@ -8,8 +8,6 @@ package org.simplesim.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.naming.OperationNotSupportedException;
-
 import org.simplesim.core.messaging.AbstractPort;
 
 /**
@@ -39,7 +37,7 @@ public abstract class BasicModelEntity {
 
 	/** Address in numbers, describing the model's branch within the model tree */
 	private int[] address=null;
-	
+
 	/** The level in the hierarchy the model is located at. */
 	private int level=INIT_LEVEL;
 
@@ -66,11 +64,11 @@ public abstract class BasicModelEntity {
 	/**
 	 * Adds a new inport to the model.
 	 *
-	 * @param <P> class of port
+	 * @param <P>  class of port
 	 * @param port the port to add
 	 * @return reference to the new port for further usage
-	 * @throws UnsupportedOperationException if the simulation is running
-	 * @throws UniqueConstraintViolationException   if the same port is added twice
+	 * @throws UnsupportedOperationException      if the simulation is running
+	 * @throws UniqueConstraintViolationException if the same port is added twice
 	 */
 	@SuppressWarnings("unchecked")
 	public final <P extends AbstractPort> P addInport(P port) {
@@ -83,10 +81,10 @@ public abstract class BasicModelEntity {
 	 * <p>
 	 * Addition will fail if the same object is already used as a port.
 	 *
-	 * @param <P> class of port
+	 * @param <P>  class of port
 	 * @param port the port to add
 	 * @return reference to the new port for further usage
-	 * @throws UnsupportedOperationException if the simulation is running
+	 * @throws UnsupportedOperationException      if the simulation is running
 	 * @throws UniqueConstraintViolationException if the same port is added twice
 	 */
 	@SuppressWarnings("unchecked")
@@ -281,19 +279,18 @@ public abstract class BasicModelEntity {
 	/**
 	 * Resets the entity's address based on its position in the model structure.
 	 * <p>
-	 * Uses the parent's address and an additional index given by the caller. This method should
-	 * be called if the structure changes (e.g. this entity is moved to another domain) It can also be use to initialize
-	 * the address.
+	 * Uses the parent's address and an additional index given by the caller. This method should be called if the
+	 * structure changes (e.g. this entity is moved to another domain) It can also be use to initialize the address.
 	 *
 	 * @param index the new index value of this entity
 	 */
 	public void resetAddress(int index) {
 		resetLevel();
 		final int[] pAddr=getParent().getAddress();
-		if ((address==null)||(address.length!=pAddr.length+1)) address=new int[pAddr.length+1];
+		if ((address==null)||(address.length!=(pAddr.length+1))) address=new int[pAddr.length+1];
 		int i=0;
 		for (; i<pAddr.length; i++) address[i]=pAddr[i];
-		address[i]=index; //i==pAddr.length
+		address[i]=index; // i==pAddr.length
 	}
 
 	/**
@@ -301,7 +298,7 @@ public abstract class BasicModelEntity {
 	 *
 	 * @param port the port
 	 * @throws UnsupportedOperationException if the simulation is running
-	 * @throws InvalidPortException         if the port is unknown
+	 * @throws InvalidPortException          if the port is unknown
 	 */
 	public final void removeInport(AbstractPort port) throws UnsupportedOperationException, InvalidPortException {
 		removePort(inports,port);
@@ -312,7 +309,7 @@ public abstract class BasicModelEntity {
 	 *
 	 * @param port the port
 	 * @throws UnsupportedOperationException if the simulation is running
-	 * @throws InvalidPortException         if the port is unknown
+	 * @throws InvalidPortException          if the port is unknown
 	 */
 	public final void removeOutport(AbstractPort port) throws UnsupportedOperationException, InvalidPortException {
 		removePort(outports,port);
