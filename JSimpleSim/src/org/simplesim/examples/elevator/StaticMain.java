@@ -8,8 +8,8 @@ package org.simplesim.examples.elevator;
 
 import org.simplesim.core.messaging.DirectMessageForwarding;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.examples.elevator.core.Limits;
-import org.simplesim.examples.elevator.core.View;
+import org.simplesim.examples.elevator.shared.Limits;
+import org.simplesim.examples.elevator.shared.View;
 import org.simplesim.examples.elevator.stat.StaticElevator;
 import org.simplesim.examples.elevator.stat.StaticModel;
 import org.simplesim.examples.elevator.stat.StaticVisitor;

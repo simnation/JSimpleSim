@@ -3,12 +3,12 @@
  * source and licensed under the terms of GNU GPLv3. Contributors: - Rene Kuhlemann - development and initial
  * implementation
  */
-package org.simplesim.examples.elevator.core;
+package org.simplesim.examples.elevator.shared;
 
 import org.simplesim.model.State;
 
 /**
- * The visitors state
+ * Class containing all relevant variables of the visitor state
  */
 public final class VisitorState implements State {
 	

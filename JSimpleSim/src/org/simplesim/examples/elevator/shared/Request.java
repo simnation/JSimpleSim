@@ -4,17 +4,15 @@
  * 
  * Contributors: - Rene Kuhlemann - development and initial implementation
  */
-package org.simplesim.examples.elevator.core;
+package org.simplesim.examples.elevator.shared;
 
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 
 /**
- * Content of messages for elevator and visitor (submodels)
+ * Content of messages between elevator and visitor
  */
 public class Request implements Comparable<Request> {
-	
-
 	
 	private final AbstractAgent<?,?> visitor;
 	private final int startingFloor; // origin

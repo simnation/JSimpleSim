@@ -11,12 +11,12 @@ import org.simplesim.model.RoutingAgent;
 import org.simplesim.model.State;
 
 /**
- * Example of a simple implementation of an {@code RoutingAgent}
+ * Simple implementation of a {@code RoutingAgent} as template for own implementations
  */
-public class SimpleAgent extends RoutingAgent<SimpleAgent.SimpleAgentState, SimpleAgent.EVENT> {
+public class SimpleAgent extends RoutingAgent<SimpleAgent.SimpleAgentState, SimpleAgent.Event> {
 
-	enum EVENT {
-		event1, event2, event3
+	enum Event {
+		EVENT1, EVENT2, EVENT3
 	}
 
 	static class SimpleAgentState implements State {
@@ -42,21 +42,27 @@ public class SimpleAgent extends RoutingAgent<SimpleAgent.SimpleAgentState, Simp
 		return getTimeOfNextEvent();
 	}
 
-	private void sendMessage(RoutingAgent<?,?> destination, Object content) {
+	protected void sendMessage(RoutingAgent<?,?> destination, Object content) {
 		RoutedMessage message=new RoutedMessage(this.getAddress(),destination.getAddress(),content);
 		getOutport().write(message);
 	}
 
+	/*
+	 * Do the message handling here.
+	 */
 	private void handleMessage(RoutedMessage message) {
-		/*
-		 * Do the message handling here.
-		 */
+
 	}
 
-	private void handleEvent(EVENT event, Time time) {
-		/*
-		 * Do the event handling here.
-		 */
+	/*
+	 * Do the event handling here.
+	 */
+	private void handleEvent(Event event, Time time) {
+		switch(event) {
+		case EVENT1: ;
+		case EVENT2: ;
+		case EVENT3: ;
+		};
 	}
 
 }

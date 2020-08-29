@@ -8,20 +8,33 @@ package org.simplesim.examples.elevator;
 import org.simplesim.core.messaging.ForwardingStrategy;
 import org.simplesim.core.messaging.RoutedMessageForwarding;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.examples.elevator.core.Limits;
-import org.simplesim.examples.elevator.core.View;
 import org.simplesim.examples.elevator.dyn.DynamicElevator;
 import org.simplesim.examples.elevator.dyn.DynamicModel;
 import org.simplesim.examples.elevator.dyn.DynamicVisitor;
 import org.simplesim.examples.elevator.dyn.Floor;
+import org.simplesim.examples.elevator.shared.Limits;
+import org.simplesim.examples.elevator.shared.View;
 import org.simplesim.simulator.DynamicDecorator;
 import org.simplesim.simulator.SequentialDESimulator;
 import org.simplesim.simulator.Simulator;
 
 /**
- * Example of a multi-domain agent system with direct messaging
+ * Example of a multi-domain agent system with routed messaging and dynamic model changes
  * <p>
- * This
+ * To illustrate differences of a static and a dynamic modeling approach, both are used with the same simulation problem: the steering strategy of an elevator.
+ * Common data structure, the steering algorithm and the graphical representation are shared, so the focus lies on
+ * the differences of both approaches:
+ * <p>
+ * <u>Static model:</u><ul>
+ * <li> Visitors store their current floor in their state.
+ * <li> Ports of elevator and visitor are connected directly.
+ * <li>  
+ *  </ul>
+ * 
+ *  
+ * (no model changes) (model is changed during the 
+ * simulation run)
+ *  nThis is the dynamic variant of the elevator simulation example to illustrate differences from the static apporach. 
  */
 public class DynamicMain {
 

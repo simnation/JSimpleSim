@@ -8,8 +8,10 @@ package org.simplesim.examples.elevator.dyn;
 import org.simplesim.model.RoutingDomain;
 
 /**
- *
- *
+ * Part of the dynamic elevator example
+ * 
+ * @see org.simplesim.elevator.DynamicMain DynamicMain 
+ * 
  */
 public class DynamicModel extends RoutingDomain {
 

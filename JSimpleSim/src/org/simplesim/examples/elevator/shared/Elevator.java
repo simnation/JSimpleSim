@@ -3,28 +3,27 @@
  * source and licensed under the terms of GNU GPLv3. Contributors: - Rene Kuhlemann - development and initial
  * implementation
  */
-package org.simplesim.examples.elevator.core;
+package org.simplesim.examples.elevator.shared;
 
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 
 /**
- *
+ * Basic interface to encapsulate elevator functionality and events
  *
  */
 public interface Elevator {
 
-	enum EVENT {
-		idle, moved
+	enum Event {
+		IDLE, MOVED
 	}
 
 	void processMessages();
 
 	void sendMessage(AbstractAgent<?,?> recipient, Request content);
 
-	void enqueueEvent(EVENT event, Time time);
+	void enqueueEvent(Event event, Time time);
 
 	ElevatorState getState();
 
-	void log(Time time, String text);
 }

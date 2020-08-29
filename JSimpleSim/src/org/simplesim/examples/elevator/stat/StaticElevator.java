@@ -5,8 +5,8 @@
  */
 package org.simplesim.examples.elevator.stat;
 
-import static org.simplesim.examples.elevator.core.Limits.LOBBY;
-import static org.simplesim.examples.elevator.core.Limits.START_DAY;
+import static org.simplesim.examples.elevator.shared.Limits.LOBBY;
+import static org.simplesim.examples.elevator.shared.Limits.START_DAY;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,25 +15,23 @@ import org.simplesim.core.messaging.AbstractPort;
 import org.simplesim.core.messaging.DirectMessage;
 import org.simplesim.core.messaging.SinglePort;
 import org.simplesim.core.scheduling.Time;
+import org.simplesim.examples.elevator.shared.Elevator;
+import org.simplesim.examples.elevator.shared.ElevatorState;
+import org.simplesim.examples.elevator.shared.ElevatorStrategy;
+import org.simplesim.examples.elevator.shared.Limits;
+import org.simplesim.examples.elevator.shared.Request;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.BasicModelEntity;
-import org.simplesim.examples.elevator.core.Elevator;
-import org.simplesim.examples.elevator.core.ElevatorState;
-import org.simplesim.examples.elevator.core.ElevatorStrategy;
-import org.simplesim.examples.elevator.core.Limits;
-import org.simplesim.examples.elevator.core.Request;
 
 
 
 /**
- * Elevator agent implementing a simple planning strategy
- * <ul>
- * <li>If there is any request in direction of movement with the same direction, go to the nearest one.
- * <li>If there is any other request in direction of movement, go to the farthest one.
- * <li>If there is no other request in direction of movement, change direction.
- * </ul>
+ * Part of the static elevator example
+ * 
+ * @see org.simplesim.elevator.StaticMain StaticMain 
+ * 
  */
-public final class StaticElevator extends AbstractAgent<ElevatorState, Elevator.EVENT> implements Elevator {
+public final class StaticElevator extends AbstractAgent<ElevatorState, Elevator.Event> implements Elevator {
 
 	private final ElevatorStrategy strategy;
 	private final AbstractPort inport;
@@ -42,23 +40,23 @@ public final class StaticElevator extends AbstractAgent<ElevatorState, Elevator.
 	public StaticElevator() {
 		super(new ElevatorState());
 		inport=addInport(new SinglePort(this));
+		strategy=new ElevatorStrategy(this);
 		getState().setCurrentFloor(LOBBY);
 		getState().setDestinationFloor(LOBBY);
 		getState().setDirection(Limits.IDLE);
-		strategy=new ElevatorStrategy(this);
-		enqueueEvent(EVENT.idle,START_DAY);
+		enqueueEvent(Event.IDLE,START_DAY);
 	}
 
 	@Override
 	protected Time doEvent(Time time) {
 		switch (getEventQueue().dequeue()) {
-		case moved: // just arrived on new floor
+		case MOVED: // just arrived on new floor
 			getState().setCurrentFloor(getState().getDestinationFloor());
 			strategy.processMoveEvent(time);
 			break;
-		case idle: // nothing to do, wait for passengers
+		case IDLE: // nothing to do, wait for passengers
 			if (getInport().hasMessages()) strategy.processMoveEvent(time);
-			else enqueueEvent(EVENT.idle,time.add(Limits.IDLE_TIME));
+			else enqueueEvent(Event.IDLE,time.add(Limits.IDLE_TIME));
 			break;
 		default:
 			throw new UnknownEventType("Unknown event type occured in ElevatorStrategy");
@@ -95,7 +93,7 @@ public final class StaticElevator extends AbstractAgent<ElevatorState, Elevator.
 	 * org.simplesim.core.scheduling.Time)
 	 */
 	@Override
-	public void enqueueEvent(EVENT event, Time time) {
+	public void enqueueEvent(Event event, Time time) {
 		getEventQueue().enqueue(event,time);
 	}
 

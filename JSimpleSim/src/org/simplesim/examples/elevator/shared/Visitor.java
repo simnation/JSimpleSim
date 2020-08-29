@@ -4,19 +4,24 @@
  * 
  * Contributors: - Rene Kuhlemann - development and initial implementation
  */
-package org.simplesim.examples.elevator.core;
+package org.simplesim.examples.elevator.shared;
+
+import org.simplesim.core.scheduling.Time;
+import org.simplesim.model.AbstractAgent;
 
 /**
- * 
+ * Basic interface to encapsulate visitor functionality and events
  *
  */
 public interface Visitor {
 	
-	enum EVENT {
-		changeFloor, waiting, goHome
+	enum Event {
+		CHANGE_FLOOR, WAITING, GO_HOME
 	}
 	
 		
 	int getCurrentFloor();
+	
+	void sendRequest(AbstractAgent<?, ?> dest, int destination, Time time);
 	
 }

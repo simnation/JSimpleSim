@@ -34,8 +34,8 @@ public class EventQueueTest {
 	private static final int initTime=countTotal>>4; 	// time interval for generating initial events
 	private static final int aheadTime=initTime>>1;
 	
-	private enum QUEUE_TYPE {
-		//HASHED_BUCKET_QUEUE("Hashed bucket queue", new HashedBucketQueue<String>()),
+	private enum QueueType {
+		HASHED_BUCKET_QUEUE("Hashed bucket queue", new HashedBucketQueue<String>()),
 		HEAP_BUCKET_QUEUE("Heap bucket queue", new HeapBucketQueue<String>()),
 		SORTED_BUCKET_QUEUE("Sorted bucket queue", new SortedBucketQueue<String>()),
 		HEAP_EVENT_QUEUE("Heap event queue", new HeapEventQueue<String>()),
@@ -46,7 +46,7 @@ public class EventQueueTest {
 		private final String name;
 		private final EventQueue<String> eq;
 
-		private QUEUE_TYPE(String name, EventQueue<String> eq) {
+		private QueueType(String name, EventQueue<String> eq) {
 			this.name=name;
 			this.eq=eq;
 		}
@@ -61,9 +61,9 @@ public class EventQueueTest {
 
 	}
 
-	private final QUEUE_TYPE qt;
+	private final QueueType qt;
 
-	public EventQueueTest(QUEUE_TYPE queueType) {
+	public EventQueueTest(QueueType queueType) {
 		qt=queueType;
 	}
 
@@ -147,7 +147,7 @@ public class EventQueueTest {
 		final SortedMap<Long, String> performanceSADE=new TreeMap<>();
 		final SortedMap<Long, String> performanceRNE=new TreeMap<>();
 		final SortedMap<Long, String> performanceDequeueAll=new TreeMap<>();
-		for (final QUEUE_TYPE eq : QUEUE_TYPE.values()) {
+		for (final QueueType eq : QueueType.values()) {
 			System.out.println("Testing "+eq.getName());
 			final EventQueueTest test=new EventQueueTest(eq);
 			
@@ -173,28 +173,28 @@ public class EventQueueTest {
 		}
 		
 		System.out.println("\nPerformance in descending order for enqeue(Time,E):");
-		for (int i=0; i<QUEUE_TYPE.values().length; i++) {
+		for (int i=0; i<QueueType.values().length; i++) {
 			long time=performanceEnqueue.firstKey();
 			System.out.println(performanceEnqueue.get(time)+" with "+time+" ms");
 			performanceEnqueue.remove(time);
 		}
 		
 		System.out.println("\nPerformance in descending order for dequeue() and enqeue(Time,E):");
-		for (int i=0; i<QUEUE_TYPE.values().length; i++) {
+		for (int i=0; i<QueueType.values().length; i++) {
 			long time=performanceRNE.firstKey();
 			System.out.println(performanceRNE.get(time)+" with "+time+" ms");
 			performanceRNE.remove(time);
 		}
 		
 		System.out.println("\nPerformance in descending order for getTime(E) and dequeue(E):");
-		for (int i=0; i<QUEUE_TYPE.values().length; i++) {
+		for (int i=0; i<QueueType.values().length; i++) {
 			long time=performanceSADE.firstKey();
 			System.out.println(performanceSADE.get(time)+" with "+time+" ms");
 			performanceSADE.remove(time);
 		}
 		
 		System.out.println("\nPerformance in descending order for dequeueAll():");
-		for (int i=0; i<QUEUE_TYPE.values().length; i++) {
+		for (int i=0; i<QueueType.values().length; i++) {
 			long time=performanceDequeueAll.firstKey();
 			System.out.println(performanceDequeueAll.get(time)+" with "+time+" ms");
 			performanceDequeueAll.remove(time);

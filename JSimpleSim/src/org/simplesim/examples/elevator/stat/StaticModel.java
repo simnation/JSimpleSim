@@ -7,9 +7,12 @@ package org.simplesim.examples.elevator.stat;
 
 import org.simplesim.model.AbstractDomain;
 
+
 /**
- *
- *
+ * Part of the static elevator example
+ * 
+ * @see org.simplesim.elevator.StaticMain StaticMain 
+ * 
  */
 public final class StaticModel extends AbstractDomain {
 

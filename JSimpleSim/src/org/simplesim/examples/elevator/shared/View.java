@@ -3,10 +3,10 @@
  * source and licensed under the terms of GNU GPLv3. Contributors: - Rene Kuhlemann - development and initial
  * implementation
  */
-package org.simplesim.examples.elevator.core;
+package org.simplesim.examples.elevator.shared;
 
-import static org.simplesim.examples.elevator.core.Limits.LOBBY;
-import static org.simplesim.examples.elevator.core.Limits.MAX_FLOOR;
+import static org.simplesim.examples.elevator.shared.Limits.LOBBY;
+import static org.simplesim.examples.elevator.shared.Limits.MAX_FLOOR;
 
 import java.awt.Color;
 import java.awt.Dimension;

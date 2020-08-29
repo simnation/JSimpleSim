@@ -36,9 +36,7 @@ import org.simplesim.simulator.DynamicDecorator;
  * </ol>
  * <p>
  * Agents are always embedded in an {@code AbstractDomain} for
- * compartmentalization. If implemented, the agent may also refer to an
- * information board of its parent domain or the root domain for additional
- * external information.
+ * compartmentalization.
  *
  * @param <S> type of the agent state containing all state variables
  * @param <E> type of the events

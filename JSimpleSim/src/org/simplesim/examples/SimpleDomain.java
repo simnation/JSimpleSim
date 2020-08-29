@@ -10,9 +10,14 @@ import org.simplesim.core.messaging.ForwardingStrategy;
 import org.simplesim.core.messaging.RoutedMessageForwarding;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.RoutingDomain;
+import org.simplesim.simulator.DynamicDecorator;
 import org.simplesim.simulator.SequentialDESimulator;
 import org.simplesim.simulator.Simulator;
 
+
+/**
+ * Simple implementation of a {@code RoutingDomain} 
+ */
 public class SimpleDomain extends RoutingDomain {
 
 	public SimpleDomain() {
@@ -28,9 +33,8 @@ public class SimpleDomain extends RoutingDomain {
 		subdomain.addEntity(new SimpleAgent());
 		root.addEntity(subdomain);
 		ForwardingStrategy fs=new RoutedMessageForwarding(root);
-		//final Simulator simulator=new DynamicDecorator(new ConcurrentDESimulator(model,fs));
-		Simulator simulator=new SequentialDESimulator(root,fs);
-		simulator.runSimulation(new Time(Time.TICKS_PER_HOUR));
+		Simulator simulator=new DynamicDecorator(new SequentialDESimulator(root,fs));
+		simulator.runSimulation(new Time(Time.INFINITY));
 	}
 
 }

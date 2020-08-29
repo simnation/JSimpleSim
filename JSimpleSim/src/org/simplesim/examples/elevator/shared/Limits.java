@@ -4,25 +4,25 @@
  * 
  * Contributors: - Rene Kuhlemann - development and initial implementation
  */
-package org.simplesim.examples.elevator.core;
+package org.simplesim.examples.elevator.shared;
 
 import org.simplesim.core.scheduling.Time;
 
 /**
- * 
+ * Contains all constants of the elevator simulation model
  *
  */
 public final class Limits {
 	
-	public final static int LOBBY=0;
-	public final static int MAX_FLOOR=13;
+	public final static int LOBBY=0; // index of lowest floor
+	public final static int MAX_FLOOR=13; // index of highest floor
 	public static final int CAPACITY=16; // maximum passenger capacity
-	public static final int VISITORS=600;
+	public static final int VISITORS=600; // number of visitors
 	
-	public final static Time START_DAY=new Time(7*Time.TICKS_PER_HOUR);
-	public final static Time START_WORK=new Time(9*Time.TICKS_PER_HOUR);
-	public final static Time END_WORK=new Time(17*Time.TICKS_PER_HOUR);
-	public final static Time END_DAY=new Time(20*Time.TICKS_PER_HOUR);
+	public final static Time START_DAY=new Time(7*Time.TICKS_PER_HOUR); // start of simulation
+	public final static Time START_WORK=new Time(9*Time.TICKS_PER_HOUR);// start of working day (8 hours)
+	public final static Time END_WORK=new Time(17*Time.TICKS_PER_HOUR); // end of working day
+	public final static Time END_DAY=new Time(20*Time.TICKS_PER_HOUR);  // end of simulation
 		
 	public final static int SPEED=2*Time.TICKS_PER_SECOND; // travel time to get from one floor to the next one
 	public final static int DOOR_TIME=2*3*Time.TICKS_PER_SECOND; // time to open AND close the doors
@@ -31,7 +31,7 @@ public final class Limits {
 	
 	public static final Time IDLE_TIME=new Time(30*Time.TICKS_PER_SECOND); // time to check for requests when idle
 	
-	// constant for elevator's direction
+	// constants for elevator's direction
 	public static final int IDLE=0b00;
 	public static final int UP=0b10;
 	public static final int DOWN=0b01;

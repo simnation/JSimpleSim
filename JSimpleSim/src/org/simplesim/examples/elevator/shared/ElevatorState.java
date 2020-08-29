@@ -3,7 +3,7 @@
  * source and licensed under the terms of GNU GPLv3. Contributors: - Rene Kuhlemann - development and initial
  * implementation
  */
-package org.simplesim.examples.elevator.core;
+package org.simplesim.examples.elevator.shared;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -13,18 +13,17 @@ import java.util.Queue;
 import org.simplesim.model.State;
 
 /**
- *
- *
+ *	Class containing all relevant variables of the elevator state 
  */
 public final class ElevatorState implements State {
 
 	private int currentFloor;
 	private int destinationFloor;
-	private int direction;
-	private final List<Request> cabin=new LinkedList<>();
-	private final List<Queue<Request>> queueList=new ArrayList<>(); // lobby=0, floor N=N
-	private final int arrivals[]=new int[Limits.MAX_FLOOR+1];
-	private final int button[]=new int[Limits.MAX_FLOOR+1];
+	private int direction; // moving direction
+	private final List<Request> cabin=new LinkedList<>(); // who is in the cabin?
+	private final List<Queue<Request>> queueList=new ArrayList<>(); // requests grouped by floor
+	private final int arrivals[]=new int[Limits.MAX_FLOOR+1]; // number of recent arrival for graphic view
+	private final int button[]=new int[Limits.MAX_FLOOR+1]; // status of elevator button on each floor
 
 	public ElevatorState() {
 		for (int floor=0; floor<=Limits.MAX_FLOOR; floor++) {

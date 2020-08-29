@@ -3,25 +3,31 @@
  * source and licensed under the terms of GNU GPLv3. Contributors: - Rene Kuhlemann - development and initial
  * implementation
  */
-package org.simplesim.examples.elevator.core;
+package org.simplesim.examples.elevator.shared;
 
-import static org.simplesim.examples.elevator.core.Limits.LOBBY;
-import static org.simplesim.examples.elevator.core.Limits.MAX_FLOOR;
-import static org.simplesim.examples.elevator.core.Limits.DOWN;
-import static org.simplesim.examples.elevator.core.Limits.IDLE;
-import static org.simplesim.examples.elevator.core.Limits.UP;
-import static org.simplesim.examples.elevator.core.Limits.UPDOWN;
+import static org.simplesim.examples.elevator.shared.Limits.DOWN;
+import static org.simplesim.examples.elevator.shared.Limits.IDLE;
+import static org.simplesim.examples.elevator.shared.Limits.LOBBY;
+import static org.simplesim.examples.elevator.shared.Limits.MAX_FLOOR;
+import static org.simplesim.examples.elevator.shared.Limits.UP;
+import static org.simplesim.examples.elevator.shared.Limits.UPDOWN;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.examples.elevator.core.Elevator.EVENT;
+import org.simplesim.examples.elevator.shared.Elevator.Event;
 
 /**
- *
- *
+ * Class encapsulating the elevator steering logic. 
+ * <p>
+ * The elevator follows one of the earliest strategies for elevator
+ * control systems called <i>collective control</i>: Each floor is equipped with buttons representing the directions up
+ * and down. The elevator cabin keeps track of all the calls made in the same direction, collecting all passengers going
+ * in the same direction. The cabin then reverse and collects all passengers going in the opposite direction.
+ * <p>This class only contains the steering logic, agent-specific functionality (messaging, event management,...) is part of the
+ * elevator implementations. Thus, dynamic and static elevator both use the same strategy.
  */
 public final class ElevatorStrategy {
 
@@ -41,10 +47,10 @@ public final class ElevatorStrategy {
 	 */
 	public void processMoveEvent(Time time) {
 		elevator.processMessages(); // process any new requests
-		
+
 		final int exitingPassengers=exitCabin(time); // let passengers for this floor leave the cabin
 		getState().setArrivals(getState().getCurrentFloor(),exitingPassengers);
-		
+
 		int enteringPassengers=enterCabin(time); // let new passengers going in current direction enter the cabin
 		// if the elevator was idle, look for the next pressed button, start search in downward direction
 		if (getState().getDirection()==IDLE) getState().setDirection(DOWN);
@@ -55,10 +61,10 @@ public final class ElevatorStrategy {
 			enteringPassengers=enterCabin(time); // let passengers for the opposite direction enter the cabin
 			destination=calcNextDestination(); // calc floor of next stop again after changing direction
 		}
-	
+
 		if (destination==getState().getCurrentFloor()) { // no requests ==> switch to idle state
 			getState().setDirection(IDLE); // no request in any direction
-			getElevator().enqueueEvent(EVENT.idle,time.add(Limits.IDLE_TIME));
+			getElevator().enqueueEvent(Event.IDLE,time.add(Limits.IDLE_TIME));
 			return;
 		}
 		// elevator movement
@@ -67,7 +73,7 @@ public final class ElevatorStrategy {
 		int travelTime=Limits.DOOR_TIME+(Limits.CHANGE_TIME*(enteringPassengers+exitingPassengers));
 		// ...and the number floors to move along
 		travelTime+=Limits.SPEED*Math.abs(getState().getDestinationFloor()-getState().getCurrentFloor());
-		elevator.enqueueEvent(EVENT.moved,time.add(travelTime));
+		elevator.enqueueEvent(Event.MOVED,time.add(travelTime));
 	}
 
 	/**
@@ -151,16 +157,16 @@ public final class ElevatorStrategy {
 		final List<Request> enteringPassengers=new LinkedList<>();
 		final int floor=getState().getCurrentFloor();
 
-		for (Request request : getState().getQueue(floor)) {
+		for (final Request request : getState().getQueue(floor)) {
 			if ((getState().getCabin().size()+enteringPassengers.size())>=Limits.CAPACITY) break;
 			if (((request.getDestinationFloor()>floor)&&(getState().getDirection()==UP))
 					||((request.getDestinationFloor()<floor)&&(getState().getDirection()==DOWN)))
-			enteringPassengers.add(request);
+				enteringPassengers.add(request);
 		}
 		getState().getCabin().addAll(enteringPassengers);
 		getState().getQueue(floor).removeAll(enteringPassengers);
 		int button=IDLE;
-		for (Request request : getState().getQueue(floor)) button|=request.getDirection();
+		for (final Request request : getState().getQueue(floor)) button|=request.getDirection();
 		getState().setButton(floor,button); // set button according to remaining requests
 		return enteringPassengers.size();
 	}

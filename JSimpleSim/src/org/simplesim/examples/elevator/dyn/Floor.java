@@ -12,9 +12,13 @@ package org.simplesim.examples.elevator.dyn;
 
 import org.simplesim.model.RoutingDomain;
 
-/**
+ /**
+ * Part of the dynamic elevator example
+ * 
  * The Floor class models one story of the building and contains the level of the floor
- *
+ * 
+ * @see org.simplesim.elevator.DynamicMain DynamicMain 
+ * 
  */
 public final class Floor extends RoutingDomain {
 	
@@ -31,7 +35,7 @@ public final class Floor extends RoutingDomain {
 	
 	@Override
 	public String getName() {
-		return "Floor"+getFloor();
+		return "floor_"+getFloor();
 	}
 
 }

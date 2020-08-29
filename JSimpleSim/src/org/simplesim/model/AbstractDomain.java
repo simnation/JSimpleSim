@@ -13,10 +13,10 @@ import java.util.List;
  * <p>
  * Domains serve as a compartment for other entities within the simulation model. These entities may be agents or other
  * domains. Therefore, simulation model are build as a tree-like structure with {@code AbstractDomain} as branching and
- * {@link AbstractAgent} as leaf, resembling a composite pattern. The domain adds the following features:
+ * {@link AbstractAgent} as leaf, resembling a composite pattern. The domain adds the following features for entity management:
  * <ul>
  * <li>add and remove entities to this domain
- * <li>give an overview of the entities contained in this domain
+ * <li>provide information of the entities contained in this domain
  * <li>list all agents in this domain and its subdomains
  * </ul>
  *

@@ -18,6 +18,7 @@ import org.simplesim.core.messaging.AbstractPort;
  * <li>unit identification (by name or address)
  * <li>managing in- and outports
  * <li>utility methods (model level, naming, {@code toString}, {@code equals})
+ * <li>providing relevant exceptions 
  * </ul>
  */
 public abstract class BasicModelEntity {
