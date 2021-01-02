@@ -28,7 +28,7 @@ import org.simplesim.model.BasicModelEntity;
 /**
  * Part of the static elevator example
  * 
- * @see org.simplesim.elevator.StaticMain StaticMain 
+ * @see org.simplesim.examples.elevator.StaticMain StaticMain 
  * 
  */
 public final class StaticElevator extends AbstractAgent<ElevatorState, Elevator.Event> implements Elevator {

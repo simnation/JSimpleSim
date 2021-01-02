@@ -98,9 +98,10 @@ public abstract class RoutingDomain extends AbstractDomain {
 	/**
 	 * Defines the domain as root domain of the model.
 	 * <p>
-	 * Should be called from the constructor of the derived class or during model building. Can only be called once.
+	 * Should be called from the constructor of the derived class or during model building. Only call once!
 	 */
 	public void setAsRootDomain() {
+		setParent(null);
 		setAddress(ROOT_ADDRESS);
 		getOutport().connectTo(getInport());
 	}

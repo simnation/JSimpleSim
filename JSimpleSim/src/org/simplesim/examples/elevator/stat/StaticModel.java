@@ -11,7 +11,7 @@ import org.simplesim.model.AbstractDomain;
 /**
  * Part of the static elevator example
  * 
- * @see org.simplesim.elevator.StaticMain StaticMain 
+ * @see org.simplesim.examples.elevator.StaticMain StaticMain  
  * 
  */
 public final class StaticModel extends AbstractDomain {

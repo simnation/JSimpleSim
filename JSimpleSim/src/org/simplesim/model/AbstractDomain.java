@@ -97,19 +97,46 @@ public abstract class AbstractDomain extends BasicModelEntity {
 	}
 
 	/**
-	 * Checks for model.
+	 * Checks, if this domain contains a given model.
 	 *
 	 * @param model the model
-	 * @return true, if checks for model
+	 * @return true, if this domain contains the given submodel
 	 */
 	public final boolean containsEntity(BasicModelEntity model) {
 		return getEntityList().contains(model);
 	}
 
+	/**
+	 * Returns the submodel with a given index.
+	 *
+	 * @param index the index of the model within this domain's submodel list
+	 * @return the submodel
+	 * 
+	 * @throws IndexOutOfBoundsException
+	 */
 	public final BasicModelEntity getDomainEntity(int index) {
 		return getEntityList().get(index);
 	}
+	
+	/**
+	 * Checks, if this domain is the root of the model.
+	 *
+	 * @return true, if this domain it the root of the model
+	 */
+	public final boolean isRoot() {
+		return getParent()==null;
+	}
 
+	/**
+	 * Returns the root domain of the model.
+	 *
+	 * @return the root domain
+	 */
+	public final AbstractDomain getRoot() {
+		if (!isRoot()) return getParent().getRoot();
+		return this;
+	}
+	
 	List<BasicModelEntity> getEntityList() {
 		return entityList;
 	}

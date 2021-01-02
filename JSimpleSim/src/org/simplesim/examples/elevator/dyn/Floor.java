@@ -17,7 +17,7 @@ import org.simplesim.model.RoutingDomain;
  * 
  * The Floor class models one story of the building and contains the level of the floor
  * 
- * @see org.simplesim.elevator.DynamicMain DynamicMain 
+ * @see org.simplesim.examples.elevator.DynamicMain DynamicMain 
  * 
  */
 public final class Floor extends RoutingDomain {

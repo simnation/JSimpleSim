@@ -16,12 +16,11 @@ import org.simplesim.examples.elevator.stat.StaticVisitor;
 import org.simplesim.simulator.SequentialDESimulator;
 import org.simplesim.simulator.Simulator;
 
-/**
- * 
- *
- */
 public class StaticMain {
 	
+	/**
+	 * Example main method on how to set up a static simulation model
+	 */
 	public static void main(String[] args) {
 		final StaticModel model=new StaticModel();
 

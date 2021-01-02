@@ -39,7 +39,7 @@ import org.simplesim.simulator.Simulator;
 public class DynamicMain {
 
 	/**
-	 * @param args
+	 * Example main method on how to set up a dynamic simulation model
 	 */
 	public static void main(String[] args) {
 		final DynamicModel model=new DynamicModel();

@@ -10,7 +10,7 @@ import org.simplesim.model.RoutingDomain;
 /**
  * Part of the dynamic elevator example
  * 
- * @see org.simplesim.elevator.DynamicMain DynamicMain 
+ * @see org.simplesim.examples.elevator.DynamicMain DynamicMain 
  * 
  */
 public class DynamicModel extends RoutingDomain {

@@ -21,7 +21,7 @@ import org.simplesim.model.RoutingAgent;
 /**
  * Part of the dynamic elevator example
  * 
- * @see org.simplesim.elevator.DynamicMain DynamicMain 
+ * @see org.simplesim.examples.elevator.DynamicMain DynamicMain 
  * 
  */
 public final class DynamicElevator extends RoutingAgent<ElevatorState, Elevator.Event> implements Elevator {

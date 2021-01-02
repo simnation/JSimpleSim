@@ -29,7 +29,7 @@ import org.simplesim.model.AbstractAgent;
 /**
  * Part of the static elevator example
  * 
- * @see org.simplesim.elevator.StaticMain StaticMain 
+ * @see org.simplesim.examples.elevator.StaticMain StaticMain  
  * 
  */
 public final class StaticVisitor extends AbstractAgent<VisitorState, Visitor.Event> implements Visitor {
