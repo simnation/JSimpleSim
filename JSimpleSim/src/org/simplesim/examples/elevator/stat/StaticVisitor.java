@@ -14,8 +14,7 @@ import static org.simplesim.examples.elevator.shared.Limits.START_WORK;
 
 import java.util.Random;
 
-import org.simplesim.core.messaging.AbstractPort;
-import org.simplesim.core.messaging.DirectMessage;
+import org.simplesim.core.messaging.Message;
 import org.simplesim.core.messaging.SinglePort;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.examples.elevator.shared.Limits;
@@ -25,23 +24,20 @@ import org.simplesim.examples.elevator.shared.VisitorState;
 import org.simplesim.examples.elevator.shared.VisitorState.ACTIVITY;
 import org.simplesim.model.AbstractAgent;
 
-
 /**
  * Part of the static elevator example
- * 
- * @see org.simplesim.examples.elevator.StaticMain StaticMain  
- * 
+ *
+ * @see org.simplesim.examples.elevator.StaticMain StaticMain
  */
 public final class StaticVisitor extends AbstractAgent<VisitorState, Visitor.Event> implements Visitor {
 
-	private final AbstractPort inport, outport;
 	private static final Random random=new Random();
 	private int currentFloor=LOBBY;
 
 	public StaticVisitor() {
 		super(new VisitorState());
-		inport=addInport(new SinglePort(this));
-		outport=addOutport(new SinglePort(this));
+		setInport(new SinglePort(this));
+		setOutport(new SinglePort(this));
 		getState().setActivity(ACTIVITY.waiting);
 		// init arrival time at lobby with a random value before start of work
 		final Time time=START_DAY.add(random.nextInt((int) (START_WORK.getTicks()-START_DAY.getTicks())));
@@ -98,10 +94,10 @@ public final class StaticVisitor extends AbstractAgent<VisitorState, Visitor.Eve
 		getEventQueue().enqueue(Event.WAITING,time.add(IDLE_TIME)); // wait for elevator
 	}
 
+	@Override
 	public void sendRequest(AbstractAgent<?, ?> dest, int destination, Time time) {
 		final Request request=new Request(this,getCurrentFloor(),destination,time);
-		final DirectMessage msg=new DirectMessage(this,request);
-		getOutport().write(msg); // send request to elevator
+		getOutport().write(new Message<>(this,request)); // send request to elevator
 	}
 
 	/*
@@ -112,17 +108,9 @@ public final class StaticVisitor extends AbstractAgent<VisitorState, Visitor.Eve
 	public int getCurrentFloor() {
 		return currentFloor;
 	}
-	
-private void setCurrentFloor(int value) {
-	currentFloor=value;
-}
 
-	public AbstractPort getInport() {
-		return inport;
-	}
-
-	public AbstractPort getOutport() {
-		return outport;
+	private void setCurrentFloor(int value) {
+		currentFloor=value;
 	}
 
 	@Override

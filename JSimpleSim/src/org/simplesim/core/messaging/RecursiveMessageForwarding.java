@@ -20,7 +20,7 @@ import org.simplesim.model.AbstractAgent;
  * This implementation generally should work with all types of ports but might be less efficient than more specialized strategies.
  * 
  */
-public final class DefaultMessageForwarding implements ForwardingStrategy {
+public final class RecursiveMessageForwarding implements ForwardingStrategy {
 
 	private static final int MAX_RECURSION_LEVEL=100;
 
@@ -53,29 +53,5 @@ public final class DefaultMessageForwarding implements ForwardingStrategy {
 		throw new ForwardingFailureException(
 			"Recursion level during message forwarding exceeded max. depth of "+MAX_RECURSION_LEVEL);
 	}
-	
-	/*public void forwardMessages(Collection<AbstractAgent<?, ?>> agentList) {
-		// part I: get list of all ports carrying an outgoing message
-		final Collection<AbstractPort> ports=listPortsWithOutgoingMsg(agentList);
-		// part II: do recursive forwarding of messages
-		nextLevel(ports,0);
-	}
-	
-	
-
-	private void nextLevel(Collection<AbstractPort> sources, int level) {
-		if (level>=MAX_RECURSION_LEVEL) throw new ForwardingFailureException(
-				"Recursion level during message forwarding exceeded max. depth of "+MAX_RECURSION_LEVEL);
-		final Collection<AbstractPort> destinations=new ArrayList<>();
-		for (final AbstractPort src : sources) {
-			// make sure there is another connection
-			if (src.isEndPoint()) continue;
-			// copy messages and add new destinations to list
-			destinations.addAll(src.forwardMessages());
-		}
-		// make destinations to sources in the next level. If list is empty, all
-		// messages had arrived
-		if (!destinations.isEmpty()) nextLevel(destinations,level+1);
-	}*/
 
 }

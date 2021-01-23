@@ -14,6 +14,7 @@ import org.simplesim.examples.elevator.dyn.DynamicVisitor;
 import org.simplesim.examples.elevator.dyn.Floor;
 import org.simplesim.examples.elevator.shared.Limits;
 import org.simplesim.examples.elevator.shared.View;
+import org.simplesim.simulator.ConcurrentDESimulator;
 import org.simplesim.simulator.DynamicDecorator;
 import org.simplesim.simulator.SequentialDESimulator;
 import org.simplesim.simulator.Simulator;
@@ -54,8 +55,8 @@ public class DynamicMain {
 
 		final View view=new View(elevator.getState());
 		final ForwardingStrategy fs=new RoutedMessageForwarding(model);
-		// final Simulator simulator=new DynamicDecorator(new ConcurrentDESimulator(model,fs));
-		final Simulator simulator=new DynamicDecorator(new SequentialDESimulator(model,fs));
+		final Simulator simulator=new DynamicDecorator(new ConcurrentDESimulator(model,fs));
+		//final Simulator simulator=new DynamicDecorator(new SequentialDESimulator(model,fs));
 		// add observer
 		simulator.registerEventsProcessedListener(view);
 		simulator.runSimulation(new Time(Limits.END_DAY));

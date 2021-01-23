@@ -22,14 +22,14 @@ import org.simplesim.model.AbstractDomain;
  * Concurrent simulator for discrete event models using multiple threads
  * <p>
  * This simulator identifies all due agents of a model using a global event queue. Then the {@code doEventSim} method of
- * these imminent agents is called in a concurrent mode and with no specific order.
+ * these imminent agents are called in a concurrent mode and with no specific order.
  * <p>
  * This implementation is especially useful to run DES models.
  */
 public final class ConcurrentDESimulator extends SequentialDESimulator {
 
 	/**
-	 * Constructs a new concurret simulator with given model, queue implementation and messaging strategy
+	 * Constructs a new concurrent simulator with given model, queue implementation and messaging strategy
 	 *
 	 * @param root       the root domain of the model
 	 * @param queue      the queue implementation to use as global event queue
@@ -60,7 +60,7 @@ public final class ConcurrentDESimulator extends SequentialDESimulator {
 	public void runSimulation(Time stop) {
 		initGlobalEventQueue();
 		setSimulationTime(getGlobalEventQueue().getMin());
-		// used a variable thread pool with as many worker threads as cpu cores
+		// use a variable thread pool with as many worker threads as cpu cores
 		final ExecutorService executor=Executors.newWorkStealingPool();
 		final List<Future<Time>> futures=new ArrayList<>();
 		while (getSimulationTime().compareTo(stop)<0) {
@@ -69,9 +69,9 @@ public final class ConcurrentDESimulator extends SequentialDESimulator {
 			// and enqueue the next events of the agents
 			setCurrentEventList(getGlobalEventQueue().dequeueAll());
 			// start multi-threaded execution
-			for (final AbstractAgent<?, ?> agent : getCurrentEventList())
+			for (AbstractAgent<?, ?> agent : getCurrentEventList())
 				futures.add(executor.submit(() -> agent.doEventSim(getSimulationTime())));
-			// join things again and collect results
+			// join threads again and collect results
 			for (int index=0; index<getCurrentEventList().size(); index++) try {
 				final AbstractAgent<?, ?> agent=getCurrentEventList().get(index);
 				final Time tonie=futures.get(index).get();

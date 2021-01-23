@@ -13,6 +13,7 @@ import org.simplesim.examples.elevator.shared.View;
 import org.simplesim.examples.elevator.stat.StaticElevator;
 import org.simplesim.examples.elevator.stat.StaticModel;
 import org.simplesim.examples.elevator.stat.StaticVisitor;
+import org.simplesim.simulator.ConcurrentDESimulator;
 import org.simplesim.simulator.SequentialDESimulator;
 import org.simplesim.simulator.Simulator;
 
@@ -30,12 +31,12 @@ public class StaticMain {
 		for (int index=1; index<=Limits.VISITORS; index++) {
 			final StaticVisitor visitor=new StaticVisitor();
 			model.addEntity(visitor);
-			elevator.addOutport(visitor).connectTo(visitor.getInport());
+			elevator.getOutport().connectTo(visitor.getInport());
 			visitor.getOutport().connectTo(elevator.getInport());
 		}
 		
 		final View view=new View(elevator.getState());
-		//final AbstractSimulator simulator=new ConcurrentDESimulator(model,new DirectMessageForwarding());
+		// final Simulator simulator=new ConcurrentDESimulator(model,new DirectMessageForwarding());
 		final Simulator simulator=new SequentialDESimulator(model,new DirectMessageForwarding());
 		// add observer
 		simulator.registerEventsProcessedListener(view);

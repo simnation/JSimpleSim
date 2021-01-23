@@ -8,12 +8,9 @@ package org.simplesim.examples.elevator.stat;
 import static org.simplesim.examples.elevator.shared.Limits.LOBBY;
 import static org.simplesim.examples.elevator.shared.Limits.START_DAY;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.simplesim.core.messaging.AbstractPort;
-import org.simplesim.core.messaging.DirectMessage;
+import org.simplesim.core.messaging.Message;
 import org.simplesim.core.messaging.SinglePort;
+import org.simplesim.core.messaging.SwitchPort;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.examples.elevator.shared.Elevator;
 import org.simplesim.examples.elevator.shared.ElevatorState;
@@ -21,25 +18,20 @@ import org.simplesim.examples.elevator.shared.ElevatorStrategy;
 import org.simplesim.examples.elevator.shared.Limits;
 import org.simplesim.examples.elevator.shared.Request;
 import org.simplesim.model.AbstractAgent;
-import org.simplesim.model.BasicModelEntity;
-
-
 
 /**
  * Part of the static elevator example
- * 
- * @see org.simplesim.examples.elevator.StaticMain StaticMain 
- * 
+ *
+ * @see org.simplesim.examples.elevator.StaticMain StaticMain
  */
 public final class StaticElevator extends AbstractAgent<ElevatorState, Elevator.Event> implements Elevator {
 
 	private final ElevatorStrategy strategy;
-	private final AbstractPort inport;
-	private final Map<BasicModelEntity, AbstractPort> outport=new HashMap<>(); // one outport per connected visitor
 
 	public StaticElevator() {
 		super(new ElevatorState());
-		inport=addInport(new SinglePort(this));
+		setInport(new SinglePort(this));
+		setOutport(new SwitchPort(this));
 		strategy=new ElevatorStrategy(this);
 		getState().setCurrentFloor(LOBBY);
 		getState().setDestinationFloor(LOBBY);
@@ -83,8 +75,8 @@ public final class StaticElevator extends AbstractAgent<ElevatorState, Elevator.
 	 * org.simplesim.examples.elevator.Request)
 	 */
 	@Override
-	public void sendMessage(AbstractAgent<?,?> recipient, Request content) {
-		getOutport(recipient).write(new DirectMessage(this,content));
+	public void sendMessage(AbstractAgent<?, ?> recipient, Request content) {
+		getOutport().write(new Message<AbstractAgent<?, ?>>(this,recipient,content));
 	}
 
 	/*
@@ -95,20 +87,6 @@ public final class StaticElevator extends AbstractAgent<ElevatorState, Elevator.
 	@Override
 	public void enqueueEvent(Event event, Time time) {
 		getEventQueue().enqueue(event,time);
-	}
-
-	public AbstractPort getInport() {
-		return inport;
-	}
-
-	public AbstractPort getOutport(BasicModelEntity visitor) {
-		return outport.get(visitor);
-	}
-
-	public AbstractPort addOutport(BasicModelEntity visitor) {
-		final AbstractPort port=addOutport(new SinglePort(this));
-		outport.put(visitor,port);
-		return port;
 	}
 
 	@Override

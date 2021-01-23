@@ -5,9 +5,6 @@
  */
 package org.simplesim.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.simplesim.core.messaging.AbstractPort;
 
 /**
@@ -18,23 +15,22 @@ import org.simplesim.core.messaging.AbstractPort;
  * <li>unit identification (by name or address)
  * <li>managing in- and outports
  * <li>utility methods (model level, naming, {@code toString}, {@code equals})
- * <li>providing relevant exceptions 
+ * <li>providing relevant exceptions
  * </ul>
  */
 public abstract class BasicModelEntity {
 
 	public static final int ROOT_LEVEL=0;
 	private static final int INIT_LEVEL=Integer.MIN_VALUE;
-	private static final int DEFAULT_PORT_LIST_SIZE=1;
 
 	/** Parent entity in model hierarchy. */
 	private AbstractDomain parent=null;
 
-	/** List of inports */
-	private List<AbstractPort> inports=null;
+	/** The inport */
+	private AbstractPort inport=null;
 
-	/** List of outports */
-	private List<AbstractPort> outports=null;
+	/** The outport */
+	private AbstractPort outport=null;
 
 	/** Address in numbers, describing the model's branch within the model tree */
 	private int[] address=null;
@@ -71,10 +67,9 @@ public abstract class BasicModelEntity {
 	 * @throws UnsupportedOperationException      if the simulation is running
 	 * @throws UniqueConstraintViolationException if the same port is added twice
 	 */
-	@SuppressWarnings("unchecked")
-	public final <P extends AbstractPort> P addInport(P port) {
-		if (inports==null) setInportList(new ArrayList<>(DEFAULT_PORT_LIST_SIZE));
-		return (P) addPort(inports,port);
+	public final <P extends AbstractPort> P setInport(P port) {
+		inport=port;
+		return port;
 	}
 
 	/**
@@ -88,66 +83,17 @@ public abstract class BasicModelEntity {
 	 * @throws UnsupportedOperationException      if the simulation is running
 	 * @throws UniqueConstraintViolationException if the same port is added twice
 	 */
-	@SuppressWarnings("unchecked")
-	public final <P extends AbstractPort> P addOutport(P port) {
-		if (outports==null) setOutportList(new ArrayList<>(DEFAULT_PORT_LIST_SIZE));
-		return (P) addPort(outports,port);
+	public final <P extends AbstractPort> P setOutport(P port) {
+		outport=port;
+		return port;
 	}
 
-	/**
-	 * Returns the number of inports.
-	 *
-	 * @return number of inports
-	 */
-	public final int countInports() {
-		return inports.size();
+	public final AbstractPort getInport() {
+		return inport;
 	}
 
-	/**
-	 * Provides access to iterate over the inports in an immutable way
-	 *
-	 * @return inport iterator
-	 */
-	public final Iterable<AbstractPort> getInports() {
-		return inports;
-	}
-
-	/**
-	 * Looks up an indexed port from the inport list.
-	 *
-	 * @param index the of the port in the list of inports
-	 * @return the indexed inport
-	 */
-	public final AbstractPort getInport(int index) {
-		return inports.get(index);
-	}
-
-	/**
-	 * Returns the number of outports.
-	 *
-	 * @return number of outports
-	 */
-	public final int countOutports() {
-		return outports.size();
-	}
-
-	/**
-	 * Provides access to iterate over the outports in an immutable way
-	 *
-	 * @return outport iterator
-	 */
-	public final Iterable<AbstractPort> getOutports() {
-		return outports;
-	}
-
-	/**
-	 * Looks up an indexed port from the outport list.
-	 *
-	 * @param index the of the port in the list of inports
-	 * @return the indexed outport
-	 */
-	public final AbstractPort getOutport(int index) {
-		return outports.get(index);
+	public final AbstractPort getOutport() {
+		return outport;
 	}
 
 	/**
@@ -223,38 +169,8 @@ public abstract class BasicModelEntity {
 	 * @return true if any inport has an input
 	 */
 	public final boolean hasExternalInput() {
-		for (final AbstractPort port : getInports()) if (port.hasMessages()) return true;
-		return false; // if we get here, no port with a pending message has been found
-	}
-
-	/**
-	 * Checks whether the given port is an inport of this entity.
-	 *
-	 * @param port the port to be tested
-	 * @return true if the port is an inport of this entity
-	 */
-	public final boolean hasInport(AbstractPort port) {
-		return inports.contains(port);
-	}
-
-	/**
-	 * Checks whether the given port is an outport of this entity.
-	 *
-	 * @param port the port to be tested
-	 * @return true if the port is an outport of this entity
-	 */
-	public final boolean hasOutport(AbstractPort port) {
-		return outports.contains(port);
-	}
-
-	/**
-	 * Checks whether the given port is either an in- or an outport of this entity
-	 *
-	 * @param port the port to be tested
-	 * @return true if the port is inport or outport in this entity
-	 */
-	public final boolean hasPort(AbstractPort port) {
-		return hasInport(port)||hasOutport(port);
+		if (getInport()==null) return false;
+		return getInport().hasMessages();
 	}
 
 	/**
@@ -289,56 +205,8 @@ public abstract class BasicModelEntity {
 		resetLevel();
 		final int[] pAddr=getParent().getAddress();
 		if ((address==null)||(address.length!=(pAddr.length+1))) address=new int[pAddr.length+1];
-		int i=0;
-		for (; i<pAddr.length; i++) address[i]=pAddr[i];
-		address[i]=index; // i==pAddr.length
-	}
-
-	/**
-	 * Removes an existing inport from the model.
-	 *
-	 * @param port the port
-	 * @throws UnsupportedOperationException if the simulation is running
-	 * @throws InvalidPortException          if the port is unknown
-	 */
-	public final void removeInport(AbstractPort port) throws UnsupportedOperationException, InvalidPortException {
-		removePort(inports,port);
-	}
-
-	/**
-	 * Removes an existing outport from the model.
-	 *
-	 * @param port the port
-	 * @throws UnsupportedOperationException if the simulation is running
-	 * @throws InvalidPortException          if the port is unknown
-	 */
-	public final void removeOutport(AbstractPort port) throws UnsupportedOperationException, InvalidPortException {
-		removePort(outports,port);
-	}
-
-	private void removePort(List<AbstractPort> portList, AbstractPort port) {
-		if (AbstractAgent.isSimulationRunning())
-			throw new UnsupportedOperationException("Tried to remove a port during simulation cycle in "+getFullName());
-		if (!portList.remove(port))
-			throw new InvalidPortException("Tried to remove an unknown port from agent in "+getFullName());
-	}
-
-	/** private utility method to add port to port lists */
-	private AbstractPort addPort(List<AbstractPort> portList, AbstractPort port) {
-		if (AbstractAgent.isSimulationRunning())
-			throw new UnsupportedOperationException("Tried to add a port during a simulation run in "+getFullName());
-		if (portList.contains(port))
-			throw new UniqueConstraintViolationException("A port may not be added twice to the same model!");
-		portList.add(port);
-		return port;
-	}
-
-	final void setInportList(List<AbstractPort> list) {
-		inports=list;
-	}
-
-	final void setOutportList(List<AbstractPort> list) {
-		outports=list;
+		for (int i=0; i<pAddr.length; i++) address[i]=pAddr[i];
+		address[pAddr.length]=index;
 	}
 
 	/**

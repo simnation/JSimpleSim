@@ -5,9 +5,6 @@
  */
 package org.simplesim.model;
 
-import java.util.Collections;
-
-import org.simplesim.core.messaging.AbstractPort;
 import org.simplesim.core.messaging.SinglePort;
 import org.simplesim.core.scheduling.EventQueue;
 
@@ -32,7 +29,8 @@ public abstract class RoutingAgent<S extends State, E> extends AbstractAgent<S, 
 	 */
 	public RoutingAgent(EventQueue<E> queue, S s) {
 		super(queue,s);
-		init();
+		setInport(new SinglePort(this));
+		setOutport(new SinglePort(this));
 	}
 
 	/**
@@ -40,20 +38,8 @@ public abstract class RoutingAgent<S extends State, E> extends AbstractAgent<S, 
 	 */
 	public RoutingAgent(S s) {
 		super(s);
-		init();
-	}
-
-	private void init() {
-		setInportList(Collections.singletonList(new SinglePort(this)));
-		setOutportList(Collections.singletonList(new SinglePort(this)));
-	}
-
-	public AbstractPort getOutport() {
-		return getOutport(0);
-	}
-
-	public AbstractPort getInport() {
-		return getInport(0);
+		setInport(new SinglePort(this));
+		setOutport(new SinglePort(this));
 	}
 
 }

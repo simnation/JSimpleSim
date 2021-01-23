@@ -26,7 +26,7 @@ import org.simplesim.model.RoutingDomain;
  * Note: This strategy only works with models using the routing concept.
  * 
  * @see RoutingDomain
- * @see DefaultMessageForwarding
+ * @see RecursiveMessageForwarding
  * 
  */
 public final class RoutedMessageForwarding implements ForwardingStrategy {

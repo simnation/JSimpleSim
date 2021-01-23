@@ -24,11 +24,34 @@ public class Message<A> {
 	private final A src, dest;
 	private final Object content;
 	
-	
+	/**
+	 * Generals constructor for all types of messages.
+	 * <p>
+	 * Note: This class is read-only and thus thread-safe 
+	 * 
+	 * @param s source of message
+	 * @param d destination of message
+	 * @param c the content
+	 * 
+	 */
 	public Message(A s, A d, Object  c) {
 		this.src=s;
 		this.dest=d;
 		this.content=c;
+	}
+	
+	/**
+	 * Constructor for direct messages.
+	 * <p>
+	 * To be used if model entities are connected directly, so the destination information is already given by the 
+	 * connection itself.
+	 * 
+	 * @param s source of message
+	 * @param c the content
+	 * 
+	 */
+	public Message(A s, Object c) {
+		this(s,null,c);
 	}
 	
 	public final A getSource() {

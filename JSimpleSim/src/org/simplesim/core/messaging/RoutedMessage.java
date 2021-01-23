@@ -24,7 +24,7 @@ public final class RoutedMessage extends Message<int[]> {
 	}
 
 	public int getDestIndex(int level) {
-		return (getDestination()[level]);
+		return getDestination()[level];
 	}
 
 	/*

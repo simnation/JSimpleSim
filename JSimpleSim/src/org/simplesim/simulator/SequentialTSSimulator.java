@@ -10,7 +10,7 @@
  */
 package org.simplesim.simulator;
 
-import org.simplesim.core.messaging.DefaultMessageForwarding;
+import org.simplesim.core.messaging.RecursiveMessageForwarding;
 import org.simplesim.core.messaging.ForwardingStrategy;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
@@ -41,7 +41,7 @@ public class SequentialTSSimulator extends AbstractSimulator {
 	}
 
 	public SequentialTSSimulator(AbstractDomain root) {
-		this(root,new Time(Time.TICKS_PER_MINUTE),new DefaultMessageForwarding());
+		this(root,new Time(Time.TICKS_PER_MINUTE),new RecursiveMessageForwarding());
 	}
 
 	@Override

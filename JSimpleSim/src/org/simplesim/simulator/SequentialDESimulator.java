@@ -11,7 +11,7 @@
 package org.simplesim.simulator;
 
 import org.simplesim.core.scheduling.HeapEventQueue;
-import org.simplesim.core.messaging.DefaultMessageForwarding;
+import org.simplesim.core.messaging.RecursiveMessageForwarding;
 import org.simplesim.core.messaging.ForwardingStrategy;
 import org.simplesim.core.scheduling.EventQueue;
 import org.simplesim.core.scheduling.Time;
@@ -42,7 +42,7 @@ public class SequentialDESimulator extends AbstractSimulator {
 	}
 
 	public SequentialDESimulator(AbstractDomain root) {
-		this(root,new HeapEventQueue<AbstractAgent<?, ?>>(),new DefaultMessageForwarding());
+		this(root,new HeapEventQueue<AbstractAgent<?, ?>>(),new RecursiveMessageForwarding());
 	}
 	
 	public SequentialDESimulator(AbstractDomain root, ForwardingStrategy forwarding) {
@@ -50,7 +50,7 @@ public class SequentialDESimulator extends AbstractSimulator {
 	}
 	
 	public SequentialDESimulator(AbstractDomain root, EventQueue<AbstractAgent<?, ?>> queue) {
-		this(root,queue,new DefaultMessageForwarding());
+		this(root,queue,new RecursiveMessageForwarding());
 	}
 
 
@@ -68,20 +68,19 @@ public class SequentialDESimulator extends AbstractSimulator {
 			setCurrentEventList(getGlobalEventQueue().dequeueAll());
 			// System.out.println("Number of concurrent events: "+list.size());
 			for (final AbstractAgent<?, ?> agent : getCurrentEventList()) {
-				final Time tonie=agent.doEventSim(getSimulationTime());
-				if (tonie==null) throw new InvalidSimulatorStateException(
+				final Time tone=agent.doEventSim(getSimulationTime());
+				if (tone==null) throw new InvalidSimulatorStateException(
 						"Local event queue is empty in agent "+agent.getFullName());
-				if (tonie.compareTo(getSimulationTime())<0) throw new InvalidSimulatorStateException(
-						"Tonie "+tonie.toString()+" is before current simulation time "+
+				if (tone.compareTo(getSimulationTime())<0) throw new InvalidSimulatorStateException(
+						"Tonie "+tone.toString()+" is before current simulation time "+
 						getSimulationTime().toString()+" in agent "+agent.getFullName());
-				getGlobalEventQueue().enqueue(agent,tonie);
+				getGlobalEventQueue().enqueue(agent,tone);
 			}
 			// part II: do the message forwarding
 			getMessageForwardingStrategy().forwardMessages(getCurrentEventList());
 			AbstractAgent.toggleSimulationIsRunning(false);
 			hookEventsProcessed();
 			setSimulationTime(getGlobalEventQueue().getMin());
-			// System.out.println("Simulation time is "+getSimulationTime().toString());
 		}
 	}
 

@@ -56,7 +56,7 @@ public abstract class AbstractAgent<S extends State, E> extends BasicModelEntity
 	private final static ConcurrentLinkedDeque<ChangeRequest> queue=new ConcurrentLinkedDeque<>();
 	
 	/** Flag to indicate if the simulation is running. */
-	private static boolean simulationIsRunning=false;
+	private static volatile boolean simulationIsRunning=false;
 	
 	@SuppressWarnings("serial")
 	public static class UnknownEventType extends RuntimeException {
@@ -75,6 +75,7 @@ public abstract class AbstractAgent<S extends State, E> extends BasicModelEntity
 	 * @param s     the state of the agent
 	 */
 	public AbstractAgent(EventQueue<E> queue, S s) {
+		super();
 		state=s;
 		leq=queue;
 	}

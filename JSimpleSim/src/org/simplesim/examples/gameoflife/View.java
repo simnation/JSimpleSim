@@ -1,8 +1,7 @@
 /*
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy way. This software is published as open
- * source and licensed under the terms of GNU GPLv3.
- * 
- * Contributors: - Rene Kuhlemann - development and initial implementation
+ * source and licensed under the terms of GNU GPLv3. Contributors: - Rene Kuhlemann - development and initial
+ * implementation
  */
 package org.simplesim.examples.gameoflife;
 
@@ -21,16 +20,15 @@ import org.simplesim.simulator.AbstractSimulator;
 @SuppressWarnings("serial")
 public class View extends JFrame implements Listener<AbstractSimulator> {
 
-	public static final int CELL_SIZE=5;
+	public static final int CELL_SIZE=4;
 
 	public View(String title, int width, int height) {
 		super(title);
 		final Dimension size=new Dimension(CELL_SIZE*width,CELL_SIZE*height);
 		setPreferredSize(size);
-		setSize(size);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		pack();
 		setVisible(true);
+		pack();
 		createBufferStrategy(2);
 		System.out.println(getSize().toString());
 	}

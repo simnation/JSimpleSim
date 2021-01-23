@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.simplesim.core.messaging.DefaultMessageForwarding;
+import org.simplesim.core.messaging.RecursiveMessageForwarding;
 import org.simplesim.core.messaging.ForwardingStrategy;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
@@ -43,7 +43,7 @@ public final class ConcurrentTSSimulator extends SequentialTSSimulator {
 	}
 
 	public ConcurrentTSSimulator(AbstractDomain root) {
-		this(root,new Time(Time.TICKS_PER_MINUTE),new DefaultMessageForwarding());
+		this(root,new Time(Time.TICKS_PER_MINUTE),new RecursiveMessageForwarding());
 	}
 
 	@Override
