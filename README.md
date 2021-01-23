@@ -11,3 +11,5 @@ JSimpleSim offers a sensible balance between fast familiarization with the softw
 - Flexibility: cellular automata, hierarchical or meshed models – one tool for all. 
 
 For more information and a tutorial visit the [JSimpleSim project page](https://jsimplesim.org/).
+
+JSimplesim is open source and licensed under GPLv3.
