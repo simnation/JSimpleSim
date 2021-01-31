@@ -14,7 +14,7 @@ package org.simplesim.core.scheduling;
 /**
  * Provides a coupling between a time stamp and a corresponding event.
  * <p>
- * This class is immutable and thus thread-safe.
+ * Note: This class is immutable and thus thread-safe.
  * 
  * @see Time
  *

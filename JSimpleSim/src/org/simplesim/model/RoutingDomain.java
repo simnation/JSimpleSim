@@ -64,7 +64,7 @@ public abstract class RoutingDomain extends AbstractDomain {
 
 		@Override
 		public boolean isEndPoint() {
-			return getEntityList().isEmpty();
+			return isEmpty();
 		}
 
 		@Override
@@ -73,7 +73,7 @@ public abstract class RoutingDomain extends AbstractDomain {
 			while (hasMessages()) {
 				RoutedMessage msg=poll(); // message is also removed in this step!
 				int index=msg.getDestIndex(getLevel()); // destination index corresponding to entity level in model
-				BasicModelEntity entity=getDomainEntity(index); // find the right entity for forwarding
+				BasicModelEntity entity=getEntityList().get(index); // find the right entity for forwarding
 				AbstractPort dest=entity.getInport(); // find the right port for forwarding
 				dest.write(msg);
 				result.add(dest);
@@ -138,7 +138,7 @@ public abstract class RoutingDomain extends AbstractDomain {
 		entity.setParent(null);
 		entity.getOutport().disconnect(getOutport()); // remove connection towards domain root
 		for (int index=start; index<countDomainEntities(); index++) {
-			getDomainEntity(index).resetAddress(index);
+			getEntityList().get(index).resetAddress(index);
 		}
 		return entity;
 	}
@@ -156,7 +156,7 @@ public abstract class RoutingDomain extends AbstractDomain {
 		super.resetAddress(value); // update address of this domain
 		// recursively update addresses of all child entities
 		for (int index=0; index<countDomainEntities(); index++) {
-			getDomainEntity(index).resetAddress(index);
+			getEntityList().get(index).resetAddress(index);
 		}
 	}
 

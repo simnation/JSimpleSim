@@ -27,7 +27,7 @@ public class DynamicModel extends RoutingDomain {
 	}
 
 	public Floor getFloor(int i) {
-		return (Floor) getDomainEntity(i+1); // first entry is always the elevator
+		return (Floor) listDomainEntities().get(i+1); // first entry is always the elevator
 	}
 
 	@Override

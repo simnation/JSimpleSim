@@ -14,39 +14,35 @@ package org.simplesim.core.messaging;
 import org.simplesim.model.AbstractAgent;
 
 /**
- * Base class for messages that are sent from one port to another.
+ * Class for messages for direct (non-routed) message forwarding.
  * <p>
  * Messages always contain a content and may be extended with additional features. If agents are
  * connected <i>directly</i>, the destination can be omitted and set to {@code null}. 
+ * <p>
+ * Note: This class is read-only and thus thread-safe.	
  * 
  * @param <A> type of addressing
  * 
+ * @see SinglePort
+ * @see MultiPort
+ * @see SwitchPort
+ * @see DirectMessageForwarding
+ * @see RecursiveMessageForwarding
+ * 
  */
-public class Message extends AbstractMessage<AbstractAgent<?,?>> {
+public final class Message extends AbstractMessage<AbstractAgent<?,?>> {
 	
 	/**
-	 * Generals constructor for all types of messages.
-	 * <p>
-	 * Note: This class is read-only and thus thread-safe 
-	 * 
-	 * @param s source of message
-	 * @param d destination of message
-	 * @param c the content
-	 * 
+	 * {@inheritDoc}
+	 *
 	 */
 	public Message(AbstractAgent<?,?> s, AbstractAgent<?,?> d, Object  c) {
 		super(s,d,c);
 	}
 	
 	/**
-	 * Constructor for direct messages.
-	 * <p>
-	 * To be used if model entities are connected directly, so the destination information is already given by the 
-	 * connection itself.
-	 * 
-	 * @param s source of message
-	 * @param c the content
-	 * 
+	 * {@inheritDoc}
+	 *
 	 */
 	public Message(AbstractAgent<?,?> s, Object c) {
 		super(s,null,c);

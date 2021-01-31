@@ -6,6 +6,7 @@
 package org.simplesim.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -87,13 +88,13 @@ public abstract class AbstractDomain extends BasicModelEntity {
 	}
 
 	/**
-	 * Returns an {@link Iterable} over the set of entities of this domain, an entity can either be an agent or another
+	 * Returns an unmodifiable list of all entities of this domain - an entity can either be an agent or another
 	 * domain.
 	 *
-	 * @return an iterator for iterating over all entities of this domain
+	 * @return an unmodifiable list of all entities of this domain 
 	 */
-	public final Iterable<BasicModelEntity> listDomainEntities() {
-		return getEntityList();
+	public final List<BasicModelEntity> listDomainEntities() {
+		return Collections.unmodifiableList(getEntityList());
 	}
 
 	/**
@@ -104,18 +105,6 @@ public abstract class AbstractDomain extends BasicModelEntity {
 	 */
 	public final boolean containsEntity(BasicModelEntity model) {
 		return getEntityList().contains(model);
-	}
-
-	/**
-	 * Returns the submodel with a given index.
-	 *
-	 * @param index the index of the model within this domain's submodel list
-	 * @return the submodel
-	 * 
-	 * @throws IndexOutOfBoundsException
-	 */
-	public final BasicModelEntity getDomainEntity(int index) {
-		return getEntityList().get(index);
 	}
 	
 	/**
@@ -133,10 +122,20 @@ public abstract class AbstractDomain extends BasicModelEntity {
 	 * @return the root domain
 	 */
 	public final AbstractDomain getRoot() {
-		if (!isRoot()) return getParent().getRoot();
-		return this;
+		if (isRoot()) return this;
+		return getParent().getRoot();
 	}
 	
+	public final boolean isEmpty() {
+		return getEntityList().isEmpty();
+	}
+	
+	
+	/**
+	 * Direct access to {@code entityList} - should only be used internally.
+	 *
+	 * @return the modifiable list of entities of this domain
+	 */
 	List<BasicModelEntity> getEntityList() {
 		return entityList;
 	}

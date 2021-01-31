@@ -12,12 +12,17 @@
 package org.simplesim.core.messaging;
 
 /**
- * Base class for messages that are sent from one port to another.
+ * Abstract base class for messages that are sent from one port to another.
  * <p>
  * Messages always contain a content and may be extended with additional features. If agents are
  * connected <i>directly</i>, the destination can be omitted and set to {@code null}. 
+ * <p>
+ * Note: This class is immutable and thus thread-safe.
  * 
  * @param <A> type of addressing
+ * 
+ * @see Message
+ * @see RoutedMessage
  * 
  */
 public class AbstractMessage<A> {
