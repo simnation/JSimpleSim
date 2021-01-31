@@ -76,7 +76,7 @@ public final class StaticElevator extends AbstractAgent<ElevatorState, Elevator.
 	 */
 	@Override
 	public void sendMessage(AbstractAgent<?, ?> recipient, Request content) {
-		getOutport().write(new Message<AbstractAgent<?, ?>>(this,recipient,content));
+		getOutport().write(new Message(this,recipient,content));
 	}
 
 	/*

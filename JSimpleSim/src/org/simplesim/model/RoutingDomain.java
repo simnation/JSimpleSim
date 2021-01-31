@@ -71,7 +71,7 @@ public abstract class RoutingDomain extends AbstractDomain {
 		protected Collection<AbstractPort> forwardMessages() {
 			Collection<AbstractPort> result=new HashSet<>(); // set to ensure no duplicates in destination list
 			while (hasMessages()) {
-				RoutedMessage msg=(RoutedMessage) poll(); // message is also removed in this step!
+				RoutedMessage msg=poll(); // message is also removed in this step!
 				int index=msg.getDestIndex(getLevel()); // destination index corresponding to entity level in model
 				BasicModelEntity entity=getDomainEntity(index); // find the right entity for forwarding
 				AbstractPort dest=entity.getInport(); // find the right port for forwarding

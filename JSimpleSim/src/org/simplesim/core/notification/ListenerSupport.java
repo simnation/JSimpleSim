@@ -23,7 +23,7 @@ import java.util.List;
  * of the source object to query for the necessary information. The notification itself is coupled to the
  * specific hook in the source class.
  * 
- * @param T type of the observed class
+ * @param <T> type of the observed class
  *
  */
 public class ListenerSupport<T> {

@@ -57,7 +57,7 @@ public final class SwitchPort extends AbstractPort {
 	public Collection<AbstractPort> forwardMessages() {
 		if (!hasMessages()) return Collections.emptyList();
 		Collection<AbstractPort> result=new HashSet<>();
-		for (Message<?> msg : readAll()) {
+		for (AbstractMessage<?> msg : readAll()) {
 			AbstractPort port=destinations.get(msg.getDestination());
 			if (port==null) throw new PortConnectionException(
 					"No destination port found for "+msg.toString()+" in "+getParent().getFullName());

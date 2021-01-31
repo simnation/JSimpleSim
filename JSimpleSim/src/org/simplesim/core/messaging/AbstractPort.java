@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.BasicModelEntity;
 
 /**
@@ -41,7 +42,7 @@ public abstract class AbstractPort {
 	 * set to 1. Thus memory consumption is low in the beginning, it will
 	 * automatically be adapted if needed later on.
 	 */
-	private final List<Message<?>> messages=new ArrayList<>(1);
+	private final List<AbstractMessage<?>> messages=new ArrayList<>(1);
 
 	/**
 	 * Exception to be thrown if there is an error in port handling
@@ -129,9 +130,10 @@ public abstract class AbstractPort {
 	 *
 	 * @return last element in message list or null if list is empty
 	 */
-	public final Message<?> poll() {
+	@SuppressWarnings("unchecked")
+	public final <M extends AbstractMessage<?>> M poll() {
 		if (!hasMessages()) return null;
-		return messages.remove(countMessages()-1);
+		return (M) messages.remove(countMessages()-1);
 	}
 
 	/**
@@ -141,7 +143,7 @@ public abstract class AbstractPort {
 	 *
 	 * @return the message queue
 	 */
-	public final Collection<Message<?>> readAll() {
+	public final Collection<AbstractMessage<?>> readAll() {
 		return messages;
 	}
 
@@ -150,7 +152,7 @@ public abstract class AbstractPort {
 	 * 
 	 * @param message the message
 	 */
-	public final void write(Message<?> message) {
+	public final void write(AbstractMessage<?> message) {
 		messages.add(message);
 	}
 
@@ -158,7 +160,7 @@ public abstract class AbstractPort {
 	 * Puts several messages to be forwarded on this port.
 	 * @param m collection of messages
 	 */
-	public final void writeAll(Collection<Message<?>> m) {
+	public final void writeAll(Collection<AbstractMessage<?>> m) {
 		messages.addAll(m);
 	}
 

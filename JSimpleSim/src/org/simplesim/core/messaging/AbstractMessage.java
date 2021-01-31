@@ -11,8 +11,6 @@
  */
 package org.simplesim.core.messaging;
 
-import org.simplesim.model.AbstractAgent;
-
 /**
  * Base class for messages that are sent from one port to another.
  * <p>
@@ -22,7 +20,10 @@ import org.simplesim.model.AbstractAgent;
  * @param <A> type of addressing
  * 
  */
-public class Message extends AbstractMessage<AbstractAgent<?,?>> {
+public class AbstractMessage<A> {
+	
+	private final A src, dest;
+	private final Object content;
 	
 	/**
 	 * Generals constructor for all types of messages.
@@ -34,22 +35,23 @@ public class Message extends AbstractMessage<AbstractAgent<?,?>> {
 	 * @param c the content
 	 * 
 	 */
-	public Message(AbstractAgent<?,?> s, AbstractAgent<?,?> d, Object  c) {
-		super(s,d,c);
+	public AbstractMessage(A s, A d, Object  c) {
+		this.src=s;
+		this.dest=d;
+		this.content=c;
 	}
 	
-	/**
-	 * Constructor for direct messages.
-	 * <p>
-	 * To be used if model entities are connected directly, so the destination information is already given by the 
-	 * connection itself.
-	 * 
-	 * @param s source of message
-	 * @param c the content
-	 * 
-	 */
-	public Message(AbstractAgent<?,?> s, Object c) {
-		super(s,null,c);
+	public final A getSource() {
+		return(src);
 	}
+
+	public final A getDestination() {
+		return(dest);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public final <C> C getContent() {
+		return (C) content;
+	};
 
 }

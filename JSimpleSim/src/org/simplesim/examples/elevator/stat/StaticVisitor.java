@@ -97,7 +97,7 @@ public final class StaticVisitor extends AbstractAgent<VisitorState, Visitor.Eve
 	@Override
 	public void sendRequest(AbstractAgent<?, ?> dest, int destination, Time time) {
 		final Request request=new Request(this,getCurrentFloor(),destination,time);
-		getOutport().write(new Message<>(this,request)); // send request to elevator
+		getOutport().write(new Message(this,request)); // send request to elevator
 	}
 
 	/*

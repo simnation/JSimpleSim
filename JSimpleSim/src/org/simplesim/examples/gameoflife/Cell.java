@@ -32,7 +32,7 @@ public final class Cell extends AbstractAgent<CellState, Object> {
 			if ((getState().isLife()&&(neighbours==2))||(neighbours==3)) getState().setLife(true);
 			else getState().setLife(false);
 		}
-		getOutport().write(new Message<AbstractAgent<CellState, Object>>(this,getState().isLife()));
+		getOutport().write(new Message(this,getState().isLife()));
 		return null;
 	}
 
