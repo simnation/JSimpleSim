@@ -29,7 +29,11 @@ public abstract class AbstractDomain extends BasicModelEntity {
 
 	/** set of child entities (agents or domains). */
 	private final List<BasicModelEntity> entityList=new ArrayList<>();
-
+	
+	/** unmodifiable external view of the entityList*/
+	private final List<BasicModelEntity> unmodifiableEntityList=Collections.unmodifiableList(entityList);
+	
+	
 	/**
 	 * Adds the given entity to this domain.
 	 * <p>
@@ -94,7 +98,7 @@ public abstract class AbstractDomain extends BasicModelEntity {
 	 * @return an unmodifiable list of all entities of this domain 
 	 */
 	public final List<BasicModelEntity> listDomainEntities() {
-		return Collections.unmodifiableList(getEntityList());
+		return unmodifiableEntityList;
 	}
 
 	/**

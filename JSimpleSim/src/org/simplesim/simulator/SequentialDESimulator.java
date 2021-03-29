@@ -19,7 +19,7 @@ import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
 
 /**
- * Concurrent simulator for discrete event models using multiple threads 
+ * Sequential simulator for discrete event models using a single threads 
  * <p>
  * This simulator identifies all due agents of a model using a global event queue.
  * Then the {@code doEventSim} method of these imminent agents is called sequentially.
