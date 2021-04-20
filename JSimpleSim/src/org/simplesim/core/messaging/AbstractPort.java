@@ -1,4 +1,4 @@
-/**
+/*
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy
  * way.
  *
@@ -69,7 +69,7 @@ public abstract class AbstractPort {
 	public abstract void connectTo(AbstractPort target);
 
 	/**
-	 * Disconnects this port from another on.
+	 * Disconnects this port from another one.
 	 *
 	 * @param target the port to be removed
 	 * @exception PortConnectionException if the port is not connected with the

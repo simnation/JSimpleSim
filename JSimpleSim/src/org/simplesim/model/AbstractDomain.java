@@ -43,13 +43,15 @@ public abstract class AbstractDomain extends BasicModelEntity {
 	 * @param entity the model to be added
 	 * @throws UniqueConstraintViolationException   if the entity is already part of this domain
 	 * @throws NullPointerException if entity is null
+	 * @return the given entity for further usage
 	 */
-	public void addEntity(BasicModelEntity entity) {
+	public <T extends BasicModelEntity> T addEntity(T entity) {
 		if (entity==null) throw new NullPointerException("Cannot add null pointer to domain "+getFullName());
 		if (containsEntity(entity)) throw new UniqueConstraintViolationException(
 				"Model "+entity.toString()+" added twice to domain "+this.getFullName());
 		entity.setParent(this);
 		getEntityList().add(entity);
+		return entity;
 	}
 
 	/**
@@ -61,7 +63,7 @@ public abstract class AbstractDomain extends BasicModelEntity {
 	 * @param entity the model to be removed
 	 * @return the removed entity if the domain contained it, null otherwise
 	 */
-	public BasicModelEntity removeEntity(BasicModelEntity entity) {
+	public <T extends BasicModelEntity> T removeEntity(T entity) {
 		if (!getEntityList().remove(entity)) return null;
 		entity.setParent(null);
 		return entity;

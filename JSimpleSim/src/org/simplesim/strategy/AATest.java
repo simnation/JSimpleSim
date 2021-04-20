@@ -1,21 +1,17 @@
 /*
- * SimNation is a multi-agent model to simulate economic systems. It is scalable 
- * and used JSimpleSim as technical backbone for concurrent discrete event simulation.
+ * JSimpleSim is a framework to build multi-agent systems in a quick and easy way. This software is published as open
+ * source and licensed under the terms of GNU GPLv3.
  * 
- * This software is published as open source and licensed under GNU GPLv3.
- * 
- * Contributors:
- * 	- Rene Kuhlemann - development and initial implementation
- * 
+ * Contributors: - Rene Kuhlemann - development and initial implementation
  */
 package org.simplesim.strategy;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.simnation.agents.firm.Management.Action;
-import org.simnation.agents.firm.Management.GoalVariable;
-import static org.simnation.agents.firm.Management.INFLUENCE;;
+import org.simplesim.strategy.AspirationAdaptation.Action;
+import org.simplesim.strategy.AspirationAdaptation.GoalVariable;
+import org.simplesim.strategy.AspirationAdaptation.INFLUENCE;
 
 /**
  *
@@ -23,7 +19,7 @@ import static org.simnation.agents.firm.Management.INFLUENCE;;
 public class AATest {
 	
 	private int round=0;
-	private final Management aat;
+	private final AspirationAdaptation aat;
 
 	
 	public AATest() {
@@ -59,7 +55,7 @@ public class AATest {
 			}
 		});
 		
-		aat=new Management(goals, new float[] {0.06f,0.3f,0.2f});
+		aat=new AspirationAdaptation(goals);
 		aat.addAction(new Action() {
 			public void doAction() { System.out.println("Action 1: Price decrease"); }
 		}, new INFLUENCE[] {INFLUENCE.negative, INFLUENCE.none, INFLUENCE.positive });

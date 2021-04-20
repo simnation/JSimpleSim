@@ -146,12 +146,7 @@ public abstract class BasicModelEntity {
 	 */
 	public final String getFullName() {
 		if (parent==null) return getName();
-		final StringBuilder sb=new StringBuilder(parent.getFullName());
-		sb.append('.');
-		sb.append(getName());
-		if ((getAddress()==null)||(getAddress().length==0)) return sb.toString();
-		sb.append(getAddress()[parent.getLevel()]);
-		return sb.toString();
+		return parent.getFullName()+'.'+getName();
 	}
 
 	/**

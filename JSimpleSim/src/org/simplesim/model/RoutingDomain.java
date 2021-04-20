@@ -111,14 +111,16 @@ public abstract class RoutingDomain extends AbstractDomain {
 	 * during a simulation cycle.
 	 *
 	 * @param entity the model to be added
+	 * @return the given entity for further usage
 	 * @throws UniqueConstraintViolationException if the entity is already part of this domain
 	 * @throws NullPointerException               if entity is null
 	 */
 	@Override
-	public final void addEntity(BasicModelEntity entity) {
+	public final <T extends BasicModelEntity> T addEntity(T entity) {
 		super.addEntity(entity);
 		entity.getOutport().connectTo(getOutport()); // establish connection towards domain root
 		entity.resetAddress(countDomainEntities()-1); // reset addresses in entity and its children
+		return entity;
 	}
 
 	/**
@@ -131,7 +133,7 @@ public abstract class RoutingDomain extends AbstractDomain {
 	 * @return the removed entity if the domain contained it, null otherwise
 	 */
 	@Override
-	public final BasicModelEntity removeEntity(BasicModelEntity entity) {
+	public final <T extends BasicModelEntity> T removeEntity(T entity) {
 		final int start=getEntityList().indexOf(entity);
 		if (start==-1) return null; // unknown entity
 		getEntityList().remove(start);

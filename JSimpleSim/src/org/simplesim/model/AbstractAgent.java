@@ -164,19 +164,15 @@ public abstract class AbstractAgent<S extends State, E> extends BasicModelEntity
 	}
 	
 	/**
-	 * Provide logging functionality
+	 * Provides simple logging functionality with time stamp, entity name and message output.
+	 * <p>
+	 * May be overloaded by a more sophisticated implementation.
 	 * 
 	 * @param time current time stamp
-	 * @param msg additional message to output
+	 * @param msg message to print 
 	 */
 	public void log(Time time, String msg) {
-		StringBuffer sb=new StringBuffer();
-		sb.append('[');
-		sb.append(this.getFullName());
-		sb.append(']');
-		sb.append(time.toString());
-		sb.append(msg);
-		System.out.println(sb.toString());
+		System.out.println(time.toString()+this.toString()+": "+msg);
 	}
 
 	/**

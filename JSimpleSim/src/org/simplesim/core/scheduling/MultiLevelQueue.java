@@ -1,8 +1,12 @@
 /*
- * https://store.steampowered.com/app/1285080/Gordian_Rooms_A_curious_heritage/?snr=1_4_4__135_10&curator_clanid=
- * 34454724 * JSimpleSim is a framework to build multi-agent systems in a quick and easy way. This software is published
- * as open source and licensed under the terms of GNU GPLv3. Contributors: - Rene Kuhlemann - development and initial
- * implementation
+ * JSimpleSim is a framework to build multi-agent systems in a quick and easy
+ * way.
+ *
+ * This software is published as open source and licensed under the terms of GNU
+ * GPLv3.
+ *
+ * Contributors: - Rene Kuhlemann - development and initial implementation
+ *
  */
 package org.simplesim.core.scheduling;
 
@@ -23,8 +27,8 @@ import java.util.NoSuchElementException;
  * <li>far future tier for events from {@code minTimeTier3} to {@code maxTimeTier3}
  * </ol>
  * The near future tier is sliced into equidistant time intervals. The far future tier consists of an unsorted list.
- * When shifting events form tier 3 to tier 2, partial sorting is done by index calculation. A second sorting step is
- * done by the heap functionality of tier 1.
+ * When shifting events form tier 3 to tier 2, partial sorting is done by index calculation. The final sorting step is
+ * done by sorting the list of tier 1.
  *
  * @param <E> Event type
  * @see <a href= "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.95.4263&rep=rep1&type=pdf">Referring
@@ -199,7 +203,7 @@ public class MultiLevelQueue<E> implements EventQueue<E> {
 		// 3.) in all other case use tier3.size/TIER2_DEFAULT_BUCKET_SIZE buckets
 		int approxBucketCount=tier3.size()/TIER2_DEFAULT_BUCKET_SIZE; 
 		if (tier3.size()<=TIER2_DEFAULT_BUCKET_SIZE) approxBucketCount=1;
-		else if (approxBucketCount>TIER2_DEFAULT_BUCKET_SIZE) approxBucketCount=(int) Math.floor(Math.sqrt(tier3.size()));
+		else if (approxBucketCount>TIER2_DEFAULT_BUCKET_SIZE) approxBucketCount=(int) Math.sqrt(tier3.size());
 		// calc bucketWidth as time slice per bucket, rounded up to the next int
 		bucketWidth=(int) ((maxTimeTier3.getTicks()-minTimeTier3.getTicks())/approxBucketCount)+1;
 		// recalculate number of buckets, so that maxIndexTier2 * bucketWidth covers

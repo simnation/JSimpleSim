@@ -1,5 +1,8 @@
-/**
- *
+/*
+ * JSimpleSim is a framework to build multi-agent systems in a quick and easy way. This software is published as open
+ * source and licensed under the terms of GNU GPLv3.
+ * 
+ * Contributors: - Rene Kuhlemann - development and initial implementation
  */
 package org.simplesim.strategy;
 
@@ -52,7 +55,7 @@ public class AspirationAdaptation {
 
 		double getValue(); // current value of the goal variable  
 
-		default boolean isBelowLimit() { return getLimit() < getValue(); }
+		default boolean isBelowLimit() { return getLimit()<getValue(); }
 	}
 
 	public interface Action {
@@ -70,7 +73,7 @@ public class AspirationAdaptation {
 		private final float a[];
 
 		AspirationLevel(float init[]) {
-			a = init;
+			a=init;
 		}
 
 		AspirationLevel(int size) {
@@ -82,40 +85,40 @@ public class AspirationAdaptation {
 		}
 
 		void set(int index, float value) {
-			a[index] = value;
+			a[index]=value;
 		}
 
 		void decrease(int index) {
-			a[index] -= goalList.get(index).getStep();
+			a[index]-=goalList.get(index).getStep();
 		}
 
 		void increase(int index) {
-			a[index] += goalList.get(index).getStep();
+			a[index]+=goalList.get(index).getStep();
 		}
 
 		boolean contains(AspirationLevel other) {
-			for (int i = 0; i < a.length; i++) if (other.a[i] > a[i]) return false;
+			for (int i=0; i<a.length; i++) if (other.a[i]>a[i]) return false;
 			return true;
 		}
 
 		@Override
 		public int hashCode() {
-			int hash = Float.hashCode(a[0]);
-			for (int i = 1; i < a.length; i++) hash = (hash * 71) ^ Float.hashCode(a[i]);
+			int hash=Float.hashCode(a[0]);
+			for (int i=1; i<a.length; i++) hash=(hash*71)^Float.hashCode(a[i]);
 			return hash;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
 			// checks for same class, null and same array length omitted because of private visibility
-			for (int i = 0; i < a.length; i++) if (a[i] != ((AspirationLevel) obj).a[i]) return false;
+			for (int i=0; i<a.length; i++) if (a[i]!=((AspirationLevel) obj).a[i]) return false;
 			return true;
 		}
 	}
 
 	private final List<GoalVariable> goalList;
-	private final Map<Action, INFLUENCE[]> influenceScheme = new IdentityHashMap<>();
-	private final Map<AspirationLevel, List<Action>> expectedFeasibleSet = new HashMap<>();
+	private final Map<Action, INFLUENCE[]> influenceScheme=new IdentityHashMap<>();
+	private final Map<AspirationLevel, List<Action>> expectedFeasibleSet=new HashMap<>();
 
 	private final int[] urgencyOrder;
 	private final double[] g1; // vector of last goal variable values, g1=g(t-1)
@@ -134,28 +137,26 @@ public class AspirationAdaptation {
 	 */
 	public AspirationAdaptation(List<GoalVariable> goals) {
 		// init goal and action lists
-		goalList = new ArrayList<>(goals); // copy goal variables
-		dim = goalList.size();
-		urgencyOrder = new int[dim];
-
-		aspirationLevel = new AspirationLevel(dim);
-
-		g1 = new double[dim];
-		final INFLUENCE[] noInfluence = new INFLUENCE[dim];
+		goalList=new ArrayList<>(goals); // copy goal variables
+		dim=goalList.size();
+		urgencyOrder=new int[dim];
+		aspirationLevel=new AspirationLevel(dim);
+		g1=new double[dim];
+		final INFLUENCE[] noInfluence=new INFLUENCE[dim];
 
 		// initial values of goal variables as g(t-1)=g(t)
-		for (int index = 0; index < dim; index++) {
-			g1[index] = goalList.get(index).getValue(); // init values of goal variables
-			noInfluence[index] = INFLUENCE.none; // create neutral "no action" inflúence
+		for (int index=0; index<dim; index++) {
+			g1[index]=goalList.get(index).getValue(); // init values of goal variables
+			noInfluence[index]=INFLUENCE.none; // create neutral "no action" influence
 		}
 
 		// add a neutral "no action" element with zero influence to the action set
-		lastAction = addAction(() -> {}, noInfluence);
+		lastAction=addAction(() -> {},noInfluence);
 	}
 
 	public Action addAction(Action action, INFLUENCE influence[]) {
-		if (influence.length != dim) return null;
-		influenceScheme.put(action, influence);
+		if (influence.length!=dim) return null;
+		influenceScheme.put(action,influence);
 		return action;
 	}
 
@@ -165,7 +166,7 @@ public class AspirationAdaptation {
 		calcCurrentAspirationLevel();	// calc current aspiration level form values of goal variables
 		updateUrgencyOrder();			// update urgency order
 		maximizeAspirationLevel();		// upward aspiration adaptation
-		lastAction = selectBestAction(expectedFeasibleSet.get(aspirationLevel));
+		lastAction=selectBestAction(expectedFeasibleSet.get(aspirationLevel));
 		return lastAction;
 	}
 
@@ -177,8 +178,8 @@ public class AspirationAdaptation {
 	 * comprehensive hull of the feasibility set.
 	 */
 	private void calcCurrentAspirationLevel() {
-		for (int index = 0; index < dim; index++)
-			aspirationLevel.set(index, round(goalList.get(index).getValue(), goalList.get(index).getStep()));
+		for (int index=0; index<dim; index++)
+			aspirationLevel.set(index,round(goalList.get(index).getValue(),goalList.get(index).getStep()));
 	}
 
 	/**
@@ -189,7 +190,7 @@ public class AspirationAdaptation {
 	 * be the optimal AL that can be reached by the given set of actions.
 	 */
 	private void maximizeAspirationLevel() {
-		for (int index = 0; index < dim; index++) {
+		for (int index=0; index<dim; index++) {
 			while (isAspirationLevelFeasible()) {
 				aspirationLevel.increase(urgencyOrder[index]);
 			}
@@ -214,13 +215,13 @@ public class AspirationAdaptation {
 	 * @param a an adaptation level
 	 */
 	private void updateUrgencyOrder() {
-		int index = 0;
+		int index=0;
 		// goals with adaptation levels below the limit are more urgent than the ones above
-		for (int i = 0; i < dim; i++) {
-			if (aspirationLevel.get(i) <= goalList.get(i).getLimit()) urgencyOrder[index++] = i;
+		for (int i=0; i<dim; i++) {
+			if (aspirationLevel.get(i)<=goalList.get(i).getLimit()) urgencyOrder[index++]=i;
 		}
-		for (int i = 0; i < dim; i++) {
-			if (aspirationLevel.get(i) > goalList.get(i).getLimit()) urgencyOrder[index++] = i;
+		for (int i=0; i<dim; i++) {
+			if (aspirationLevel.get(i)>goalList.get(i).getLimit()) urgencyOrder[index++]=i;
 		}
 	}
 
@@ -235,27 +236,27 @@ public class AspirationAdaptation {
 	 */
 	private Action selectBestAction(List<Action> actionList) {
 		// list actions with the least negative influences
-		int best = Integer.MAX_VALUE;
+		int best=Integer.MAX_VALUE;
 		for (Action action : actionList)
-			best = Math.min(best, countInfluence(influenceScheme.get(action), INFLUENCE.negative));
-		for (Iterator<Action> iter = actionList.iterator(); iter.hasNext();) {
-			if (countInfluence(influenceScheme.get(iter.next()), INFLUENCE.negative) > best) iter.remove();
+			best=Math.min(best,countInfluence(influenceScheme.get(action),INFLUENCE.negative));
+		for (Iterator<Action> iter=actionList.iterator(); iter.hasNext();) {
+			if (countInfluence(influenceScheme.get(iter.next()),INFLUENCE.negative)>best) iter.remove();
 		}
 		// of this subset, select actions with most positive influences
-		best = 0;
+		best=0;
 		for (Action action : actionList)
-			best = Math.max(best, countInfluence(influenceScheme.get(action), INFLUENCE.positive));
-		for (Iterator<Action> iter = actionList.iterator(); iter.hasNext();) {
-			if (countInfluence(influenceScheme.get(iter.next()), INFLUENCE.positive) < best) iter.remove();
+			best=Math.max(best,countInfluence(influenceScheme.get(action),INFLUENCE.positive));
+		for (Iterator<Action> iter=actionList.iterator(); iter.hasNext();) {
+			if (countInfluence(influenceScheme.get(iter.next()),INFLUENCE.positive)<best) iter.remove();
 		}
 		// return first element, since all remaining elements are tantamount
 		return actionList.get(0);
 	}
 
 	private int countInfluence(INFLUENCE[] influence, INFLUENCE value) {
-		int counter = 0;
+		int counter=0;
 		for (INFLUENCE item : influence) {
-			if (item == value) counter++;
+			if (item==value) counter++;
 		}
 		return counter;
 	}
@@ -265,40 +266,40 @@ public class AspirationAdaptation {
 	 * actions.
 	 */
 	private void constructExpectedFeasibleSet() {
-		final float[] aLow = new float[dim]; // lower aspiration bound
-		final float[] aMid = new float[dim]; // mid value
-		final float[] aHi = new float[dim];  // higher aspiration bound
+		final float[] aLow=new float[dim]; // lower aspiration bound
+		final float[] aMid=new float[dim]; // mid value
+		final float[] aHi=new float[dim];  // higher aspiration bound
 
 		// calculate feasible aspiration levels
-		for (int i = 0; i < dim; i++) {
-			final float step = goalList.get(i).getStep();
-			final float a = round(g1[i], step);
-			if (a < goalList.get(i).getMax()) aHi[i] = a + step;
-			else aHi[i] = a;
-			if ((a == g1[i]) && (a > goalList.get(i).getMin())) aLow[i] = a - step;
-			else aLow[i] = a;
-			aMid[i] = a;
+		for (int i=0; i<dim; i++) {
+			final float step=goalList.get(i).getStep();
+			final float a=round(g1[i],step);
+			if (a<goalList.get(i).getMax()) aHi[i]=a+step;
+			else aHi[i]=a;
+			if ((a==g1[i])&&(a>goalList.get(i).getMin())) aLow[i]=a-step;
+			else aLow[i]=a;
+			aMid[i]=a;
 		}
 		// assign feasible aspirations form influence scheme to actions
 		expectedFeasibleSet.clear();
 		for (Action action : influenceScheme.keySet()) {
-			AspirationLevel fal = new AspirationLevel(dim); // feasible aspiration level
-			for (int index = 0; index < dim; index++) {
+			AspirationLevel fal=new AspirationLevel(dim); // feasible aspiration level
+			for (int index=0; index<dim; index++) {
 				switch (influenceScheme.get(action)[index]) {
 				case negative:
-					fal.set(index, aLow[index]);
+					fal.set(index,aLow[index]);
 					break;
 				case positive:
-					fal.set(index, aHi[index]);
+					fal.set(index,aHi[index]);
 					break;
 				default:
-					fal.set(index, aMid[index]);
+					fal.set(index,aMid[index]);
 				}
 			}
-			List<Action> actionList = expectedFeasibleSet.get(fal);
-			if (actionList == null) {
-				actionList = new LinkedList<>();
-				expectedFeasibleSet.put(fal, actionList);
+			List<Action> actionList=expectedFeasibleSet.get(fal);
+			if (actionList==null) {
+				actionList=new LinkedList<>();
+				expectedFeasibleSet.put(fal,actionList);
 			}
 			actionList.add(action);
 		}
@@ -309,18 +310,18 @@ public class AspirationAdaptation {
 	 * the current values of the goal variables.
 	 */
 	private void updateInfluenceScheme() {
-		final INFLUENCE[] influenceRow = influenceScheme.get(lastAction);
-		for (int index = 0; index < dim; index++) {
-			final double g = goalList.get(index).getValue();
-			if (g < g1[index]) influenceRow[index] = INFLUENCE.negative;
-			else if (g > g1[index]) influenceRow[index] = INFLUENCE.positive;
-			else influenceRow[index] = INFLUENCE.none;
-			g1[index] = g; // save for next round
+		final INFLUENCE[] influenceRow=influenceScheme.get(lastAction);
+		for (int index=0; index<dim; index++) {
+			final double g=goalList.get(index).getValue();
+			if (g<g1[index]) influenceRow[index]=INFLUENCE.negative;
+			else if (g>g1[index]) influenceRow[index]=INFLUENCE.positive;
+			else influenceRow[index]=INFLUENCE.none;
+			g1[index]=g; // save for next round
 		}
 	}
 
 	private static float round(double value, float step) {
-		return ((float) Math.floor(value / step)) * step;
+		return ((float) Math.floor(value/step))*step;
 	}
 
 }

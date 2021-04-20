@@ -6,10 +6,12 @@
 package org.simplesim.core.scheduling;
 
 /**
- * Provides time and calendar functionality to scale and navigate the simulation's time axis.
+ * Provides time and calendar functionality to scale and navigate the
+ * simulation's time axis.
  * <p>
- * Ticks are stored as {@code long} primitive. A time scale is provided, standardized with one second set to one. The
- * scale may be changed because within the simulator, only the {@code Time} wrapper is used.
+ * Ticks are stored as {@code long} primitive. A time scale is provided,
+ * standardized with one second set to one. The scale may be changed because
+ * within the simulator, only the {@code Time} wrapper is used.
  * <p>
  * This class is immutable and thus tread safe.
  */
@@ -43,28 +45,57 @@ public final class Time implements Comparable<Time> {
 	public static final Time INFINITY=new Time(Long.MAX_VALUE);
 
 	/**
-	 * This is an immutable class, so ticks are final (multiple references to a changing time instance are prone to hard
-	 * to find bugs)
+	 * This is an immutable class, so ticks are final (multiple references to a
+	 * changing time instance are prone to hard to find bugs)
 	 */
 	private final long ticks;
 
+	/**
+	 * Basic constructor
+	 *
+	 * @param value number of ticks
+	 */
 	public Time(long value) {
 		ticks=value;
 	}
 
-	// copy constructor
+	/**
+	 * Copy constructor
+	 *
+	 * @param time time to duplicate
+	 */
 	public Time(Time time) {
 		this(time.ticks);
 	}
 
+	/**
+	 * Constructor converting a given date into ticks
+	 *
+	 * @param year  the year (counting starts at zero)
+	 * @param month the month (0<x<12, counting starts at zero)
+	 * @param day   the day (0<x<30, counting starts at zero)
+	 * @param hour  the hour (0<x<24)
+	 * @param min   the minute (0<x<60)
+	 * @param sec   the second (0<x<60)
+	 */
 	public Time(int year, int month, int day, int hour, int min, int sec) {
 		this((year*TICKS_PER_YEAR)+(month*TICKS_PER_MONTH)+(day*TICKS_PER_DAY)+(hour*TICKS_PER_HOUR)
 				+(min*TICKS_PER_MINUTE)+(sec*TICKS_PER_SECOND));
 	}
 
-	public long getTicks() {
-		return ticks;
+	/**
+	 * Constructor converting a given date into ticks, facilitating shorter time
+	 * spans.
+	 *
+	 * @param day  the day (counting starts at zero)
+	 * @param hour the hour (0<x<24)
+	 * @param min  the minute (0<x<60)
+	 */
+	public Time(int day, int hour, int min) {
+		this((day*TICKS_PER_DAY)+(hour*TICKS_PER_HOUR)+(min*TICKS_PER_MINUTE));
 	}
+
+	public long getTicks() { return ticks; }
 
 	public Time add(long value) {
 		return new Time(getTicks()+value);
@@ -119,7 +150,7 @@ public final class Time implements Comparable<Time> {
 
 	@Override
 	public int hashCode() {
-		return (int) getTicks();
+		return Long.hashCode(getTicks());
 	}
 
 	@Override
