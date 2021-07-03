@@ -36,12 +36,6 @@ public final class Time implements Comparable<Time> {
 	public static final int TICKS_PER_YEAR=MONTHS_PER_YEAR*TICKS_PER_MONTH;
 
 	public static final Time ZERO=new Time(0);
-	public static final Time SECOND=new Time(TICKS_PER_SECOND);
-	public static final Time MINUTE=new Time(TICKS_PER_MINUTE);
-	public static final Time HOUR=new Time(TICKS_PER_HOUR);
-	public static final Time DAY=new Time(TICKS_PER_DAY);
-	public static final Time MONTH=new Time(TICKS_PER_MONTH);
-	public static final Time YEAR=new Time(TICKS_PER_YEAR);
 	public static final Time INFINITY=new Time(Long.MAX_VALUE);
 
 	/**
@@ -113,33 +107,36 @@ public final class Time implements Comparable<Time> {
 		return sub(time.getTicks());
 	}
 
-	public int seconds() {
-		return (int) ((getTicks()%TICKS_PER_MINUTE)/TICKS_PER_SECOND);
+	public static Time getMinutes(int minutes) {
+		return new Time(minutes*TICKS_PER_MINUTE);
 	}
 
-	public int minutes() {
-		return (int) ((getTicks()%TICKS_PER_HOUR)/TICKS_PER_MINUTE);
+	public static Time getHours(int hours) {
+		return new Time(hours*TICKS_PER_HOUR);
 	}
 
-	public int hours() {
-		return (int) ((getTicks()%TICKS_PER_DAY)/TICKS_PER_HOUR);
+	public static Time getDays(int days) {
+		return new Time(days*TICKS_PER_DAY);
 	}
 
-	public int days() {
-		return (int) ((getTicks()%TICKS_PER_MONTH)/TICKS_PER_DAY);
+	public static Time getMonths(int months) {
+		return new Time(months*TICKS_PER_MONTH);
 	}
 
-	public int months() {
-		return (int) ((getTicks()%TICKS_PER_YEAR)/TICKS_PER_MONTH);
-	}
-
-	public int years() {
-		return (int) (getTicks()/TICKS_PER_YEAR);
+	public static Time getYears(int years) {
+		return new Time(years*TICKS_PER_YEAR);
 	}
 
 	@Override
 	public String toString() {
-		return String.format("[%02d.%02d.%02d %02d:%02d.%02d]",years(),months(),days(),hours(),minutes(),seconds());
+		final int years=(int) (getTicks()/TICKS_PER_YEAR);
+		final int months=(int) ((getTicks()%TICKS_PER_YEAR)/TICKS_PER_MONTH);
+		final int days=(int) ((getTicks()%TICKS_PER_MONTH)/TICKS_PER_DAY);
+		final int hours=(int) ((getTicks()%TICKS_PER_DAY)/TICKS_PER_HOUR);
+		final int minutes=(int) ((getTicks()%TICKS_PER_HOUR)/TICKS_PER_MINUTE);
+		final int seconds=(int) ((getTicks()%TICKS_PER_MINUTE)/TICKS_PER_SECOND);
+
+		return String.format("[%02d.%02d.%02d %02d:%02d.%02d]",years,months,days,hours,minutes,seconds);
 	}
 
 	@Override

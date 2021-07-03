@@ -10,6 +10,7 @@
  */
 package org.simplesim.model;
 
+import java.io.PrintStream;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import org.simplesim.core.dynamic.ChangeRequest;
@@ -135,11 +136,11 @@ public abstract class AbstractAgent<S extends State, E> extends BasicModelEntity
 	 * </ul>
 	 * If implemented, the agent may also refer <i>read-only</i> to a bulletin board
 	 * implementation of its parent domain or the root domain for additional
-	 * external parameters
+	 * external parameters.
 	 * <p>
+	 * Note: Do not invoke from outside the simulation loop!
 	 *
 	 * @param time current simulation time
-	 *
 	 * @return time of the next event (tone)
 	 *
 	 * @see State
@@ -162,21 +163,58 @@ public abstract class AbstractAgent<S extends State, E> extends BasicModelEntity
 	public final Time doEventSim(Time time) {
 		return doEvent(time);
 	}
-	
+	 
 	/**
-	 * Provides simple logging functionality with time stamp, entity name and message output.
+	 * Provides simple logging functionality to a stream with time stamp, entity name and message output.
 	 * <p>
-	 * May be overloaded by a more sophisticated implementation.
+	 * Can be used to redirect output to a log file. May be overloaded by a more sophisticated implementation.
 	 * 
+	 * @param stream stream to be used as output
 	 * @param time current time stamp
 	 * @param msg message to print 
-	 */
-	public void log(Time time, String msg) {
-		System.out.println(time.toString()+this.toString()+": "+msg);
+	 */	
+	public void log(PrintStream stream, Time time, String msg) {
+		stream.println(time.toString()+this.toString()+": "+msg);
+	}
+	
+	/**
+	 * Provides simple logging functionality to a stream - only message output.
+	 * <p>
+	 * Can be used to redirect output to a log file. May be overloaded by a more sophisticated implementation.
+	 * 
+	 * @param stream stream to be used as output
+	 * @param msg message to print 
+	 */	
+	public void log(PrintStream stream, String msg) {
+		stream.println(msg);
 	}
 
 	/**
-	 * Sets the status of simulation run.<br>
+	 * Provides simple logging functionality to System.out with time stamp, entity name and message output.
+	 * <p>
+	 * Can be used to redirect output to a log file. May be overloaded by a more sophisticated implementation.
+	 * 
+	 * @param time current time stamp
+	 * @param msg message to print 
+	 */	
+	public void log(Time time, String msg) {
+		log(System.out,time,msg);
+	}
+	
+	/**
+	 * Provides simple logging functionality to System.out - only message output.
+	 * <p>
+	 * Can be used to redirect output to a log file. May be overloaded by a more sophisticated implementation.
+	 * 
+	 * @param msg message to print 
+	 */	
+	public void log(String msg) {
+		log(System.out,msg);
+	}
+
+	/**
+	 * Sets the status of simulation run.
+	 * <p>
 	 * Static method and variable to be accessible for all entities of the simulation model
 	 *
 	 * @param toggle the status of the simulation, {@code true} means simulation is running
@@ -186,7 +224,8 @@ public abstract class AbstractAgent<S extends State, E> extends BasicModelEntity
 	}
 
 	/**
-	 * Gets the status of simulation run.<br>
+	 * Gets the status of simulation run.
+	 * <p>
 	 * Static method and variable to be accessible for all entities of the simulation model
 	 *
 	 * @return current simulation status, {@code true} means simulation is running
