@@ -10,7 +10,7 @@
  */
 package org.simplesim.simulator;
 
-import org.simplesim.core.scheduling.HeapEventQueue;
+import org.simplesim.core.scheduling.SortedBucketQueue;
 import org.simplesim.core.messaging.RecursiveMessageForwarding;
 import org.simplesim.core.messaging.ForwardingStrategy;
 import org.simplesim.core.scheduling.EventQueue;
@@ -23,6 +23,8 @@ import org.simplesim.model.AbstractDomain;
  * <p>
  * This simulator identifies all due agents of a model using a global event queue.
  * Then the {@code doEventSim} method of these imminent agents is called sequentially.
+ * <p>
+ * Uses a {@code SortedBucketQueue} as default implementation of the global event queue
  * <p>
  * This implementation is especially useful to run DES models.
  *
@@ -42,11 +44,11 @@ public class SequentialDESimulator extends AbstractSimulator {
 	}
 
 	public SequentialDESimulator(AbstractDomain root) {
-		this(root,new HeapEventQueue<AbstractAgent<?, ?>>(),new RecursiveMessageForwarding());
+		this(root,new SortedBucketQueue<AbstractAgent<?, ?>>(),new RecursiveMessageForwarding());
 	}
 	
 	public SequentialDESimulator(AbstractDomain root, ForwardingStrategy forwarding) {
-		this(root,new HeapEventQueue<AbstractAgent<?, ?>>(),forwarding);
+		this(root,new SortedBucketQueue<AbstractAgent<?, ?>>(),forwarding);
 	}
 	
 	public SequentialDESimulator(AbstractDomain root, EventQueue<AbstractAgent<?, ?>> queue) {

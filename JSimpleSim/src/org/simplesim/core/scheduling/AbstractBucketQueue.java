@@ -36,7 +36,7 @@ abstract class AbstractBucketQueue<E, M extends Map<Time, List<E>>> implements E
 	private final M map;
 
 	/** number of total events, accessible for subclasses */
-	int size=0;
+	private int size=0;
 
 	@SuppressWarnings("serial")
 	static class UnexpectedEmptyBucketException extends RuntimeException {
@@ -61,11 +61,14 @@ abstract class AbstractBucketQueue<E, M extends Map<Time, List<E>>> implements E
 	 */
 	@Override
 	public Time getTime(E event) {
-		for (final Time time : getMap().keySet()) {
-			final List<E> bucket=getMap().get(time);
-			if (bucket.contains(event)) return time;
+		for (Map.Entry<Time, List<E>> entry : getMap().entrySet()) {
+			if (entry.getValue().contains(event)) return entry.getKey();
 		}
 		return null;
+	}
+	
+	void removeEmptyBucket(Time time) {
+		getMap().remove(time);		
 	}
 
 	/*
@@ -75,16 +78,16 @@ abstract class AbstractBucketQueue<E, M extends Map<Time, List<E>>> implements E
 	 */
 	@Override
 	public Time dequeue(E event) {
-		for (final Time time : getMap().keySet()) {
-			final List<E> bucket=getMap().get(time);
-			if (bucket.contains(event)) {
-				bucket.remove(event);
-				if (bucket.isEmpty()) getMap().remove(time);
+		for (Map.Entry<Time, List<E>> entry : getMap().entrySet()) {
+			if (entry.getValue().contains(event)) {
+				entry.getValue().remove(event);
 				size--;
-				return time;
+				final Time result=entry.getKey();
+				if (entry.getValue().isEmpty()) removeEmptyBucket(result);
+				return result;
 			}
 		}
-		return null;
+		return null;	
 	}
 
 	/*
@@ -136,7 +139,7 @@ abstract class AbstractBucketQueue<E, M extends Map<Time, List<E>>> implements E
 		final List<E> bucket=getMap().get(min);
 		if (bucket.isEmpty()) throw new UnexpectedEmptyBucketException();
 		final E result=bucket.remove(bucket.size()-1);
-		if (bucket.isEmpty()) getMap().remove(min);
+		if (bucket.isEmpty()) removeEmptyBucket(min);
 		size--;
 		return result;
 	}
