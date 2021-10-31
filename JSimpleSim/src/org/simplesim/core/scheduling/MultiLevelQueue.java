@@ -34,10 +34,10 @@ import org.simplesim.core.scheduling.AbstractBucketQueue.UnexpectedEmptyBucketEx
  * <li>far future tier for events from {@code minTimeTier3} to
  * {@code maxTimeTier3}
  * </ol>
- * The near future tier is sliced into equidistant time intervals. The far
- * future tier consists of an unsorted list. When shifting events form tier 3 to
- * tier 2, partial sorting is done by index calculation. The final sorting step
- * is done by sorting the list of tier 1.
+ * The far future tier consists of an unsorted {@code HashMap}. When shifting
+ * events form tier 3 to tier 2, partial sorting is done by index calculation.
+ * The final sorting step is done during transfer to a {@code SortedMap} in tier
+ * 1.
  *
  * @param <E> Event type
  * @see <a href=
@@ -46,7 +46,7 @@ import org.simplesim.core.scheduling.AbstractBucketQueue.UnexpectedEmptyBucketEx
  */
 public class MultiLevelQueue<E> implements EventQueue<E> {
 
-	private final static int TIER2_DEFAULT_BUCKET_SIZE=128;
+	private final static int TIER2_DEFAULT_CHUNK_SIZE=128;
 
 	private final SortedMap<Time, List<E>> tier1=new TreeMap<>(); // current events, sorted
 	private final List<Map<Time, List<E>>> tier2=new ArrayList<>();// near future events, partly sorted
@@ -54,6 +54,7 @@ public class MultiLevelQueue<E> implements EventQueue<E> {
 
 	private int size=0;
 	private int bucketWidth; // size of a bucket in tier 2 in time units
+	private int chunkSizeTier2=TIER2_DEFAULT_CHUNK_SIZE;
 	private int indexTier2=0; // actual index in array of tier 2
 	private int maxIndexTier2=0; // maximum index in array of tier 2
 	private long minTimeTier2=0; // minimum ticks in tier 2
@@ -61,6 +62,21 @@ public class MultiLevelQueue<E> implements EventQueue<E> {
 	private long minTimeTier3=0; // minimum ticks in tier 3 (equals upper bound of tier 2)
 	private long maxTimeTier3=0; // maximum ticks in tier 3
 
+	
+	/**
+	 * Constructor to enable setting the average chunk size of the second sorting tier.
+	 * <p>
+	 * Only for optimization purpose, see documentation in {@code refillTier2}. Generally, use default constrcutor.
+	 * 
+	 * @param chunkSize
+	 */
+	public MultiLevelQueue(int chunkSize) {
+		chunkSizeTier2=chunkSize;
+	}
+	
+	public MultiLevelQueue() {	}
+	
+	
 	/*
 	 * (non-Javadoc)
 	 *
@@ -203,19 +219,19 @@ public class MultiLevelQueue<E> implements EventQueue<E> {
 		// 1.) if there are less than TIER2_DEFAULT_BUCKET_SIZE items, ensure at least one bucket
 		// 2.) if there are more than TIER2_DEFAULT_BUCKET_SIZE^2 items, use the square root as approximation
 		// 3.) in all other cases use tier3.size/TIER2_DEFAULT_BUCKET_SIZE buckets
-		int bucketCount=tier3.size()/TIER2_DEFAULT_BUCKET_SIZE; 					// default: case 3.)
-		if (tier3.size()<=TIER2_DEFAULT_BUCKET_SIZE) bucketCount=1;					// case 1.)
-		else if (tier3.size()>(TIER2_DEFAULT_BUCKET_SIZE*TIER2_DEFAULT_BUCKET_SIZE))// case 2.)
+		int bucketCount=tier3.size()/chunkSizeTier2; 				// default: case 3.)
+		if (tier3.size()<=chunkSizeTier2) bucketCount=1;			// case 1.)
+		else if (tier3.size()>(chunkSizeTier2*chunkSizeTier2))		// case 2.)
 			bucketCount=(int) Math.sqrt(tier3.size());
 		// calc bucketWidth as time slice (deltaT) per bucket, rounded up to the next integer
 		final long delta=maxTimeTier3-minTimeTier3;
 		bucketWidth=(int) (delta/bucketCount)+1;
 		// recalculate number of buckets, so that (maxIndexTier2 * bucketWidth) covers
 		// the overall time span of tier3 as a convex hull.
-		maxIndexTier2=(int) (delta/bucketWidth)+1; // maxIndexTier2 replaces bucketCount
-		indexTier2=0; 				// reset index
-		actTimeTier2=minTimeTier2=minTimeTier3;	// transfer min time of tier3 to tier2
-		minTimeTier3=maxTimeTier3;	// tier3 is now empty, so minTime equals maxTime
+		maxIndexTier2=(int) (delta/bucketWidth)+1;	// maxIndexTier2 replaces bucketCount
+		indexTier2=0; 								// reset index
+		actTimeTier2=minTimeTier2=minTimeTier3;		// transfer min time of tier3 to tier2
+		minTimeTier3=maxTimeTier3;					// tier3 is now empty, so minTime equals maxTime
 
 		// add additional lists to tier2 to match desired array size
 		// existing maps are empty and will be reused
@@ -228,12 +244,12 @@ public class MultiLevelQueue<E> implements EventQueue<E> {
 		tier3.clear();
 	}
 
-	private void addEventToTier(Map<Time, List<E>> tier, E event, Time time) {
-		List<E> bucket=tier.get(time);
+	private void addEventToTier(Map<Time, List<E>> map, E event, Time time) {
+		List<E> bucket=map.get(time);
 		if (bucket==null) { // time stamp has not been added to queue, yet
 			bucket=new ArrayList<>();
-			tier.put(time,bucket);
-		} // now we definitely have a valid entry queued in the heap
+			map.put(time,bucket);
+		} // now we definitely have a valid map entry
 		bucket.add(event);
 	}
 
@@ -246,7 +262,7 @@ public class MultiLevelQueue<E> implements EventQueue<E> {
 				return entry.getKey();
 			}
 		}
-		return null;		
+		return null;
 	}
 
 }
