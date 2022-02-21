@@ -72,7 +72,7 @@ public final class ConcurrentDESimulator extends SequentialDESimulator {
 			for (AbstractAgent<?, ?> agent : getCurrentEventList())
 				futures.add(executor.submit(() -> agent.doEventSim(getSimulationTime())));
 			// join threads again and collect results
-			for (int index=0; index<getCurrentEventList().size(); index++) try {
+			for (int index=0; index<futures.size(); index++) try {
 				final AbstractAgent<?, ?> agent=getCurrentEventList().get(index);
 				final Time tonie=futures.get(index).get();
 				if (tonie==null) throw new InvalidSimulatorStateException(

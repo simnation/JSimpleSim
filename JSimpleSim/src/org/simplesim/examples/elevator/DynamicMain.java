@@ -7,6 +7,7 @@ package org.simplesim.examples.elevator;
 
 import org.simplesim.core.messaging.ForwardingStrategy;
 import org.simplesim.core.messaging.RoutedMessageForwarding;
+import org.simplesim.core.scheduling.HeapBucketQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.examples.elevator.dyn.DynamicElevator;
 import org.simplesim.examples.elevator.dyn.DynamicModel;
@@ -55,7 +56,7 @@ public class DynamicMain {
 
 		final View view=new View(elevator.getState());
 		final ForwardingStrategy fs=new RoutedMessageForwarding(model);
-		final Simulator simulator=new DynamicDecorator(new ConcurrentDESimulator(model,fs));
+		final Simulator simulator=new DynamicDecorator(new ConcurrentDESimulator(model,new HeapBucketQueue(),fs));
 		//final Simulator simulator=new DynamicDecorator(new SequentialDESimulator(model,fs));
 		// add observer
 		simulator.registerEventsProcessedListener(view);

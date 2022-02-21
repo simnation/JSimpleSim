@@ -11,22 +11,20 @@
 package org.simplesim.core.scheduling;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import org.simplesim.core.scheduling.AbstractBucketQueue.UnexpectedEmptyBucketException;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
- * The MultiLevelQueue is a layered event queue with three tiers suitable for a
+ * A multi-level queue is a layered event queue with three tiers suitable for a
  * large amount of events.
  * <p>
- * MultiLevelQueue is based on the article "MList: An efficient pending event
- * set structure for discrete event simulation" by Rick Siow Mong Goh and Ian
- * Li-Jin Thng. It is structured as a bucket queue with three tiers:
+ * Both multi-level queue implementations are based on the article "MList: An
+ * efficient pending event set structure for discrete event simulation" by Rick
+ * Siow Mong Goh and Ian Li-Jin Thng. They are structured in three tiers:
  * <ol>
  * <li>current event tier for events before {@code minTimerTier2}
  * <li>near future tier for events since {@code minTimeTier2} but before
@@ -34,23 +32,24 @@ import org.simplesim.core.scheduling.AbstractBucketQueue.UnexpectedEmptyBucketEx
  * <li>far future tier for events from {@code minTimeTier3} to
  * {@code maxTimeTier3}
  * </ol>
- * The far future tier consists of an unsorted {@code HashMap}. When shifting
- * events form tier 3 to tier 2, partial sorting is done by index calculation.
- * The final sorting step is done during transfer to a {@code SortedMap} in tier
- * 1.
+ * {@code MultiLevelBucketQueue} uses buckets of events of the same time-stamp.
+ * This is versatile if there are many event with the same time-stamp.
+ * <p>
+ * {@code MultiLevelEventQueue} uses {@code EventQueueEntry} to couple time and
+ * events. This is versatile if there are many event with different time-stamps.
  *
  * @param <E> Event type
  * @see <a href=
  *      "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.95.4263&rep=rep1&type=pdf">Referring
  *      article</a>
  */
-public class MultiLevelQueue<E> implements EventQueue<E> {
+public class MultiLevelEventQueue<E> implements EventQueue<E> {
 
 	private final static int TIER2_DEFAULT_CHUNK_SIZE=128;
 
-	private final SortedMap<Time, List<E>> tier1=new TreeMap<>(); // current events, sorted
-	private final List<Map<Time, List<E>>> tier2=new ArrayList<>();// near future events, partly sorted
-	private final Map<Time, List<E>> tier3=new HashMap<>(); // far future events, unsorted
+	private Queue<EventQueueEntry<E>> tier1=new PriorityQueue<>(); // current events, sorted
+	private final List<Collection<EventQueueEntry<E>>> tier2=new ArrayList<>();// near future events, partly sorted
+	private final Collection<EventQueueEntry<E>> tier3=new ArrayList<>(); // far future events, unsorted
 
 	private int size=0;
 	private int bucketWidth; // size of a bucket in tier 2 in time units
@@ -62,21 +61,21 @@ public class MultiLevelQueue<E> implements EventQueue<E> {
 	private long minTimeTier3=0; // minimum ticks in tier 3 (equals upper bound of tier 2)
 	private long maxTimeTier3=0; // maximum ticks in tier 3
 
-	
 	/**
-	 * Constructor to enable setting the average chunk size of the second sorting tier.
+	 * Constructor to enable setting the average chunk size of the second sorting
+	 * tier.
 	 * <p>
-	 * Only for optimization purpose, see documentation in {@code refillTier2}. Generally, use default constrcutor.
-	 * 
+	 * Only for optimization purpose, see documentation in {@code refillTier2}.
+	 * Generally, use default constrcutor.
+	 *
 	 * @param chunkSize
 	 */
-	public MultiLevelQueue(int chunkSize) {
+	public MultiLevelEventQueue(int chunkSize) {
 		chunkSizeTier2=chunkSize;
 	}
-	
-	public MultiLevelQueue() {	}
-	
-	
+
+	public MultiLevelEventQueue() {}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -103,7 +102,7 @@ public class MultiLevelQueue<E> implements EventQueue<E> {
 	@Override
 	public Time getMin() {
 		if (tier1.isEmpty()) refillTier1();
-		return tier1.firstKey();
+		return tier1.peek().getTime();
 	}
 
 	/*
@@ -113,13 +112,14 @@ public class MultiLevelQueue<E> implements EventQueue<E> {
 	 */
 	@Override
 	public void enqueue(E event, Time time) {
+		final EventQueueEntry<E> entry=new EventQueueEntry<>(time,event);
 		if (time.getTicks()>=minTimeTier3) {
-			addEventToTier(tier3,event,time);
+			tier3.add(entry);
 			if (time.getTicks()>maxTimeTier3) maxTimeTier3=time.getTicks();
-		} else if (time.getTicks()<actTimeTier2) addEventToTier(tier1,event,time);
+		} else if (time.getTicks()<actTimeTier2) tier1.add(entry);
 		else {
 			final int index=(int) ((time.getTicks()-minTimeTier2)/bucketWidth);
-			addEventToTier(tier2.get(index),event,time);
+			tier2.get(index).add(entry);
 		}
 		size++;
 	}
@@ -133,12 +133,8 @@ public class MultiLevelQueue<E> implements EventQueue<E> {
 	public E dequeue() {
 		if (isEmpty()) return null;
 		if (tier1.isEmpty()) refillTier1();
-		final List<E> bucket=tier1.get(getMin());
-		if (bucket.isEmpty()) throw new UnexpectedEmptyBucketException();
-		final E result=bucket.remove(bucket.size()-1);
-		if (bucket.isEmpty()) tier1.remove(getMin());
 		size--;
-		return result;
+		return tier1.poll().getEvent();
 	}
 
 	/*
@@ -148,11 +144,14 @@ public class MultiLevelQueue<E> implements EventQueue<E> {
 	 */
 	@Override
 	public List<E> dequeueAll() {
-		if (tier1.isEmpty()) refillTier1();
-		final List<E> bucket=tier1.remove(getMin());
-		if (bucket.isEmpty()) throw new UnexpectedEmptyBucketException();
-		size-=bucket.size();
-		return bucket;
+		if (isEmpty()) return Collections.emptyList();
+		
+		final List<E> result=new ArrayList<>();
+		final Time time=getMin(); // remember current time stamp, also refills tier1
+
+		while (!tier1.isEmpty()&&tier1.peek().getTime().equals(time)) result.add(tier1.poll().getEvent());
+		size-=result.size(); 
+		return result;
 	}
 
 	/*
@@ -172,15 +171,7 @@ public class MultiLevelQueue<E> implements EventQueue<E> {
 	 */
 	@Override
 	public Time dequeue(E event) {
-		Time result=findAndRemoveEvent(tier1,event);
-		if (result!=null) return result;
-		result=findAndRemoveEvent(tier3,event);
-		if (result!=null) return result;
-		for (Map<Time, List<E>> map : tier2) {
-			result=findAndRemoveEvent(map,event);
-			if (result!=null) return result;
-		}
-		return null;
+		throw new UnsupportedOperationException(); // to be implemented later
 	}
 
 	/*
@@ -190,23 +181,12 @@ public class MultiLevelQueue<E> implements EventQueue<E> {
 	 */
 	@Override
 	public Time getTime(E event) {
-		for (Map.Entry<Time, List<E>> entry : tier1.entrySet()) {
-			if (entry.getValue().contains(event)) return entry.getKey();
-		}
-		for (Map<Time, List<E>> map : tier2) {
-			for (Map.Entry<Time, List<E>> entry : map.entrySet()) {
-				if (entry.getValue().contains(event)) return entry.getKey();
-			}
-		}
-		for (Map.Entry<Time, List<E>> entry : tier3.entrySet()) {
-			if (entry.getValue().contains(event)) return entry.getKey();
-		}
-		return null;
+		throw new UnsupportedOperationException(); // to be implemented later
 	}
 
 	private void refillTier1() {
 		if (indexTier2>=maxIndexTier2) refillTier2();
-		tier1.putAll(tier2.get(indexTier2));
+		tier1=new PriorityQueue<>(tier2.get(indexTier2)); // heapify() only called once when init with a collection.
 		tier2.get(indexTier2).clear();
 		indexTier2++;
 		actTimeTier2+=bucketWidth;
@@ -235,34 +215,13 @@ public class MultiLevelQueue<E> implements EventQueue<E> {
 
 		// add additional lists to tier2 to match desired array size
 		// existing maps are empty and will be reused
-		while (tier2.size()<maxIndexTier2) tier2.add(new HashMap<>());
+		while (tier2.size()<maxIndexTier2) tier2.add(new ArrayList<>());
 		// transfer tier3 to tier2
-		for (Map.Entry<Time, List<E>> entry : tier3.entrySet()) {
-			final int index=(int) ((entry.getKey().getTicks()-minTimeTier2)/bucketWidth);
-			tier2.get(index).put(entry.getKey(),entry.getValue());
+		for (EventQueueEntry<E> entry : tier3) {
+			final int index=(int) ((entry.getTime().getTicks()-minTimeTier2)/bucketWidth);
+			tier2.get(index).add(entry);
 		}
 		tier3.clear();
-	}
-
-	private void addEventToTier(Map<Time, List<E>> map, E event, Time time) {
-		List<E> bucket=map.get(time);
-		if (bucket==null) { // time stamp has not been added to queue, yet
-			bucket=new ArrayList<>();
-			map.put(time,bucket);
-		} // now we definitely have a valid map entry
-		bucket.add(event);
-	}
-
-	private Time findAndRemoveEvent(Map<Time, List<E>> map, E event) {
-		for (Map.Entry<Time, List<E>> entry : map.entrySet()) {
-			if (entry.getValue().contains(event)) {
-				entry.getValue().remove(event);
-				if (entry.getValue().isEmpty()) map.remove(entry.getKey());
-				size--;
-				return entry.getKey();
-			}
-		}
-		return null;
 	}
 
 }

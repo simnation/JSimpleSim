@@ -58,5 +58,6 @@ public class AbstractMessage<A> {
 	public final <C> C getContent() {
 		return (C) content;
 	};
+	
 
 }

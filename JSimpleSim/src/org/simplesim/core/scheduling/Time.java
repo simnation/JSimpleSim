@@ -35,8 +35,14 @@ public final class Time implements Comparable<Time> {
 	public static final int TICKS_PER_MONTH=DAYS_PER_MONTH*TICKS_PER_DAY;
 	public static final int TICKS_PER_YEAR=MONTHS_PER_YEAR*TICKS_PER_MONTH;
 
+	// some basic Time objects, for multiples see static methods below...
 	public static final Time ZERO=new Time(0);
 	public static final Time INFINITY=new Time(Long.MAX_VALUE);
+	
+	public static final Time DAY=new Time(TICKS_PER_DAY);
+	public static final Time WEEK=new Time(TICKS_PER_WEEK);
+	public static final Time MONTH=new Time(TICKS_PER_MONTH);
+	public static final Time YEAR=new Time(TICKS_PER_YEAR);
 
 	/**
 	 * This is an immutable class, so ticks are final (multiple references to a
@@ -105,6 +111,14 @@ public final class Time implements Comparable<Time> {
 
 	public Time sub(Time time) {
 		return sub(time.getTicks());
+	}
+	
+	public boolean isBefore(Time other) {
+		return (this.getTicks()<other.getTicks());
+	}
+	
+	public boolean isAfter(Time other) {
+		return (this.getTicks()>other.getTicks());
 	}
 
 	public static Time minutes(int minutes) {

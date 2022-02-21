@@ -14,7 +14,8 @@ import org.simplesim.core.scheduling.EventQueue;
 import org.simplesim.core.scheduling.HashedBucketQueue;
 import org.simplesim.core.scheduling.HeapBucketQueue;
 import org.simplesim.core.scheduling.HeapEventQueue;
-import org.simplesim.core.scheduling.MultiLevelQueue;
+import org.simplesim.core.scheduling.MultiLevelBucketQueue;
+import org.simplesim.core.scheduling.MultiLevelEventQueue;
 import org.simplesim.core.scheduling.SortedBucketQueue;
 import org.simplesim.core.scheduling.Time;
 
@@ -38,8 +39,10 @@ public class LargeQueueTest {
 		HEAP_BUCKET_QUEUE("Heap bucket queue", new HeapBucketQueue<String>()),
 		SORTED_BUCKET_QUEUE("Sorted bucket queue", new SortedBucketQueue<String>()),
 		HEAP_EVENT_QUEUE("Heap event queue", new HeapEventQueue<String>()),
-		MLIST_EVENT_QUEUE("MList event queue", new MultiLevelQueue<String>());
-
+		MLIST_EVENT_QUEUE("MList bucket queue", new MultiLevelBucketQueue<String>()),
+		MLIST_EVENT_QUEUE2("MList event queue", new MultiLevelEventQueue<String>());
+		
+		
 		private final String name;
 		private final EventQueue<String> eq;
 
