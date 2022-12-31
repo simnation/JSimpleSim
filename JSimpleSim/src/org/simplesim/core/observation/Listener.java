@@ -7,7 +7,7 @@
  * 	- Rene Kuhlemann - development and initial implementation
  * 
  */
-package org.simplesim.core.notification;
+package org.simplesim.core.observation;
 
 /**
  * Part of the observer patter to be implemented by observers listening to the source.

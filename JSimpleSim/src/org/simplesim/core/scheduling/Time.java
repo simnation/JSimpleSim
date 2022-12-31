@@ -121,24 +121,24 @@ public final class Time implements Comparable<Time> {
 		return (this.getTicks()>other.getTicks());
 	}
 
-	public static Time minutes(int minutes) {
-		return new Time(minutes*TICKS_PER_MINUTE);
+	public static long minutes(int minutes) {
+		return minutes*TICKS_PER_MINUTE;
 	}
 
-	public static Time hours(int hours) {
-		return new Time(hours*TICKS_PER_HOUR);
+	public static long hours(int hours) {
+		return hours*TICKS_PER_HOUR;
 	}
 
-	public static Time days(int days) {
-		return new Time(days*TICKS_PER_DAY);
+	public static long days(int days) {
+		return days*TICKS_PER_DAY;
 	}
 
-	public static Time months(int months) {
-		return new Time(months*TICKS_PER_MONTH);
+	public static long months(int months) {
+		return months*TICKS_PER_MONTH;
 	}
 
-	public static Time years(int years) {
-		return new Time(years*TICKS_PER_YEAR);
+	public static long years(int years) {
+		return years*TICKS_PER_YEAR;
 	}
 
 	@Override

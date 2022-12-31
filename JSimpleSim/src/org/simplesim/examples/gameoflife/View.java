@@ -13,7 +13,7 @@ import java.awt.image.BufferStrategy;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-import org.simplesim.core.notification.Listener;
+import org.simplesim.core.observation.Listener;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.simulator.AbstractSimulator;
 

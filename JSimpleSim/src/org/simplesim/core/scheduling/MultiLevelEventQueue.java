@@ -36,9 +36,10 @@ import java.util.Queue;
  * This is versatile if there are many event with the same time-stamp.
  * <p>
  * {@code MultiLevelEventQueue} uses {@code EventQueueEntry} to couple time and
- * events. This is versatile if there are many event with different time-stamps.
+ * events. This is versatile if there are many events with different time-stamps.
  *
  * @param <E> Event type
+ * @see MultiLevelBucketQueue
  * @see <a href=
  *      "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.95.4263&rep=rep1&type=pdf">Referring
  *      article</a>

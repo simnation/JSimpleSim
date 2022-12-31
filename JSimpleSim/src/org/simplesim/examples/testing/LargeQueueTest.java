@@ -101,6 +101,7 @@ public class LargeQueueTest {
 	public static void main(String[] args) {
 		final SortedMap<Long, String> performanceEnqueue=new TreeMap<>();
 		final SortedMap<Long, String> performanceDequeueAll=new TreeMap<>();
+		final SortedMap<Long, String> performanceTotal=new TreeMap<>();
 		for (final QueueType eq : QueueType.values()) {
 			System.out.print("Testing "+eq.getName());
 			final LargeQueueTest test=new LargeQueueTest(eq);
@@ -119,7 +120,7 @@ public class LargeQueueTest {
 			performanceEnqueue.put(time1,eq.getName());
 			System.out.println("Emptying queue with dequeueAll(): "+time2+" ms");
 			performanceDequeueAll.put(time2,eq.getName());
-
+			performanceTotal.put(time1+time2,eq.getName());
 		}
 
 		System.out.println("\nPerformance in descending order for enqeue(Time,E):");
@@ -134,6 +135,13 @@ public class LargeQueueTest {
 			long time=performanceDequeueAll.firstKey();
 			System.out.println(performanceDequeueAll.get(time)+" with "+time+" ms");
 			performanceDequeueAll.remove(time);
+		}
+		
+		System.out.println("\nPerformance in descending order for total execution time:");
+		for (int i=0; i<QueueType.values().length; i++) {
+			long time=performanceTotal.firstKey();
+			System.out.println(performanceTotal.get(time)+" with "+time+" ms");
+			performanceTotal.remove(time);
 		}
 
 		System.out.println("done.");

@@ -8,7 +8,7 @@ package org.simplesim.simulator;
 
 import java.util.List;
 
-import org.simplesim.core.notification.Listener;
+import org.simplesim.core.observation.Listener;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;

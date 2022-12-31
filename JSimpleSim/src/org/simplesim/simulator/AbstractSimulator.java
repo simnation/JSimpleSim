@@ -13,8 +13,8 @@ package org.simplesim.simulator;
 import java.util.List;
 
 import org.simplesim.core.messaging.ForwardingStrategy;
-import org.simplesim.core.notification.Listener;
-import org.simplesim.core.notification.ListenerSupport;
+import org.simplesim.core.observation.Listener;
+import org.simplesim.core.observation.ListenerSupport;
 import org.simplesim.core.scheduling.EventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
