@@ -84,10 +84,10 @@ public abstract class AbstractDomain extends BasicModelEntity {
 	 * @param recursive true if listing should be done recursively for agents in all subdomains, too
 	 * @return list of all agents of this domain
 	 */
-	public final List<AbstractAgent<?, ?>> listAllAgents(boolean recursive) {
-		final List<AbstractAgent<?, ?>> result=new ArrayList<>();
+	public final List<Agent> listAllAgents(boolean recursive) {
+		final List<Agent> result=new ArrayList<>();
 		for (final BasicModelEntity iter : getEntityList())
-			if (iter instanceof AbstractAgent) result.add((AbstractAgent<?, ?>) iter);
+			if (iter instanceof Agent) result.add((Agent) iter);
 			else if (recursive&&(iter instanceof AbstractDomain))
 				result.addAll(((AbstractDomain) iter).listAllAgents(true));
 		return result;

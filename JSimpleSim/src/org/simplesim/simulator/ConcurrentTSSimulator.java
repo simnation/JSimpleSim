@@ -17,40 +17,45 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.simplesim.core.messaging.RecursiveMessageForwarding;
 import org.simplesim.core.messaging.ForwardingStrategy;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
+import org.simplesim.model.Agent;
 
 /**
  * Simulator for concurrent time step simulation
  * <p>
- * This simulator calls all agents of a model at equidistant time steps. The {@code doEventSim} method
- * of the agents is called in a concurrent mode and with no specific oder every {@code timeStep}.
+ * This simulator calls all agents of a model at equidistant time steps. The
+ * {@code doEventSim} method of the agents is called in a concurrent mode and
+ * with no specific oder every {@code timeStep}.
  * <p>
  * This implementation is especially useful to run cellular automata.
  *
  */
 public final class ConcurrentTSSimulator extends SequentialTSSimulator {
 
-	public ConcurrentTSSimulator(AbstractDomain rt, Time step, ForwardingStrategy forwarding) {
-		super(rt,step,forwarding);
-	}
-
 	public ConcurrentTSSimulator(AbstractDomain root, ForwardingStrategy forwarding) {
-		this(root,new Time(Time.TICKS_PER_MINUTE),forwarding);
+		super(root,forwarding);
 	}
 
+	/**
+	 * Quick start constructor of a concurrent time-step simulator with a given
+	 * model
+	 * <p>
+	 * Uses {@code RecursiveMessageForwarding} as default option.
+	 *
+	 * @param root the root domain of the model
+	 */
 	public ConcurrentTSSimulator(AbstractDomain root) {
-		this(root,new Time(Time.TICKS_PER_MINUTE),new RecursiveMessageForwarding());
+		super(root);
 	}
 
 	@Override
 	public void runSimulation(Time stop) {
 		setCurrentEventList(getRootDomain().listAllAgents(true));
 		// used a variable thread pool with a maximum of as many worker threads as cpu
-		// cores		
+		// cores
 		final ExecutorService executor=Executors.newWorkStealingPool();
 		final List<Future<?>> futures=new ArrayList<>();
 		setSimulationTime(Time.ZERO);
@@ -58,11 +63,11 @@ public final class ConcurrentTSSimulator extends SequentialTSSimulator {
 			AbstractAgent.toggleSimulationIsRunning(true);
 			// part I: process all current events by calling the agents' doEvent method
 			// in time step, iterate over ALL agents, ignore time of next event
-			for (final AbstractAgent<?, ?> agent : getCurrentEventList())
-				futures.add(executor.submit(() -> agent.doEventSim(getSimulationTime())));
+			for (Agent agent : getCurrentEventList())
+				futures.add(executor.submit(() -> agent.doEvent(getSimulationTime())));
 			// wait until all threads have finished
 			try {
-				for (final Future<?> item : futures) item.get();
+				for (Future<?> item : futures) item.get();
 			} catch (InterruptedException|ExecutionException exception) {
 				exception.printStackTrace();
 			}

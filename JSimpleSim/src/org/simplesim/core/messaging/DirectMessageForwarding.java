@@ -14,7 +14,7 @@ package org.simplesim.core.messaging;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.simplesim.model.AbstractAgent;
+import org.simplesim.model.Agent;
 
 /**
  * Strategy for direct message forwarding.
@@ -35,7 +35,7 @@ public final class DirectMessageForwarding implements ForwardingStrategy {
 	 * List)
 	 */
 	@Override
-	public void forwardMessages(Collection<AbstractAgent<?, ?>> agentList) {
+	public void forwardMessages(Collection<Agent> agentList) {
 		// part I: get list of all ports carrying an outgoing message
 		final Collection<AbstractPort> destinations=new ArrayList<>();
 		final Collection<AbstractPort> sources=listPortsWithOutgoingMsg(agentList);

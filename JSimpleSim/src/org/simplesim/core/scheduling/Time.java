@@ -37,8 +37,10 @@ public final class Time implements Comparable<Time> {
 
 	// some basic Time objects, for multiples see static methods below...
 	public static final Time ZERO=new Time(0);
+	public static final Time TICK=new Time(TICKS_PER_SECOND);
 	public static final Time INFINITY=new Time(Long.MAX_VALUE);
 	
+	public static final Time HOUR=new Time(TICKS_PER_HOUR);
 	public static final Time DAY=new Time(TICKS_PER_DAY);
 	public static final Time WEEK=new Time(TICKS_PER_WEEK);
 	public static final Time MONTH=new Time(TICKS_PER_MONTH);

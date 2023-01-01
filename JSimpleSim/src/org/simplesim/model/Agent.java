@@ -6,13 +6,14 @@
  */
 package org.simplesim.model;
 
+import org.simplesim.core.messaging.AbstractPort;
 import org.simplesim.core.scheduling.Time;
 
 /**
  * 
  *
  */
-public interface Agent {
+public interface Agent extends ModelEntity {
 	
 	/**
 	 * Returns the agent's state containing all internal variables
@@ -52,7 +53,7 @@ public interface Agent {
 	 * implementation of its parent domain or the root domain for additional
 	 * external parameters.
 	 * <p>
-	 * Note: Do not invoke from outside the simulation loop!
+	 * <b>Do not invoke from outside the simulation loop!</b>
 	 *
 	 * @param time current simulation time
 	 * @return time of the next event (tone)
@@ -64,5 +65,72 @@ public interface Agent {
 	 * @see org.simplesim.core.messaging.AbstractPort AbstractPort
 	 */
 	Time doEvent(Time time);
+	
+	/**
+	 * Returns the agent's inport
+	 * <p>
+	 * The inport contains all incoming messages. 
+	 * This method is called by the message forwarding algorithm and when connecting agents.
+	 *
+	 * @return the inport
+	 */
+	AbstractPort getInport();
+
+	/**
+	 * Returns the agent's outport
+	 * <p>
+	 * The outport contains all outgoing messages.
+	 * This method is called by the message forwarding algorithm and when connecting agents.
+	 *
+	 * @return the outport
+	 */
+	AbstractPort getOutport();
+	
+	/**
+	 * Returns the level of the current domain within the model hierarchy
+	 * <p>
+	 * Models may be organized in a hierarchy, so that each entity resides in a definite domain level of the model tree.
+	 * The level information is generated when the getLevel() method is called first. The level of the root node is
+	 * always {@value BasicModelEntity#ROOT_LEVEL}.
+	 * 
+	 * @return the level of this entity in the model hierarchy
+	 */
+	int getLevel();
+	
+	/**
+	 * Gets the entity address. Can be null.
+	 * <p>
+	 * Note: The address of the root domain is {@code int[0]}. Another dimension has to be added per model level. The
+	 * value of each dimension is the index within the corresponding level.
+	 *
+	 * @return the address
+	 */
+	int[] getAddress(); 
+	
+	/**
+	 * Returns the name of this model entity
+	 * <p>
+	 * Returns an empty string as default, may be overridden in derived classes.
+	 *
+	 * @return the name of this model entity, may be an empty string but not null
+	 */
+	String getName();
+	
+	/**
+	 * Returns the full name of a model, concatenating the names of the parent entities.
+	 * <p>
+	 * Example: If A and B are parents of this entity and this entity is named C, then the full name is A.B.C
+	 *
+	 * @return the full name of this entity
+	 */
+	String getFullName();
+	
+	/**
+	 * Returns the parent of this model.
+	 *
+	 * @return the parent of this model
+	 */
+	AbstractDomain getParent();
+	
 
 }

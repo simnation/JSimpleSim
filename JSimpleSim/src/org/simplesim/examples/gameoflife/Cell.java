@@ -23,7 +23,7 @@ public final class Cell extends AbstractAgent<CellState, Object> {
 	}
 
 	@Override
-	protected Time doEvent(Time time) {
+	public Time doEvent(Time time) {
 		if (getInport().hasMessages()) {
 			int neighbours=0;
 			while (getInport().hasMessages()) {

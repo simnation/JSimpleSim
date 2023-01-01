@@ -13,7 +13,8 @@ package org.simplesim.core.messaging;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import org.simplesim.model.AbstractAgent;
+
+import org.simplesim.model.Agent;
 
 /**
  * Recursive version of a {@code ForwardingStrategy}.
@@ -36,7 +37,7 @@ public final class RecursiveMessageForwarding implements ForwardingStrategy {
 	 * List)
 	 */
 	@Override
-	public void forwardMessages(Collection<AbstractAgent<?, ?>> agentList) {
+	public void forwardMessages(Collection<Agent> agentList) {
 		// part I: get list of all ports carrying an outgoing message
 		Collection<AbstractPort> sources=listPortsWithOutgoingMsg(agentList);
 		Collection<AbstractPort> destinations=new ArrayList<>();

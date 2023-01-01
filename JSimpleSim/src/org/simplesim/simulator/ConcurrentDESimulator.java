@@ -17,44 +17,50 @@ import org.simplesim.core.scheduling.EventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
+import org.simplesim.model.Agent;
 
 /**
  * Concurrent simulator for discrete event models using multiple threads
  * <p>
- * This simulator identifies all due agents of a model using a global event queue. Then the {@code doEventSim} method of
- * these imminent agents are called in a concurrent mode and with no specific order.
+ * This simulator identifies all due agents of a model using a global event
+ * queue. Then the {@code doEventSim} method of these imminent agents are called
+ * in a concurrent mode and with no specific order.
  * <p>
  * This implementation is especially useful to run DES models.
  */
 public final class ConcurrentDESimulator extends SequentialDESimulator {
 
 	/**
-	 * Constructs a new concurrent simulator with given model, queue implementation and messaging strategy
+	 * Constructs a new concurrent simulator with given model, queue implementation
+	 * and messaging strategy
 	 *
 	 * @param root       the root domain of the model
 	 * @param queue      the queue implementation to use as global event queue
 	 * @param forwarding the strategy to use for message forwarding
 	 */
-	public ConcurrentDESimulator(AbstractDomain root, EventQueue<AbstractAgent<?, ?>> queue,
-			ForwardingStrategy forwarding) {
+	public ConcurrentDESimulator(AbstractDomain root, EventQueue<Agent> queue, ForwardingStrategy forwarding) {
 		super(root,queue,forwarding);
 	}
 
+	/**
+	 * Quick start constructor of a new concurrent discrete-event simulator with a
+	 * given model
+	 * <p>
+	 * Uses {@code RecursiveMessageForwarding} and a {@code HeapEventQueue} as
+	 * default options.
+	 *
+	 * @param root the root domain of the model
+	 */
 	public ConcurrentDESimulator(AbstractDomain root) {
 		super(root);
 	}
 
-	public ConcurrentDESimulator(AbstractDomain root, ForwardingStrategy forwarding) {
-		super(root,forwarding);
-	}
-
-	public ConcurrentDESimulator(AbstractDomain root, EventQueue<AbstractAgent<?, ?>> queue) {
-		super(root,queue);
-	}
-
 	/*
 	 * (non-Javadoc)
-	 * @see org.simplesim.simulator.SequentialDESimulator#runSimulation(org.simplesim.core.scheduling.Time)
+	 *
+	 * @see
+	 * org.simplesim.simulator.SequentialDESimulator#runSimulation(org.simplesim.
+	 * core.scheduling.Time)
 	 */
 	@Override
 	public void runSimulation(Time stop) {
@@ -69,11 +75,11 @@ public final class ConcurrentDESimulator extends SequentialDESimulator {
 			// and enqueue the next events of the agents
 			setCurrentEventList(getGlobalEventQueue().dequeueAll());
 			// start multi-threaded execution
-			for (AbstractAgent<?, ?> agent : getCurrentEventList())
-				futures.add(executor.submit(() -> agent.doEventSim(getSimulationTime())));
+			for (Agent agent : getCurrentEventList())
+				futures.add(executor.submit(() -> agent.doEvent(getSimulationTime())));
 			// join threads again and collect results
 			for (int index=0; index<futures.size(); index++) try {
-				final AbstractAgent<?, ?> agent=getCurrentEventList().get(index);
+				final Agent agent=getCurrentEventList().get(index);
 				final Time tonie=futures.get(index).get();
 				if (tonie==null) throw new InvalidSimulatorStateException(
 						"Local event queue is empty in agent "+agent.getFullName());

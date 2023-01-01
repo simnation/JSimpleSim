@@ -8,10 +8,10 @@ package org.simplesim.simulator;
 
 import java.util.List;
 
-import org.simplesim.core.observation.Listener;
+import org.simplesim.core.instrumentation.Listener;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
+import org.simplesim.model.Agent;
 import org.simplesim.simulator.AbstractSimulator.InvalidSimulatorStateException;
 
 /**
@@ -32,7 +32,7 @@ public interface Simulator {
 
 	Time getSimulationTime();
 
-	List<AbstractAgent<?, ?>> getCurrentEventList();
+	List<Agent> getCurrentEventList();
 
 	/**
 	 * Registers an {@code EventsProcessedListener} to be called after each simulation cycle.

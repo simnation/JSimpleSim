@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.simplesim.model.AbstractAgent;
+import org.simplesim.model.Agent;
 import org.simplesim.model.AbstractDomain;
 import static org.simplesim.model.BasicModelEntity.ROOT_LEVEL;
 import org.simplesim.model.RoutingDomain;
@@ -50,7 +50,7 @@ public final class RoutedMessageForwarding implements ForwardingStrategy {
 	 * @see org.devs.core.ports.IMessageForwardingStrategy#forwardMessages(java.util. List)
 	 */
 	@Override
-	public void forwardMessages(Collection<AbstractAgent<?, ?>> agentList) {
+	public void forwardMessages(Collection<Agent> agentList) {
 		// part I: build a list of sets, each set representing a level of the overall
 		// model and containing all respective ports with outgoing messages
 		final Collection<AbstractPort> sources=listPortsWithOutgoingMsg(agentList);

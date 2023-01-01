@@ -10,8 +10,6 @@ package org.simplesim.model;
  * 
  *
  */
-public class ObservableAgent<S extends State, E> extends AbstractAgent<S, E> {
+public interface ModelEntity {
 
-	
-	
 }

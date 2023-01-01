@@ -18,7 +18,7 @@ import java.util.Queue;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-import org.simplesim.core.observation.Listener;
+import org.simplesim.core.instrumentation.Listener;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.simulator.AbstractSimulator;
 

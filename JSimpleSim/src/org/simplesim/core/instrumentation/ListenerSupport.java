@@ -7,7 +7,7 @@
  * 	- Rene Kuhlemann - development and initial implementation
  * 
  */
-package org.simplesim.core.observation;
+package org.simplesim.core.instrumentation;
 
 import java.util.ArrayList;
 import java.util.List;
