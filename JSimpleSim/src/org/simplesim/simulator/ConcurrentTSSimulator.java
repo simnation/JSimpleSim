@@ -78,7 +78,6 @@ public final class ConcurrentTSSimulator extends SequentialTSSimulator {
 			hookEventsProcessed();
 			// part III: add the time step
 			setSimulationTime(getSimulationTime().add(getTimeStep()));
-			// System.out.println("Simulation time is "+getSimulationTime().toString());
 		}
 		executor.shutdown();
 	}

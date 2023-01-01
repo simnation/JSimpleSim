@@ -45,7 +45,7 @@ public final class StaticVisitor extends AbstractAgent<VisitorState, Visitor.Eve
 	}
 
 	@Override
-	protected Time doEvent(Time time) {
+	public Time doEvent(Time time) {
 		switch (getEventQueue().dequeue()) {
 		case WAITING:
 			waitForElevator(time);

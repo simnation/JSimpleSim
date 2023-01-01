@@ -85,28 +85,7 @@ public interface Agent extends ModelEntity {
 	 * @return the outport
 	 */
 	AbstractPort getOutport();
-	
-	/**
-	 * Returns the level of the current domain within the model hierarchy
-	 * <p>
-	 * Models may be organized in a hierarchy, so that each entity resides in a definite domain level of the model tree.
-	 * The level information is generated when the getLevel() method is called first. The level of the root node is
-	 * always {@value BasicModelEntity#ROOT_LEVEL}.
-	 * 
-	 * @return the level of this entity in the model hierarchy
-	 */
-	int getLevel();
-	
-	/**
-	 * Gets the entity address. Can be null.
-	 * <p>
-	 * Note: The address of the root domain is {@code int[0]}. Another dimension has to be added per model level. The
-	 * value of each dimension is the index within the corresponding level.
-	 *
-	 * @return the address
-	 */
-	int[] getAddress(); 
-	
+		
 	/**
 	 * Returns the name of this model entity
 	 * <p>
@@ -123,14 +102,6 @@ public interface Agent extends ModelEntity {
 	 *
 	 * @return the full name of this entity
 	 */
-	String getFullName();
-	
-	/**
-	 * Returns the parent of this model.
-	 *
-	 * @return the parent of this model
-	 */
-	AbstractDomain getParent();
-	
+	String getFullName();	
 
 }

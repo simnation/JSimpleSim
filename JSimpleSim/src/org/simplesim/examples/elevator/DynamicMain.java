@@ -44,6 +44,8 @@ public class DynamicMain {
 	 * Example main method on how to set up a dynamic simulation model
 	 */
 	public static void main(String[] args) {
+		View.intro();
+		
 		final DynamicModel model=new DynamicModel();
 
 		// build simulation model

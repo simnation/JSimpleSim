@@ -7,6 +7,7 @@
 package org.simplesim.examples.elevator;
 
 import org.simplesim.core.messaging.DirectMessageForwarding;
+import org.simplesim.core.scheduling.HeapEventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.examples.elevator.shared.Limits;
 import org.simplesim.examples.elevator.shared.View;
@@ -23,8 +24,10 @@ public class StaticMain {
 	 * Example main method on how to set up a static simulation model
 	 */
 	public static void main(String[] args) {
+		View.intro();
+		
 		final StaticModel model=new StaticModel();
-
+		
 		// build simulation model
 		final StaticElevator elevator=model.getElevator();
 		model.addEntity(elevator);
@@ -37,7 +40,7 @@ public class StaticMain {
 		
 		final View view=new View(elevator.getState());
 		// final Simulator simulator=new ConcurrentDESimulator(model,new DirectMessageForwarding());
-		final Simulator simulator=new SequentialDESimulator(model,new DirectMessageForwarding());
+		final Simulator simulator=new SequentialDESimulator(model,new HeapEventQueue<>(),new DirectMessageForwarding());
 		// add observer
 		simulator.registerEventsProcessedListener(view);
 		simulator.runSimulation(new Time(Limits.END_DAY));

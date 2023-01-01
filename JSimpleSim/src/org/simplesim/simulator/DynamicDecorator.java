@@ -39,7 +39,8 @@ public class DynamicDecorator implements Simulator {
 
 	public DynamicDecorator(AbstractSimulator value) {
 		simulator=value;
-		simulator.registerEventsProcessedListener((sim) -> doModelChanges());
+		// The change listener is notified after a simulation loop. It does not need any time or object info
+		simulator.registerEventsProcessedListener((time,sim) -> doModelChanges());
 	}
 
 	/**

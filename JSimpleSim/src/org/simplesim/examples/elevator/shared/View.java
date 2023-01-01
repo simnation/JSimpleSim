@@ -44,8 +44,7 @@ public class View extends JFrame implements Listener<AbstractSimulator> {
 	private static final int RIGHT_ICON_COUNT=Math.floorDiv(RIGHT_FLOOR_END-RIGHT_FLOOR_START,ICON_SIZE+OFFSET);
 	private static final int LEFT_ICON_COUNT=Math.floorDiv(LEFT_FLOOR_END-LEFT_FLOOR_START,ICON_SIZE+OFFSET);
 
-	private final static int ACCEPTABLE_WAITING_TIME=3*Time.TICKS_PER_MINUTE;
-
+	
 	final private Image background;
 	final private ElevatorState elevator;
 	final private Color[] scale= { Color.GREEN, Color.YELLOW, Color.ORANGE, Color.ORANGE, Color.RED };
@@ -77,7 +76,7 @@ public class View extends JFrame implements Listener<AbstractSimulator> {
 	}
 
 	@Override
-	public void notifyListener(AbstractSimulator source) {
+	public void notifyListener(Time unused, AbstractSimulator source) {
 		final BufferStrategy bs=getBufferStrategy();
 		do {
 			do {
@@ -114,7 +113,7 @@ public class View extends JFrame implements Listener<AbstractSimulator> {
 				final int floorY=WINDOW_DY-OFFSET-(floor*FLOOR_HEIGHT)-ICON_SIZE;
 				int index=0;
 				for (final Request request : queue) {
-					int color=(int) Math.floorDiv(request.calcWaitingTime(simTime).getTicks(),ACCEPTABLE_WAITING_TIME);
+					int color=(int) Math.floorDiv(request.calcWaitingTime(simTime).getTicks(),Limits.ACCEPTABLE_WAITING_TIME.getTicks());
 					if (color>=scale.length) color=scale.length-1;
 					graphics.setColor(scale[color]);
 					graphics.fillRect(RIGHT_FLOOR_START+(index*dx),floorY,ICON_SIZE,ICON_SIZE);
@@ -139,6 +138,19 @@ public class View extends JFrame implements Listener<AbstractSimulator> {
 	public void close() {
 		setVisible(false);
 		dispose();
+	}
+	
+	public static void intro() {
+		System.out.println("\nThis example shows the simulation of an elevator as use-case of the JSimpleSim framework.");
+		System.out.println();
+		System.out.println("\tThe building is "+Limits.MAX_FLOOR+" floor levels tall.");
+		System.out.println("\t"+Limits.VISITORS+" employees work in the offices.");
+		System.out.println("\tThe elevator has a maximium capacity of "+Limits.CAPACITY+" people.");
+		System.out.println("\tWork starts at "+Limits.START_WORK.toString()+" and ends at "+Limits.END_WORK.toString());
+		System.out.println("\tPeople start to get angry after "+Limits.ACCEPTABLE_WAITING_TIME.toString()+" waiting time.");
+		System.out.println();
+		System.out.println("In the static version there are no model changes. The current level is stores in the agents' states.");
+		System.out.println("In the dynamic version, each floor is a domain. Agents are moved from one domain to another dynamically during the simulation run.");
 	}
 
 }

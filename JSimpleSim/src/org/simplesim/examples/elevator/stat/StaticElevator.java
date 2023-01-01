@@ -40,7 +40,7 @@ public final class StaticElevator extends AbstractAgent<ElevatorState, Elevator.
 	}
 
 	@Override
-	protected Time doEvent(Time time) {
+	public Time doEvent(Time time) {
 		switch (getEventQueue().dequeue()) {
 		case MOVED: // just arrived on new floor
 			getState().setCurrentFloor(getState().getDestinationFloor());
