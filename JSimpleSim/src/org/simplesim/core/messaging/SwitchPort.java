@@ -18,6 +18,7 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 
 import org.simplesim.model.BasicModelEntity;
+import org.simplesim.model.RecursiveMessageForwarding;
 import org.simplesim.model.BasicModelEntity.UniqueConstraintViolationException;
 
 /**
@@ -42,7 +43,7 @@ public final class SwitchPort extends AbstractPort {
 	}
 
 	@Override
-	public void connectTo(AbstractPort port) {
+	public void connect(AbstractPort port) {
 		if (isConnectedTo(port)) throw new UniqueConstraintViolationException("SwitchPort in "
 				+this.getParent().getFullName()+" may not be connected twice to "+port.getParent().getFullName());
 		destinations.put(port.getParent(),port);

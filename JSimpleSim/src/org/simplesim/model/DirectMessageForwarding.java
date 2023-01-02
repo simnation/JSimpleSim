@@ -9,12 +9,12 @@
  * 	- Rene Kuhlemann - development and initial implementation
  * 
  */
-package org.simplesim.core.messaging;
+package org.simplesim.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.simplesim.model.Agent;
+import org.simplesim.core.messaging.AbstractPort;
 
 /**
  * Strategy for direct message forwarding.
@@ -25,15 +25,8 @@ import org.simplesim.model.Agent;
  * intermeshed networks and when there is no need for a model hierarchy.
  *
  */
-public final class DirectMessageForwarding implements ForwardingStrategy {
+public final class DirectMessageForwarding implements MessageForwardingStrategy {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.devs.core.ports.IMessageForwardingStrategy#forwardMessages(java.util.
-	 * List)
-	 */
 	@Override
 	public void forwardMessages(Collection<Agent> agentList) {
 		// part I: get list of all ports carrying an outgoing message

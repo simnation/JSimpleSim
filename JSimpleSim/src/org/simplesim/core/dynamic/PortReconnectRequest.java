@@ -27,7 +27,7 @@ public class PortReconnectRequest implements ChangeRequest {
 	 */
 	public void doModelChange() {
 		srcPort.disconnect(oldDest);
-		srcPort.connectTo(newDest);
+		srcPort.connect(newDest);
 	}
 
 }

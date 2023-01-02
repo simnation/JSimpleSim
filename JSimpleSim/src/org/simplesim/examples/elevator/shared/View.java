@@ -145,12 +145,16 @@ public class View extends JFrame implements Listener<AbstractSimulator> {
 		System.out.println();
 		System.out.println("\tThe building is "+Limits.MAX_FLOOR+" floor levels tall.");
 		System.out.println("\t"+Limits.VISITORS+" employees work in the offices.");
-		System.out.println("\tThe elevator has a maximium capacity of "+Limits.CAPACITY+" people.");
+		System.out.println("\tThe day starts at "+Limits.START_DAY.toString()+" and ends at "+Limits.END_DAY.toString());
 		System.out.println("\tWork starts at "+Limits.START_WORK.toString()+" and ends at "+Limits.END_WORK.toString());
+		System.out.println("\tPeople stay at most  "+new Time(Limits.MAX_STAY_TIME).toString()+" on the same floor.");
+		System.out.println("\tThe elevator has a maximium capacity of "+Limits.CAPACITY+" people.");
 		System.out.println("\tPeople start to get angry after "+Limits.ACCEPTABLE_WAITING_TIME.toString()+" waiting time.");
 		System.out.println();
-		System.out.println("In the static version there are no model changes. The current level is stores in the agents' states.");
-		System.out.println("In the dynamic version, each floor is a domain. Agents are moved from one domain to another dynamically during the simulation run.");
+		System.out.println("Left side: people who exited at the last stop | Right side: people waiting for the elevator");
+		System.out.println();	
+		System.out.println("Static version: There are no model changes, the current level is stored in the agents' states.");
+		System.out.println("Dynamic version: Each floor is a domain, agents are moved from one domain to another dynamically during the simulation run.");
 	}
 
 }

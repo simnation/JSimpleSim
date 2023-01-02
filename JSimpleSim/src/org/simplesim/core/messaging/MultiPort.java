@@ -44,7 +44,7 @@ public final class MultiPort extends AbstractPort {
 	}
 
 	@Override
-	public void connectTo(AbstractPort port) {
+	public void connect(AbstractPort port) {
 		if (destinations.contains(port)) throw new UniqueConstraintViolationException("MultiPort in "+this.getParent().getFullName()
 				+" may not be connected twice to "+port.getParent().getFullName());
 		destinations.add(port);

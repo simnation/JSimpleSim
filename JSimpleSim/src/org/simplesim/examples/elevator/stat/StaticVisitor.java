@@ -36,7 +36,6 @@ public final class StaticVisitor extends AbstractAgent<VisitorState, Visitor.Eve
 
 	public StaticVisitor() {
 		super(new VisitorState());
-		setInport(new SinglePort(this));
 		setOutport(new SinglePort(this));
 		getState().setActivity(ACTIVITY.waiting);
 		// init arrival time at lobby with a random value before start of work

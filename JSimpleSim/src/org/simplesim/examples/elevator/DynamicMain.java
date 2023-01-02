@@ -5,8 +5,6 @@
  */
 package org.simplesim.examples.elevator;
 
-import org.simplesim.core.messaging.ForwardingStrategy;
-import org.simplesim.core.messaging.RoutedMessageForwarding;
 import org.simplesim.core.scheduling.HeapBucketQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.examples.elevator.dyn.DynamicElevator;
@@ -15,6 +13,8 @@ import org.simplesim.examples.elevator.dyn.DynamicVisitor;
 import org.simplesim.examples.elevator.dyn.Floor;
 import org.simplesim.examples.elevator.shared.Limits;
 import org.simplesim.examples.elevator.shared.View;
+import org.simplesim.model.MessageForwardingStrategy;
+import org.simplesim.model.RoutedMessageForwarding;
 import org.simplesim.simulator.ConcurrentDESimulator;
 import org.simplesim.simulator.DynamicDecorator;
 import org.simplesim.simulator.SequentialDESimulator;
@@ -57,7 +57,7 @@ public class DynamicMain {
 		for (int floor=1; floor<=Limits.MAX_FLOOR; floor++) model.addEntity(new Floor(floor));
 
 		final View view=new View(elevator.getState());
-		final ForwardingStrategy fs=new RoutedMessageForwarding(model);
+		final MessageForwardingStrategy fs=new RoutedMessageForwarding(model);
 		final Simulator simulator=new DynamicDecorator(new ConcurrentDESimulator(model,new HeapBucketQueue(),fs));
 		//final Simulator simulator=new DynamicDecorator(new SequentialDESimulator(model,fs));
 		// add observer

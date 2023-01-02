@@ -7,7 +7,6 @@ package org.simplesim.examples.gameoflife;
 
 import org.simplesim.core.messaging.Message;
 import org.simplesim.core.messaging.MultiPort;
-import org.simplesim.core.messaging.SinglePort;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 
@@ -18,7 +17,6 @@ public final class Cell extends AbstractAgent<CellState, Object> {
 		getState().setPosX(posX);
 		getState().setPosY(posY);
 		getState().setLife(life);
-		setInport(new SinglePort(this));
 		setOutport(new MultiPort(this));
 	}
 
@@ -37,8 +35,6 @@ public final class Cell extends AbstractAgent<CellState, Object> {
 	}
 
 	@Override
-	public String getName() {
-		return "cell";
-	}
+	public String getName() { return "cell"; }
 
 }

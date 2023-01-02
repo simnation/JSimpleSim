@@ -29,7 +29,6 @@ public abstract class RoutingAgent<S extends State, E> extends AbstractAgent<S, 
 	 */
 	public RoutingAgent(EventQueue<E> queue, S s) {
 		super(queue,s);
-		setInport(new SinglePort(this));
 		setOutport(new SinglePort(this));
 	}
 
@@ -38,7 +37,6 @@ public abstract class RoutingAgent<S extends State, E> extends AbstractAgent<S, 
 	 */
 	public RoutingAgent(S s) {
 		super(s);
-		setInport(new SinglePort(this));
 		setOutport(new SinglePort(this));
 	}
 

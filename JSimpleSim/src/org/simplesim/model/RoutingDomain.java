@@ -53,7 +53,7 @@ public abstract class RoutingDomain extends AbstractDomain {
 		}
 
 		@Override
-		public void connectTo(AbstractPort port) {
+		public void connect(AbstractPort port) {
 			throw new UnsupportedOperationException("Connection is done automatically when adding an entity");
 		}
 
@@ -68,7 +68,7 @@ public abstract class RoutingDomain extends AbstractDomain {
 		}
 
 		@Override
-		protected Collection<AbstractPort> forwardMessages() {
+		public Collection<AbstractPort> forwardMessages() {
 			Collection<AbstractPort> result=new HashSet<>(); // set to ensure no duplicates in destination list
 			while (hasMessages()) {
 				final RoutedMessage msg=poll(); // message is also removed in this step!
@@ -101,7 +101,8 @@ public abstract class RoutingDomain extends AbstractDomain {
 	public void setAsRootDomain() {
 		setParent(null);
 		setAddress(ROOT_ADDRESS);
-		getOutport().connectTo(getInport());
+		this.connectTo(this); // close the loop at the root domain 
+		//getOutport().connect(getInport());
 	}
 
 	/**
@@ -118,8 +119,9 @@ public abstract class RoutingDomain extends AbstractDomain {
 	@Override
 	public final <T extends BasicModelEntity> T addEntity(T entity) {
 		super.addEntity(entity);
-		entity.getOutport().connectTo(getOutport()); // establish connection towards domain root
-		entity.resetAddress(countDomainEntities()-1); // reset addresses in entity and its children
+		entity.getOutport().connect(getOutport()); // upstream coupling towards the domain root
+		// Note: The downstream coupling is handled by the RoutingPort itself
+		entity.resetAddress(countDomainEntities()-1); // reset addresses of the entity and its children
 		return entity;
 	}
 

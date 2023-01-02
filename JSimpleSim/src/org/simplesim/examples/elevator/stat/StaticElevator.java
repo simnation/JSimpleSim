@@ -9,7 +9,6 @@ import static org.simplesim.examples.elevator.shared.Limits.LOBBY;
 import static org.simplesim.examples.elevator.shared.Limits.START_DAY;
 
 import org.simplesim.core.messaging.Message;
-import org.simplesim.core.messaging.SinglePort;
 import org.simplesim.core.messaging.SwitchPort;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.examples.elevator.shared.Elevator;
@@ -30,7 +29,6 @@ public final class StaticElevator extends AbstractAgent<ElevatorState, Elevator.
 
 	public StaticElevator() {
 		super(new ElevatorState());
-		setInport(new SinglePort(this));
 		setOutport(new SwitchPort(this));
 		strategy=new ElevatorStrategy(this);
 		getState().setCurrentFloor(LOBBY);

@@ -6,14 +6,13 @@
  */
 package org.simplesim.model;
 
-import org.simplesim.core.messaging.AbstractPort;
 import org.simplesim.core.scheduling.Time;
 
 /**
  * 
  *
  */
-public interface Agent extends ModelEntity {
+public interface Agent {
 	
 	/**
 	 * Returns the agent's state containing all internal variables
@@ -65,27 +64,7 @@ public interface Agent extends ModelEntity {
 	 * @see org.simplesim.core.messaging.AbstractPort AbstractPort
 	 */
 	Time doEvent(Time time);
-	
-	/**
-	 * Returns the agent's inport
-	 * <p>
-	 * The inport contains all incoming messages. 
-	 * This method is called by the message forwarding algorithm and when connecting agents.
-	 *
-	 * @return the inport
-	 */
-	AbstractPort getInport();
-
-	/**
-	 * Returns the agent's outport
-	 * <p>
-	 * The outport contains all outgoing messages.
-	 * This method is called by the message forwarding algorithm and when connecting agents.
-	 *
-	 * @return the outport
-	 */
-	AbstractPort getOutport();
-		
+			
 	/**
 	 * Returns the name of this model entity
 	 * <p>
@@ -103,5 +82,22 @@ public interface Agent extends ModelEntity {
 	 * @return the full name of this entity
 	 */
 	String getFullName();	
+	
+	/**
+	 * Gets the entity address. Can be null.
+	 * <p>
+	 * Note: The address of the root domain is {@code int[0]}. Another dimension has to be added per model level. The
+	 * value of each dimension is the index within the corresponding level.
+	 *
+	 * @return the address
+	 */
+	int[] getAddress(); 
+	
+	/**
+	 * Checks whether there is at least one input at any inport.
+	 *
+	 * @return true if any inport has an input
+	 */
+	boolean hasInput(); 
 
 }

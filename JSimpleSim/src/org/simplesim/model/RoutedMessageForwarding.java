@@ -4,12 +4,14 @@
  *
  * This software is published as open source and licensed under the terms of GNU
  * GPLv3.
- * 
+ *
  * Contributors:
  * 	- Rene Kuhlemann - development and initial implementation
- * 
+ *
  */
-package org.simplesim.core.messaging;
+package org.simplesim.model;
+
+import static org.simplesim.model.BasicModelEntity.ROOT_LEVEL;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,38 +19,30 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.simplesim.model.Agent;
-import org.simplesim.model.AbstractDomain;
-import static org.simplesim.model.BasicModelEntity.ROOT_LEVEL;
-import org.simplesim.model.RoutingDomain;
+import org.simplesim.core.messaging.AbstractPort;
 
 /**
  * Implementation of {@code ForwardingStrategy} for the routing concept.
  * <p>
- * This implementation first assigns outports with messages to layers according to the level of their parent {@link AbstractDomain}.
- * Then forwarding starts at the bottom most port and works its way up to the root. In a second step, messages are
- * copied in the root node of the model tree. In a third step, messages are forwarded top-down in a similar way.
+ * This implementation first assigns outports with messages to layers according
+ * to the level of their parent {@link AbstractDomain}. Then forwarding starts
+ * at the bottom most port and works its way up to the root. In a second step,
+ * messages are copied in the root node of the model tree. In a third step,
+ * messages are forwarded top-down in a similar way.
  * <p>
  * Note: This strategy only works with models using the routing concept.
- * 
+ *
  * @see RoutingDomain
  * @see RecursiveMessageForwarding
- * 
+ *
  */
-public final class RoutedMessageForwarding implements ForwardingStrategy {
+public final class RoutedMessageForwarding implements MessageForwardingStrategy {
 
 	private final RoutingDomain root;
 	private final List<Set<AbstractPort>> layers=new ArrayList<>();
-	
-	
-	public RoutedMessageForwarding(RoutingDomain r) {
-		root=r;
-	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.devs.core.ports.IMessageForwardingStrategy#forwardMessages(java.util. List)
-	 */
+	public RoutedMessageForwarding(RoutingDomain r) { root=r; }
+
 	@Override
 	public void forwardMessages(Collection<Agent> agentList) {
 		// part I: build a list of sets, each set representing a level of the overall

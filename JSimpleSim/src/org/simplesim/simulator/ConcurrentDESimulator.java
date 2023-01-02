@@ -12,12 +12,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.simplesim.core.messaging.ForwardingStrategy;
 import org.simplesim.core.scheduling.EventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
 import org.simplesim.model.Agent;
+import org.simplesim.model.MessageForwardingStrategy;
 
 /**
  * Concurrent simulator for discrete event models using multiple threads
@@ -38,7 +38,7 @@ public final class ConcurrentDESimulator extends SequentialDESimulator {
 	 * @param queue      the queue implementation to use as global event queue
 	 * @param forwarding the strategy to use for message forwarding
 	 */
-	public ConcurrentDESimulator(AbstractDomain root, EventQueue<Agent> queue, ForwardingStrategy forwarding) {
+	public ConcurrentDESimulator(AbstractDomain root, EventQueue<Agent> queue, MessageForwardingStrategy forwarding) {
 		super(root,queue,forwarding);
 	}
 

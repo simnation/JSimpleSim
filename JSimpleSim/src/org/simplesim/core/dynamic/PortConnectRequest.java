@@ -25,7 +25,7 @@ public class PortConnectRequest implements ChangeRequest {
 	 * @see org.simplesim.core.dynamic.ChangeRequest#doModelChange()
 	 */
 	public void doModelChange() {
-		fromPort.connectTo(toPort);
+		fromPort.connect(toPort);
 	}
 
 }

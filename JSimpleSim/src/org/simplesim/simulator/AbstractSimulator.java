@@ -14,11 +14,11 @@ import java.util.List;
 
 import org.simplesim.core.instrumentation.Listener;
 import org.simplesim.core.instrumentation.ListenerSupport;
-import org.simplesim.core.messaging.ForwardingStrategy;
 import org.simplesim.core.scheduling.EventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractDomain;
 import org.simplesim.model.Agent;
+import org.simplesim.model.MessageForwardingStrategy;
 
 /**
  * Implements the core functionality of a simulator.
@@ -36,7 +36,7 @@ public abstract class AbstractSimulator implements Simulator {
 	private final EventQueue<Agent> geq;
 
 	// the strategy used to forward messages during a simulation run
-	private final ForwardingStrategy mfs;
+	private final MessageForwardingStrategy mfs;
 
 	// listeners to notify after all agents of a cycle have been processed
 	private final ListenerSupport<AbstractSimulator> eventsProcessedListeners=new ListenerSupport<>();
@@ -62,7 +62,7 @@ public abstract class AbstractSimulator implements Simulator {
 	 * @param queue      the queue implementation to use as global event queue
 	 * @param forwarding the strategy to use for message forwarding
 	 */
-	public AbstractSimulator(AbstractDomain root, EventQueue<Agent> queue, ForwardingStrategy forwarding) {
+	public AbstractSimulator(AbstractDomain root, EventQueue<Agent> queue, MessageForwardingStrategy forwarding) {
 		rootDomain=root;
 		geq=queue;
 		mfs=forwarding;
@@ -114,7 +114,7 @@ public abstract class AbstractSimulator implements Simulator {
 		eventsProcessedListeners.notifyListeners(this);
 	}
 
-	protected ForwardingStrategy getMessageForwardingStrategy() { return mfs; }
+	protected MessageForwardingStrategy getMessageForwardingStrategy() { return mfs; }
 
 	protected EventQueue<Agent> getGlobalEventQueue() { return geq; }
 

@@ -12,6 +12,8 @@
 package org.simplesim.core.messaging;
 
 import org.simplesim.model.AbstractAgent;
+import org.simplesim.model.DirectMessageForwarding;
+import org.simplesim.model.RecursiveMessageForwarding;
 
 /**
  * Class for messages for direct (non-routed) message forwarding.

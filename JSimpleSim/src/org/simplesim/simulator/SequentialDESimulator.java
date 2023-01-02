@@ -10,14 +10,14 @@
  */
 package org.simplesim.simulator;
 
-import org.simplesim.core.messaging.ForwardingStrategy;
-import org.simplesim.core.messaging.RecursiveMessageForwarding;
 import org.simplesim.core.scheduling.EventQueue;
 import org.simplesim.core.scheduling.HeapEventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
 import org.simplesim.model.Agent;
+import org.simplesim.model.MessageForwardingStrategy;
+import org.simplesim.model.RecursiveMessageForwarding;
 
 /**
  * Sequential simulator for discrete event models using a single threads
@@ -42,7 +42,7 @@ public class SequentialDESimulator extends AbstractSimulator {
 	 * @param queue      the queue implementation to use as global event queue
 	 * @param forwarding the strategy to use for message forwarding
 	 */
-	public SequentialDESimulator(AbstractDomain root, EventQueue<Agent> queue, ForwardingStrategy forwarding) {
+	public SequentialDESimulator(AbstractDomain root, EventQueue<Agent> queue, MessageForwardingStrategy forwarding) {
 		super(root,queue,forwarding);
 	}
 

@@ -6,6 +6,7 @@
 package org.simplesim.model;
 
 import org.simplesim.core.messaging.AbstractPort;
+import org.simplesim.core.messaging.SinglePort;
 
 /**
  * Provides basic functionality needed by all entities within the simulation model.
@@ -27,7 +28,7 @@ public abstract class BasicModelEntity {
 	private AbstractDomain parent=null;
 
 	/** The inport */
-	private AbstractPort inport=null;
+	private AbstractPort inport=new SinglePort(this);
 
 	/** The outport */
 	private AbstractPort outport=null;
@@ -57,63 +58,15 @@ public abstract class BasicModelEntity {
 			super(message);
 		}
 	}
+	
+	protected AbstractPort getInport() { return inport; }
 
-	/**
-	 * Adds a new inport to the model.
-	 *
-	 * @param <P>  class of port
-	 * @param port the port to add
-	 * @return reference to the new port for further usage
-	 * @throws UnsupportedOperationException      if the simulation is running
-	 * @throws UniqueConstraintViolationException if the same port is added twice
-	 */
-	public final <P extends AbstractPort> P setInport(P port) {
-		inport=port;
-		return port;
-	}
-
-	/**
-	 * Adds a new outport to the model.
-	 * <p>
-	 * Addition will fail if the same object is already used as a port.
-	 *
-	 * @param <P>  class of port
-	 * @param port the port to add
-	 * @return reference to the new port for further usage
-	 * @throws UnsupportedOperationException      if the simulation is running
-	 * @throws UniqueConstraintViolationException if the same port is added twice
-	 */
-	public final <P extends AbstractPort> P setOutport(P port) {
-		outport=port;
-		return port;
-	}
-
-	public final AbstractPort getInport() {
-		return inport;
-	}
-
-	public final AbstractPort getOutport() {
-		return outport;
-	}
-
-	/**
-	 * Returns the level of the current domain within the model hierarchy
-	 * <p>
-	 * Models may be organized in a hierarchy, so that each entity resides in a definite domain level of the model tree.
-	 * The level information is generated when the getLevel() method is called first. The level of the root node is
-	 * always {@value #ROOT_LEVEL}, the "no valid" level value is {@value #INIT_LEVEL}.
-	 *
-	 * @return the level of this entity in the model hierarchy
-	 */
-	public final int getLevel() {
-		// if there is no level information yet, re-compute it
-		if (level==INIT_LEVEL) {
-			if (parent==null) level=ROOT_LEVEL;
-			else level=parent.getLevel()+1;
-		}
-		return level;
-	}
-
+	protected AbstractPort getOutport() {	return outport; }
+	
+	protected AbstractPort setInport(AbstractPort port) {	return (inport=port); }
+	
+	protected AbstractPort setOutport(AbstractPort port) {	return (outport=port); }
+	
 	/**
 	 * Gets the entity address. Can be null.
 	 * <p>
@@ -122,9 +75,34 @@ public abstract class BasicModelEntity {
 	 *
 	 * @return the address
 	 */
-	public final int[] getAddress() {
+	public int[] getAddress() {
 		return address;
 	}
+
+	/**
+	 * Connects this model entity to another one.
+	 * <p>
+	 * Keep in mind that connections are always directed. Messages are sent from the outport
+	 * of this entity to the inport of the other. 
+	 * 	 
+	 * @param other the model entity to connect to
+	 */
+	public void connectTo(BasicModelEntity other) {
+		this.getOutport().connect(other.getInport());
+	}
+	
+	/**
+	 * Disconnects this model entity from another one.
+	 * <p>
+	 * Keep in mind that connections are always directed. Disconnection has to be done by the 
+	 * same entity that made the connection.
+	 * 	 
+	 * @param other the model entity to connect to
+	 */
+	public void disconnectFrom(BasicModelEntity other) {
+		this.getOutport().disconnect(other.getInport());
+	}
+
 
 	/**
 	 * Returns the name of this model entity
@@ -161,10 +139,10 @@ public abstract class BasicModelEntity {
 	/**
 	 * Checks whether there is at least one input at any inport.
 	 *
-	 * @return true if any inport has an input
+	 * @return true if inport has an input
 	 */
-	public final boolean hasExternalInput() {
-		if (getInport()==null) return false;
+	public final boolean hasInput() {
+		// The inport is automatically set at construction time and thus never null.
 		return getInport().hasMessages();
 	}
 
@@ -176,17 +154,33 @@ public abstract class BasicModelEntity {
 	 *
 	 * @param addr address as branching code
 	 */
-	public final void setAddress(int[] addr) {
+	void setAddress(int[] addr) {
 		address=addr;
 		resetLevel();
 	}
 
 	/**
+	 * Returns the level of the current domain within the model hierarchy
+	 * <p>
+	 * Models may be organized in a hierarchy, so that each entity resides in a definite domain level of the model tree.
+	 * The level information is generated when the getLevel() method is called first. The level of the root node is
+	 * always {@value #ROOT_LEVEL}, the "no valid" level value is {@value #INIT_LEVEL}.
+	 *
+	 * @return the level of this entity in the model hierarchy
+	 */
+	int getLevel() {
+		// if there is no level information yet, re-compute it
+		if (level==INIT_LEVEL) {
+			if (parent==null) level=ROOT_LEVEL;
+			else level=parent.getLevel()+1;
+		}
+		return level;
+	}
+
+	/**
 	 * Used internally for updating cached values if the structure changes (e.g. model is moved to another parent)
 	 */
-	public final void resetLevel() {
-		level=INIT_LEVEL;
-	}
+	private void resetLevel() { level=INIT_LEVEL; }
 
 	/**
 	 * Resets the entity's address based on its position in the model structure.
@@ -196,7 +190,7 @@ public abstract class BasicModelEntity {
 	 *
 	 * @param index the new index value of this entity
 	 */
-	public void resetAddress(int index) {
+	void resetAddress(int index) {
 		resetLevel();
 		final int[] pAddr=getParent().getAddress();
 		if ((address==null)||(address.length!=(pAddr.length+1))) address=new int[pAddr.length+1];

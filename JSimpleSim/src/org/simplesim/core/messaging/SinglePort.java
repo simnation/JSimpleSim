@@ -43,7 +43,7 @@ public final class SinglePort extends AbstractPort {
 	 * @see org.simplesim.core.messaging.AbstractPort#connectTo(org.simplesim.core.messaging.AbstractPort)
 	 */
 	@Override
-	public void connectTo(AbstractPort port) {
+	public void connect(AbstractPort port) {
 		if (!isEndPoint())
 			throw new PortConnectionException("Connection of SinglePort alread in use in "+getParent().getFullName());
 		destination=Collections.singletonList(port);

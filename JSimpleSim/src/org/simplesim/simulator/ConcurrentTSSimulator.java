@@ -17,11 +17,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.simplesim.core.messaging.ForwardingStrategy;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
 import org.simplesim.model.Agent;
+import org.simplesim.model.MessageForwardingStrategy;
 
 /**
  * Simulator for concurrent time step simulation
@@ -35,7 +35,7 @@ import org.simplesim.model.Agent;
  */
 public final class ConcurrentTSSimulator extends SequentialTSSimulator {
 
-	public ConcurrentTSSimulator(AbstractDomain root, ForwardingStrategy forwarding) {
+	public ConcurrentTSSimulator(AbstractDomain root, MessageForwardingStrategy forwarding) {
 		super(root,forwarding);
 	}
 

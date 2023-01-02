@@ -37,14 +37,14 @@ public class Model extends AbstractDomain {
 			if (y==(height-1)) up=0; else up=y+1;
 			// connect cell outport with inport of neighbor - clockwise
 			final Cell cell=getCell(x,y);
-			cell.getOutport().connectTo(getCell(x,up).getInport());
-			cell.getOutport().connectTo(getCell(right,up).getInport());
-			cell.getOutport().connectTo(getCell(right,y).getInport());
-			cell.getOutport().connectTo(getCell(right,down).getInport());
-			cell.getOutport().connectTo(getCell(x,down).getInport());
-			cell.getOutport().connectTo(getCell(left,down).getInport());
-			cell.getOutport().connectTo(getCell(left,y).getInport());
-			cell.getOutport().connectTo(getCell(left,up).getInport());
+			cell.connectTo(getCell(x,up));
+			cell.connectTo(getCell(right,up));
+			cell.connectTo(getCell(right,y));
+			cell.connectTo(getCell(right,down));
+			cell.connectTo(getCell(x,down));
+			cell.connectTo(getCell(left,down));
+			cell.connectTo(getCell(left,y));
+			cell.connectTo(getCell(left,up));
 		}
 	}
 

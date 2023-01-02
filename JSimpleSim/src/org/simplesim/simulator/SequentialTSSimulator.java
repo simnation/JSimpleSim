@@ -10,12 +10,12 @@
  */
 package org.simplesim.simulator;
 
-import org.simplesim.core.messaging.ForwardingStrategy;
-import org.simplesim.core.messaging.RecursiveMessageForwarding;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.AbstractAgent;
 import org.simplesim.model.AbstractDomain;
 import org.simplesim.model.Agent;
+import org.simplesim.model.MessageForwardingStrategy;
+import org.simplesim.model.RecursiveMessageForwarding;
 
 /**
  * Simulator for sequential time step simulation
@@ -32,7 +32,7 @@ public class SequentialTSSimulator extends AbstractSimulator {
 	// the constant time step, no event queue
 	private final Time timeStep=Time.TICK;
 
-	public SequentialTSSimulator(AbstractDomain rt, ForwardingStrategy forwarding) {
+	public SequentialTSSimulator(AbstractDomain rt, MessageForwardingStrategy forwarding) {
 		super(rt,null,forwarding);
 	}
 

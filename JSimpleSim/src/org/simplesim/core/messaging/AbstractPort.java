@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.simplesim.model.BasicModelEntity;
+import org.simplesim.model.MessageForwardingStrategy;
 
 /**
  * Ports are used to send messages within a model.
@@ -66,7 +67,7 @@ public abstract class AbstractPort {
 	 *
 	 * @param target the other part of the connection
 	 */
-	public abstract void connectTo(AbstractPort target);
+	public abstract void connect(AbstractPort target);
 
 	/**
 	 * Disconnects this port from another one.
@@ -98,11 +99,11 @@ public abstract class AbstractPort {
 	 * Port must be connected to other ports, please check if it is an end point
 	 * beforehand!
 	 * <p>
-	 * Note: Only to be used by an implementation of {@link ForwardingStrategy}
+	 * Note: Only to be used by an implementation of {@link MessageForwardingStrategy}
 	 *
 	 * @return list of destination ports that need further forwarding
 	 */
-	protected abstract Collection<AbstractPort> forwardMessages();
+	public abstract Collection<AbstractPort> forwardMessages();
 
 	/**
 	 * Clears message queue of this port.

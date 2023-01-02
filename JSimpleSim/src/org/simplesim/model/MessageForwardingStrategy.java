@@ -9,18 +9,18 @@
  * 	- Rene Kuhlemann - development and initial implementation
  *
  */
-package org.simplesim.core.messaging;
+package org.simplesim.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.simplesim.model.Agent;
+import org.simplesim.core.messaging.AbstractPort;
 
 /**
  * Interface for various strategies to forward messages during simulation
  *
  */
-public interface ForwardingStrategy {
+public interface MessageForwardingStrategy {
 
 	/**
 	 * Exception to be thrown if there is an error in the process of message
@@ -51,7 +51,7 @@ public interface ForwardingStrategy {
 	default Collection<AbstractPort> listPortsWithOutgoingMsg(Collection<Agent> agentList) {
 		final Collection<AbstractPort> result=new ArrayList<>();
 		for (final Agent agent : agentList) {
-			AbstractPort port=agent.getOutport();
+			AbstractPort port=((BasicModelEntity) agent).getOutport();
 			if (port.hasMessages()) result.add(port);
 		}
 		return result;

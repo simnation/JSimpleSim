@@ -7,7 +7,6 @@ package org.simplesim.model;
 
 import org.simplesim.core.instrumentation.Listener;
 import org.simplesim.core.instrumentation.ListenerSupport;
-import org.simplesim.core.messaging.AbstractPort;
 import org.simplesim.core.scheduling.Time;
 
 /**
@@ -74,15 +73,15 @@ public class InstrumentationDecorator implements Agent {
 	public Time getTimeOfNextEvent() { return agent.getTimeOfNextEvent(); }
 
 	@Override
-	public AbstractPort getInport() { return agent.getInport(); }
-
-	@Override
-	public AbstractPort getOutport() { return agent.getOutport(); }
-
-	@Override
 	public String getName() { return agent.getName(); }
 
 	@Override
 	public String getFullName() { return agent.getFullName(); }
+
+	@Override
+	public boolean hasInput() { return agent.hasInput(); }
+
+	@Override
+	public int[] getAddress() { return agent.getAddress(); }
 
 }

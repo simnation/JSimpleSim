@@ -1,4 +1,4 @@
 /**
- * Message classes and forwarding strategies for messaging system
+ * Message and port classes for messaging system
  */
 package org.simplesim.core.messaging;
