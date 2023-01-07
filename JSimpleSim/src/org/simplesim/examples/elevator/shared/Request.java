@@ -40,10 +40,6 @@ public class Request implements Comparable<Request> {
 		return destinationFloor;
 	}
 
-	public Time getRequestTime() {
-		return requestTime;
-	}
-
 	public Time getArrivalTime() {
 		return arrivalTime;
 	}
@@ -71,13 +67,6 @@ public class Request implements Comparable<Request> {
 		return arrivalTime.sub(requestTime);
 	}
 	
-	public Time calcWaitingTime(Time currTime) {
-		return currTime.sub(getRequestTime());
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
 	public int compareTo(Request other) {
 		return requestTime.compareTo(other.requestTime);
 	}

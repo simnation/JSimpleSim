@@ -5,6 +5,7 @@
  */
 package org.simplesim.examples.elevator.shared;
 
+import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.State;
 
 /**
@@ -17,6 +18,8 @@ public final class VisitorState implements State {
 	}
 	
 	private ACTIVITY activity;
+	private Time startWaitingTime=Time.ZERO;
+	
 
 	public ACTIVITY getActivity() {
 		return activity;
@@ -25,5 +28,9 @@ public final class VisitorState implements State {
 	public void setActivity(ACTIVITY value) {
 		activity=value;
 	}
+
+	public Time getStartWaitingTime() { return startWaitingTime; }
+
+	public void setStartWaitingTime(Time value) { startWaitingTime=value; }
 
 }

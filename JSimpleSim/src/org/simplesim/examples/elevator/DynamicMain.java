@@ -17,26 +17,29 @@ import org.simplesim.model.MessageForwardingStrategy;
 import org.simplesim.model.RoutedMessageForwarding;
 import org.simplesim.simulator.ConcurrentDESimulator;
 import org.simplesim.simulator.DynamicDecorator;
-import org.simplesim.simulator.SequentialDESimulator;
 import org.simplesim.simulator.Simulator;
 
 /**
- * Example of a multi-domain agent system with routed messaging and dynamic model changes
+ * Example of a multi-domain agent system with routed messaging and dynamic
+ * model changes
  * <p>
- * To illustrate differences of a static and a dynamic modeling approach, both are used with the same simulation problem: the steering strategy of an elevator.
- * Common data structure, the steering algorithm and the graphical representation are shared, so the focus lies on
- * the differences of both approaches:
+ * To illustrate differences of a static and a dynamic modeling approach, both
+ * are used with the same simulation problem: the steering strategy of an
+ * elevator. Common data structure, the steering algorithm and the graphical
+ * representation are shared, so the focus lies on the differences of both
+ * approaches:
  * <p>
- * <u>Static model:</u><ul>
- * <li> Visitors store their current floor in their state.
- * <li> Ports of elevator and visitor are connected directly.
- * <li>  
- *  </ul>
+ * <u>Static model:</u>
+ * <ul>
+ * <li>Visitors store their current floor in their state.
+ * <li>Ports of elevator and visitor are connected directly.
+ * <li>
+ * </ul>
+ *
  * 
- *  
- * (no model changes) (model is changed during the 
- * simulation run)
- *  nThis is the dynamic variant of the elevator simulation example to illustrate differences from the static apporach. 
+ * (no model changes) (model is changed during the simulation run) nThis is the
+ * dynamic variant of the elevator simulation example to illustrate differences
+ * from the static apporach.
  */
 public class DynamicMain {
 
@@ -45,7 +48,7 @@ public class DynamicMain {
 	 */
 	public static void main(String[] args) {
 		View.intro();
-		
+
 		final DynamicModel model=new DynamicModel();
 
 		// build simulation model
@@ -58,7 +61,7 @@ public class DynamicMain {
 
 		final View view=new View(elevator.getState());
 		final MessageForwardingStrategy fs=new RoutedMessageForwarding(model);
-		final Simulator simulator=new DynamicDecorator(new ConcurrentDESimulator(model,new HeapBucketQueue(),fs));
+		final Simulator simulator=new DynamicDecorator(new ConcurrentDESimulator(model,new HeapBucketQueue<>(),fs));
 		//final Simulator simulator=new DynamicDecorator(new SequentialDESimulator(model,fs));
 		// add observer
 		simulator.registerEventsProcessedListener(view);

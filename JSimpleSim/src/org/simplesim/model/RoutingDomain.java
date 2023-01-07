@@ -120,7 +120,7 @@ public abstract class RoutingDomain extends AbstractDomain {
 	public final <T extends BasicModelEntity> T addEntity(T entity) {
 		super.addEntity(entity);
 		entity.getOutport().connect(getOutport()); // upstream coupling towards the domain root
-		// Note: The downstream coupling is handled by the RoutingPort itself
+		// Note: The downstream coupling is handled by the RoutingPort itself!
 		entity.resetAddress(countDomainEntities()-1); // reset addresses of the entity and its children
 		return entity;
 	}

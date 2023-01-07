@@ -101,6 +101,7 @@ public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.Eve
 		else while (destination==getCurrentFloor()) destination=1+random.nextInt(MAX_FLOOR);
 		sendRequest(building.getElevator(),destination,time);
 		getState().setActivity(ACTIVITY.waiting);
+		getState().setStartWaitingTime(time);
 		getEventQueue().enqueue(Event.WAITING,time.add(IDLE_TIME));
 	}
 

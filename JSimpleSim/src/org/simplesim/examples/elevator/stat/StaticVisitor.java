@@ -32,7 +32,7 @@ import org.simplesim.model.AbstractAgent;
 public final class StaticVisitor extends AbstractAgent<VisitorState, Visitor.Event> implements Visitor {
 
 	private static final Random random=new Random();
-	private int currentFloor=LOBBY;
+	private int currentFloor=LOBBY; // usually, this should be a state variable
 
 	public StaticVisitor() {
 		super(new VisitorState());
@@ -90,6 +90,7 @@ public final class StaticVisitor extends AbstractAgent<VisitorState, Visitor.Eve
 		else while (destination==getCurrentFloor()) destination=1+random.nextInt(MAX_FLOOR);
 		sendRequest(null,destination,time);
 		getState().setActivity(ACTIVITY.waiting);
+		getState().setStartWaitingTime(time);
 		getEventQueue().enqueue(Event.WAITING,time.add(IDLE_TIME)); // wait for elevator
 	}
 
