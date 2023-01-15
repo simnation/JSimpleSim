@@ -13,6 +13,7 @@ import org.simplesim.examples.elevator.dyn.DynamicVisitor;
 import org.simplesim.examples.elevator.dyn.Floor;
 import org.simplesim.examples.elevator.shared.Limits;
 import org.simplesim.examples.elevator.shared.View;
+import org.simplesim.model.InstrumentationDecorator;
 import org.simplesim.model.MessageForwardingStrategy;
 import org.simplesim.model.RoutedMessageForwarding;
 import org.simplesim.simulator.ConcurrentDESimulator;
@@ -25,21 +26,23 @@ import org.simplesim.simulator.Simulator;
  * <p>
  * To illustrate differences of a static and a dynamic modeling approach, both
  * are used with the same simulation problem: the steering strategy of an
- * elevator. Common data structure, the steering algorithm and the graphical
- * representation are shared, so the focus lies on the differences of both
- * approaches:
+ * elevator. Steering algorithm, graphical representation and common data structures are shared, 
+ * so the focus lies on the differences of both approaches:
  * <p>
  * <u>Static model:</u>
  * <ul>
- * <li>Visitors store their current floor in their state.
+ * <li>There are no model changes.
+ * <li>Visitors store their current floor as part of their state.
  * <li>Ports of elevator and visitor are connected directly.
- * <li>
+ * <li>Direct message forwarding is used.
  * </ul>
- *
- * 
- * (no model changes) (model is changed during the simulation run) nThis is the
- * dynamic variant of the elevator simulation example to illustrate differences
- * from the static apporach.
+ * <u>Dynamic model:</u>
+ * <ul>
+ * <li>Each floor is represented by a submodel containing its visitors.
+ * <li>Change of the floor is implemented as moving to an other submodel, the model is changed repeatedly during simulation run.
+ * <li>The model hierarchy Building-->Floor-->Visitor represents the real world situation comprehensibly.
+ * <li>Messaging is done by a routing mechanism.
+ * </ul>
  */
 public class DynamicMain {
 
@@ -56,6 +59,7 @@ public class DynamicMain {
 		model.addEntity(elevator);
 		final Floor lobby=new Floor(Limits.LOBBY);
 		model.addEntity(lobby);
+		lobby.addEntity(new InstrumentationDecorator(new DynamicVisitor(model)));
 		for (int i=0; i<Limits.VISITORS; i++) lobby.addEntity(new DynamicVisitor(model));
 		for (int floor=1; floor<=Limits.MAX_FLOOR; floor++) model.addEntity(new Floor(floor));
 

@@ -29,7 +29,7 @@ import org.simplesim.core.scheduling.Time;
  */
 public class InstrumentationDecorator implements Agent {
 
-	/* the encapsulated simulator */
+	/* the encapsulated agent */
 	private final Agent agent;
 
 	// listeners to notify BEFORE agent is called

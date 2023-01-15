@@ -48,7 +48,7 @@ public class MultiLevelEventQueue<E> implements EventQueue<E> {
 
 	private final static int TIER2_DEFAULT_CHUNK_SIZE=128;
 
-	private Queue<EventQueueEntry<E>> tier1=new PriorityQueue<>(); // current events, sorted
+	private final Queue<EventQueueEntry<E>> tier1=new PriorityQueue<>(TIER2_DEFAULT_CHUNK_SIZE); // current events, sorted
 	private final List<Collection<EventQueueEntry<E>>> tier2=new ArrayList<>();// near future events, partly sorted
 	private final Collection<EventQueueEntry<E>> tier3=new ArrayList<>(); // far future events, unsorted
 
@@ -187,7 +187,7 @@ public class MultiLevelEventQueue<E> implements EventQueue<E> {
 
 	private void refillTier1() {
 		if (indexTier2>=maxIndexTier2) refillTier2();
-		tier1=new PriorityQueue<>(tier2.get(indexTier2)); // heapify() only called once when init with a collection.
+		tier1.addAll(tier2.get(indexTier2)); 
 		tier2.get(indexTier2).clear();
 		indexTier2++;
 		actTimeTier2+=bucketWidth;

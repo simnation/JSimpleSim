@@ -17,6 +17,30 @@ import org.simplesim.model.DirectMessageForwarding;
 import org.simplesim.simulator.ConcurrentDESimulator;
 import org.simplesim.simulator.Simulator;
 
+/**
+ * Example of a multi-domain agent system with routed messaging and dynamic
+ * model changes
+ * <p>
+ * To illustrate differences of a static and a dynamic modeling approach, both
+ * are used with the same simulation problem: the steering strategy of an
+ * elevator. Steering algorithm, graphical representation and common data structures are shared, 
+ * so the focus lies on the differences of both approaches:
+ * <p>
+ * <u>Static model:</u>
+ * <ul>
+ * <li>There are no model changes.
+ * <li>Visitors store their current floor as part of their state.
+ * <li>Ports of elevator and visitor are connected directly.
+ * <li>Direct message forwarding is used.
+ * </ul>
+ * <u>Dynamic model:</u>
+ * <ul>
+ * <li>Each floor is represented by a submodel containing its visitors.
+ * <li>Change of the floor is implemented as moving to an other submodel, the model is changed repeatedly during simulation run.
+ * <li>The model hierarchy Building-->Floor-->Visitor represents the real world situation comprehensibly.
+ * <li>Messaging is done by a routing mechanism.
+ * </ul>
+ */
 public class StaticMain {
 
 	/**
