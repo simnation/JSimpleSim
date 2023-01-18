@@ -18,8 +18,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.model.AbstractAgent;
-import org.simplesim.model.AbstractDomain;
+import org.simplesim.model.BasicAgent;
+import org.simplesim.model.BasicDomain;
 import org.simplesim.model.Agent;
 import org.simplesim.model.MessageForwardingStrategy;
 
@@ -35,7 +35,7 @@ import org.simplesim.model.MessageForwardingStrategy;
  */
 public final class ConcurrentTSSimulator extends SequentialTSSimulator {
 
-	public ConcurrentTSSimulator(AbstractDomain root, MessageForwardingStrategy forwarding) {
+	public ConcurrentTSSimulator(BasicDomain root, MessageForwardingStrategy forwarding) {
 		super(root,forwarding);
 	}
 
@@ -47,7 +47,7 @@ public final class ConcurrentTSSimulator extends SequentialTSSimulator {
 	 *
 	 * @param root the root domain of the model
 	 */
-	public ConcurrentTSSimulator(AbstractDomain root) {
+	public ConcurrentTSSimulator(BasicDomain root) {
 		super(root);
 	}
 
@@ -60,7 +60,7 @@ public final class ConcurrentTSSimulator extends SequentialTSSimulator {
 		final List<Future<?>> futures=new ArrayList<>();
 		setSimulationTime(Time.ZERO);
 		while (getSimulationTime().compareTo(stop)<0) {
-			AbstractAgent.toggleSimulationIsRunning(true);
+			BasicAgent.toggleSimulationIsRunning(true);
 			// part I: process all current events by calling the agents' doEvent method
 			// in time step, iterate over ALL agents, ignore time of next event
 			for (Agent agent : getCurrentEventList())
@@ -73,7 +73,7 @@ public final class ConcurrentTSSimulator extends SequentialTSSimulator {
 			}
 			// part II: do the message forwarding
 			getMessageForwardingStrategy().forwardMessages(getCurrentEventList());
-			AbstractAgent.toggleSimulationIsRunning(false);
+			BasicAgent.toggleSimulationIsRunning(false);
 			futures.clear();
 			hookEventsProcessed();
 			// part III: add the time step

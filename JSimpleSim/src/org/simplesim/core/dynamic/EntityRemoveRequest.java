@@ -6,7 +6,7 @@
  */
 package org.simplesim.core.dynamic;
 
-import org.simplesim.model.AbstractDomain;
+import org.simplesim.model.BasicDomain;
 import org.simplesim.model.BasicModelEntity;
 
 /**
@@ -32,7 +32,7 @@ public class EntityRemoveRequest implements ChangeRequest {
 	 * @see org.simplesim.core.dynamic.ChangeRequest#doModelChange()
 	 */
 	public void doModelChange() {
-		if ((entity instanceof AbstractDomain) && (((AbstractDomain) entity).countDomainEntities()!=0))
+		if ((entity instanceof BasicDomain) && (((BasicDomain) entity).countDomainEntities()!=0))
 			throw new ChangeRequestException("Only empty domains may be removed. Domain "+entity.getFullName()+" still has child entities!");
 		if (entity.getParent().removeEntity(entity)==null) throw new ChangeRequestException(
 				"Model entity "+entity.getFullName()+" could not removed from "+entity.getParent().getFullName());

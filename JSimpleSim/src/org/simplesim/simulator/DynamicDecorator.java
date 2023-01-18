@@ -10,8 +10,8 @@ import java.util.List;
 import org.simplesim.core.dynamic.ChangeRequest;
 import org.simplesim.core.instrumentation.Listener;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.model.AbstractAgent;
-import org.simplesim.model.AbstractDomain;
+import org.simplesim.model.BasicAgent;
+import org.simplesim.model.BasicDomain;
 import org.simplesim.model.Agent;
 
 /**
@@ -30,7 +30,7 @@ import org.simplesim.model.Agent;
  * {@code AbstractAgent#addModelChangeRequest(ChangeRequest)} class.
  *
  * @see ChangeRequest
- * @see AbstractAgent
+ * @see BasicAgent
  */
 public class DynamicDecorator implements Simulator {
 
@@ -48,10 +48,10 @@ public class DynamicDecorator implements Simulator {
 	 * implementations
 	 */
 	private void doModelChanges() {
-		ChangeRequest cr=AbstractAgent.pollModelChangeRequest();
+		ChangeRequest cr=BasicAgent.pollModelChangeRequest();
 		while (cr!=null) {
 			cr.doModelChange();
-			cr=AbstractAgent.pollModelChangeRequest();
+			cr=BasicAgent.pollModelChangeRequest();
 		}
 	}
 
@@ -61,7 +61,7 @@ public class DynamicDecorator implements Simulator {
 	}
 
 	@Override
-	public AbstractDomain getRootDomain() { return simulator.getRootDomain(); }
+	public BasicDomain getRootDomain() { return simulator.getRootDomain(); }
 
 	@Override
 	public Time getSimulationTime() { return simulator.getSimulationTime(); }

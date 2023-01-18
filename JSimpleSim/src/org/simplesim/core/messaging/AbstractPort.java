@@ -15,8 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.simplesim.model.BasicModelEntity;
-import org.simplesim.model.MessageForwardingStrategy;
+import org.simplesim.model.ModelEntity;
 
 /**
  * Ports are used to send messages within a model.
@@ -36,154 +35,66 @@ import org.simplesim.model.MessageForwardingStrategy;
  * @see SwitchPort
  * @see org.simplesim.model.RoutingDomain.RoutingPort RoutingPort
  */
-public abstract class AbstractPort {
+public abstract class AbstractPort implements Port {
 
 	/** parent model that contains this port */
-	private final BasicModelEntity parent;
+	private final ModelEntity parent;
 
 	/**
 	 * List of messages that are communicated through this port. The initial size is
 	 * set to 1. Thus memory consumption is low in the beginning, it will
 	 * automatically be adapted if needed later on.
 	 */
-	private final List<AbstractMessage<?>> messages = new ArrayList<>(1);
+	private final List<AbstractMessage<?>> messages=new ArrayList<>(1);
 
-	/**
-	 * Exception to be thrown if there is an error in port handling
-	 */
-	@SuppressWarnings("serial")
-	protected static class PortConnectionException extends RuntimeException {
-		public PortConnectionException(String message) {
-			super(message);
-		}
+	public AbstractPort(ModelEntity model) {
+		parent=model;
 	}
 
-	public AbstractPort(BasicModelEntity model) {
-		parent = model;
-	}
-
-	/**
-	 * Connects this port to another one.
-	 *
-	 * @param target the other part of the connection
-	 */
-	public abstract void connect(AbstractPort target);
-
-	/**
-	 * Disconnects this port from another one.
-	 *
-	 * @param target the port to be removed
-	 * @exception PortConnectionException if the port is not connected with the
-	 *                                    target or the simulation is running
-	 */
-	public abstract void disconnect(AbstractPort target);
-
-	/**
-	 * Tests if the port is the end point of a connection.
-	 *
-	 * @return true if it is end point (destination port)
-	 */
-	public abstract boolean isEndPoint();
-
-	/**
-	 * Tests if the port is connected to another one.
-	 *
-	 * @param port the port to test
-	 * @return true if this port is connected to the other port
-	 */
-	public abstract boolean isConnectedTo(AbstractPort port);
-
-	/**
-	 * Implements a message forwarding strategy specific for the port class.
-	 * <p>
-	 * Port must be connected to other ports, please check if it is an end point
-	 * beforehand!
-	 * <p>
-	 * Note: Only to be used by an implementation of {@link MessageForwardingStrategy}
-	 *
-	 * @return list of destination ports that need further forwarding
-	 */
-	public abstract Collection<AbstractPort> forwardMessages();
-
-	/**
-	 * Clears message queue of this port.
-	 */
+	@Override
 	public final void clearMessages() {
 		messages.clear();
 	}
 
-	/**
-	 * Counts messages in queue of this port.
-	 *
-	 * @return number of messages, can be zero
-	 */
+	@Override
 	public final int countMessages() {
 		return messages.size();
 	}
 
-	/**
-	 * Checks if the port has messages.
-	 *
-	 * @return true if there are messages
-	 */
+	@Override
 	public final boolean hasMessages() {
 		return !messages.isEmpty();
 	}
 
-	/**
-	 * Returns <u>and</u> removes the last element in the message queue.
-	 *
-	 * @return last element in message list or null if list is empty
-	 */
 	@SuppressWarnings("unchecked")
+	@Override
 	public final <M extends AbstractMessage<?>> M poll() {
-		if (!hasMessages())
-			return null;
-		return (M) messages.remove(countMessages() - 1);
+		if (!hasMessages()) return null;
+		return (M) messages.remove(countMessages()-1);
 	}
 
-	/**
-	 * Returns the message queue.
-	 * <p>
-	 * Elements must be removed manually by calling the {@link #clearMessages()}
-	 * method
-	 *
-	 * @return the message queue
-	 */
-	public final Collection<AbstractMessage<?>> readAll() {
-		return messages;
+	@SuppressWarnings("unchecked")
+	@Override
+	public final <M extends AbstractMessage<?>> Collection<M> readAll() {
+		return (Collection<M>) messages;
 	}
 
-	/**
-	 * Puts a message to be forwarded on this port.
-	 *
-	 * @param message the message
-	 */
+	@Override
 	public final void write(AbstractMessage<?> message) {
 		messages.add(message);
 	}
 
-	/**
-	 * Puts several messages to be forwarded on this port.
-	 *
-	 * @param m collection of messages
-	 */
+	@Override
 	public final void writeAll(Collection<AbstractMessage<?>> m) {
 		messages.addAll(m);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	@Override
+	public final ModelEntity getParent() { return parent; }
+
 	@Override
 	public final boolean equals(Object obj) {
-		return (this == obj);
-	}
-
-	public final BasicModelEntity getParent() {
-		return parent;
+		return (this==obj);
 	}
 
 }

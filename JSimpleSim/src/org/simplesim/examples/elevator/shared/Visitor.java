@@ -9,7 +9,7 @@ package org.simplesim.examples.elevator.shared;
 import java.awt.Color;
 
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.model.AbstractAgent;
+import org.simplesim.model.BasicAgent;
 
 /**
  * Basic interface to encapsulate visitor functionality and events
@@ -45,7 +45,7 @@ public interface Visitor {
 	
 	VisitorState getState();
 	
-	void sendRequest(AbstractAgent<?, ?> dest, int destination, Time time);
+	void sendRequest(BasicAgent<?, ?> dest, int destination, Time time);
 	
 	default Mood getCurrentMood(Time simTime) {
 		final long diff=simTime.getTicks()-getState().getStartWaitingTime().getTicks();

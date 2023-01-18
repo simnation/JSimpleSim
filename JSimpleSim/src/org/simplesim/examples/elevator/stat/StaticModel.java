@@ -5,7 +5,7 @@
  */
 package org.simplesim.examples.elevator.stat;
 
-import org.simplesim.model.AbstractDomain;
+import org.simplesim.model.BasicDomain;
 
 
 /**
@@ -14,7 +14,7 @@ import org.simplesim.model.AbstractDomain;
  * @see org.simplesim.examples.elevator.StaticMain StaticMain  
  * 
  */
-public final class StaticModel extends AbstractDomain {
+public final class StaticModel extends BasicDomain {
 
 	/* init elevator, ensure only one elevator per model */
 	private final StaticElevator elevator=new StaticElevator();

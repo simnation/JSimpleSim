@@ -11,9 +11,7 @@
  */
 package org.simplesim.core.messaging;
 
-import org.simplesim.model.AbstractAgent;
-import org.simplesim.model.DirectMessageForwarding;
-import org.simplesim.model.RecursiveMessageForwarding;
+import org.simplesim.model.Agent;
 
 /**
  * Class for messages for direct (non-routed) message forwarding.
@@ -23,30 +21,20 @@ import org.simplesim.model.RecursiveMessageForwarding;
  * <p>
  * Note: This class is read-only and thus thread-safe.	
  * 
- * @param <A> type of addressing
- * 
  * @see SinglePort
  * @see MultiPort
  * @see SwitchPort
- * @see DirectMessageForwarding
- * @see RecursiveMessageForwarding
+ * @see org.simplesim.model.DirectMessageForwarding
+ * @see org.simplesim.model.RecursiveMessageForwarding
  * 
  */
-public final class Message extends AbstractMessage<AbstractAgent<?,?>> {
+public final class Message extends AbstractMessage<Agent> {
 	
-	/**
-	 * {@inheritDoc}
-	 *
-	 */
-	public Message(AbstractAgent<?,?> s, AbstractAgent<?,?> d, Object  c) {
+	public Message(Agent s, Agent d, Object  c) {
 		super(s,d,c);
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 *
-	 */
-	public Message(AbstractAgent<?,?> s, Object c) {
+	public Message(Agent s, Object c) {
 		super(s,null,c);
 	}
 

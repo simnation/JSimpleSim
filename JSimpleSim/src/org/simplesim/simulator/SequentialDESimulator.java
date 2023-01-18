@@ -13,8 +13,8 @@ package org.simplesim.simulator;
 import org.simplesim.core.scheduling.EventQueue;
 import org.simplesim.core.scheduling.HeapEventQueue;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.model.AbstractAgent;
-import org.simplesim.model.AbstractDomain;
+import org.simplesim.model.BasicAgent;
+import org.simplesim.model.BasicDomain;
 import org.simplesim.model.Agent;
 import org.simplesim.model.MessageForwardingStrategy;
 import org.simplesim.model.RecursiveMessageForwarding;
@@ -42,7 +42,7 @@ public class SequentialDESimulator extends AbstractSimulator {
 	 * @param queue      the queue implementation to use as global event queue
 	 * @param forwarding the strategy to use for message forwarding
 	 */
-	public SequentialDESimulator(AbstractDomain root, EventQueue<Agent> queue, MessageForwardingStrategy forwarding) {
+	public SequentialDESimulator(BasicDomain root, EventQueue<Agent> queue, MessageForwardingStrategy forwarding) {
 		super(root,queue,forwarding);
 	}
 
@@ -54,11 +54,11 @@ public class SequentialDESimulator extends AbstractSimulator {
 	 *
 	 * @param root the root domain of the model
 	 */
-	public SequentialDESimulator(AbstractDomain root) {
+	public SequentialDESimulator(BasicDomain root) {
 		this(root,new HeapEventQueue<Agent>(),new RecursiveMessageForwarding());
 	}
 
-	public SequentialDESimulator(AbstractDomain root, EventQueue<Agent> queue) {
+	public SequentialDESimulator(BasicDomain root, EventQueue<Agent> queue) {
 		this(root,queue,new RecursiveMessageForwarding());
 	}
 
@@ -67,7 +67,7 @@ public class SequentialDESimulator extends AbstractSimulator {
 		initGlobalEventQueue();
 		setSimulationTime(getGlobalEventQueue().getMin());
 		while (getSimulationTime().compareTo(stop)<0) {
-			AbstractAgent.toggleSimulationIsRunning(true);
+			BasicAgent.toggleSimulationIsRunning(true);
 			// part I: process all current events by calling the agents' doEvent method
 			// and enqueue the next events of the agents
 			setCurrentEventList(getGlobalEventQueue().dequeueAll());
@@ -83,7 +83,7 @@ public class SequentialDESimulator extends AbstractSimulator {
 			}
 			// part II: do the message forwarding
 			getMessageForwardingStrategy().forwardMessages(getCurrentEventList());
-			AbstractAgent.toggleSimulationIsRunning(false);
+			BasicAgent.toggleSimulationIsRunning(false);
 			hookEventsProcessed();
 			setSimulationTime(getGlobalEventQueue().getMin());
 		}

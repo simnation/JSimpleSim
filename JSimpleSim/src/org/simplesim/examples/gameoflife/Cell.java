@@ -8,9 +8,9 @@ package org.simplesim.examples.gameoflife;
 import org.simplesim.core.messaging.Message;
 import org.simplesim.core.messaging.MultiPort;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.model.AbstractAgent;
+import org.simplesim.model.BasicAgent;
 
-public final class Cell extends AbstractAgent<CellState, Object> {
+public final class Cell extends BasicAgent<CellState, Object> {
 
 	public Cell(int posX, int posY, boolean life) {
 		super(null,new CellState());

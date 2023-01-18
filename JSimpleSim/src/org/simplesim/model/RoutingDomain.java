@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.simplesim.core.messaging.AbstractPort;
+import org.simplesim.core.messaging.Port;
 import org.simplesim.core.messaging.RoutedMessage;
 import org.simplesim.core.messaging.SinglePort;
 
@@ -16,8 +17,8 @@ import org.simplesim.core.messaging.SinglePort;
  * Implements a domain suited for automatic message routing by using the message's address tag.
  * <p>
  * Domains serve as a compartment for other entities within the simulation model. These entities may be agents or other
- * domains. Therefore, simulation model are build as a tree-like structure with {@code AbstractDomain} as branching and
- * {@link AbstractAgent} as leaf, resembling a composite pattern. The domain adds the following features:
+ * domains. Therefore, simulation model are build as a tree-like structure with {@code Domain} as branching and
+ * {@link Agent} as leaf, resembling a composite pattern. The domain adds the following features:
  * <ul>
  * <li>offer message routing by adding a {@code RoutingPort}
  * <li>give an overview of the entities contained in this domain
@@ -28,7 +29,7 @@ import org.simplesim.core.messaging.SinglePort;
  * @see org.simplesim.core.messaging.RoutedMessage RoutedMessage
  * @see <a href="https://en.wikipedia.org/wiki/Composite_pattern">Reference for composite pattern</a>
  */
-public abstract class RoutingDomain extends AbstractDomain {
+public abstract class RoutingDomain extends BasicDomain {
 
 	/**
 	 * Port for automatic message routing.
@@ -48,18 +49,18 @@ public abstract class RoutingDomain extends AbstractDomain {
 	 */
 	protected final class RoutingPort extends AbstractPort {
 
-		public RoutingPort(BasicModelEntity parent) {
+		public RoutingPort(ModelEntity parent) {
 			super(parent);
 		}
 
 		@Override
-		public void connect(AbstractPort port) {
-			throw new UnsupportedOperationException("Connection is done automatically when adding an entity");
+		public void connect(Port port) {
+			throw new PortConnectionException("Connection is done automatically when adding an entity");
 		}
 
 		@Override
-		public void disconnect(AbstractPort port) {
-			throw new UnsupportedOperationException("Disconnection is done automatically when removing an entity");
+		public void disconnect(Port port) {
+			throw new PortConnectionException("Disconnection is done automatically when removing an entity");
 		}
 
 		@Override
@@ -68,13 +69,13 @@ public abstract class RoutingDomain extends AbstractDomain {
 		}
 
 		@Override
-		public Collection<AbstractPort> forwardMessages() {
-			Collection<AbstractPort> result=new HashSet<>(); // set to ensure no duplicates in destination list
+		public Collection<Port> forwardMessages() {
+			final Collection<Port> result=new HashSet<>(); // set to ensure no duplicates in destination list
 			while (hasMessages()) {
 				final RoutedMessage msg=poll(); // message is also removed in this step!
 				final int index=msg.getDestIndex(getLevel()); // destination index corresponding to entity level in model
-				final BasicModelEntity entity=getEntityList().get(index); // find the right entity for forwarding
-				final AbstractPort dest=entity.getInport(); // find the right port for forwarding
+				final ModelEntity entity=getBasicEntityList().get(index); // find the right entity for forwarding
+				final Port dest=entity.getInport(); // find the right port for forwarding
 				dest.write(msg);
 				result.add(dest);
 			}
@@ -82,7 +83,7 @@ public abstract class RoutingDomain extends AbstractDomain {
 		}
 
 		@Override
-		public boolean isConnectedTo(AbstractPort port) {
+		public boolean isConnectedTo(Port port) {
 			return containsEntity(port.getParent());
 		}
 
@@ -101,8 +102,7 @@ public abstract class RoutingDomain extends AbstractDomain {
 	public void setAsRootDomain() {
 		setParent(null);
 		setAddress(ROOT_ADDRESS);
-		this.connectTo(this); // close the loop at the root domain 
-		//getOutport().connect(getInport());
+		getOutport().connect(getInport()); // close the loop at the root domain 
 	}
 
 	/**
@@ -119,7 +119,7 @@ public abstract class RoutingDomain extends AbstractDomain {
 	@Override
 	public final <T extends BasicModelEntity> T addEntity(T entity) {
 		super.addEntity(entity);
-		entity.getOutport().connect(getOutport()); // upstream coupling towards the domain root
+		entity.getOutport().connect(getOutport()); // upstream coupling through the domain towards the root
 		// Note: The downstream coupling is handled by the RoutingPort itself!
 		entity.resetAddress(countDomainEntities()-1); // reset addresses of the entity and its children
 		return entity;
@@ -136,13 +136,14 @@ public abstract class RoutingDomain extends AbstractDomain {
 	 */
 	@Override
 	public final <T extends BasicModelEntity> T removeEntity(T entity) {
-		final int start=getEntityList().indexOf(entity);
+		final int start=getBasicEntityList().indexOf(entity);
 		if (start==-1) return null; // unknown entity
-		getEntityList().remove(start);
+		getBasicEntityList().remove(start);
 		entity.setParent(null);
 		entity.getOutport().disconnect(getOutport()); // remove connection towards domain root
 		for (int index=start; index<countDomainEntities(); index++) {
-			getEntityList().get(index).resetAddress(index);
+			final BasicModelEntity bme=(BasicModelEntity) getBasicEntityList().get(index);
+			bme.resetAddress(index);
 		}
 		return entity;
 	}
@@ -156,11 +157,12 @@ public abstract class RoutingDomain extends AbstractDomain {
 	 * @param value the new index value of this entity
 	 */
 	@Override
-	public void resetAddress(int value) {
+	protected final void resetAddress(int value) {
 		super.resetAddress(value); // update address of this domain
 		// recursively update addresses of all child entities
 		for (int index=0; index<countDomainEntities(); index++) {
-			getEntityList().get(index).resetAddress(index);
+			final BasicModelEntity bme=(BasicModelEntity) getBasicEntityList().get(index);
+			bme.resetAddress(index);
 		}
 	}
 

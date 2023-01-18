@@ -16,7 +16,7 @@ import org.simplesim.core.instrumentation.Listener;
 import org.simplesim.core.instrumentation.ListenerSupport;
 import org.simplesim.core.scheduling.EventQueue;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.model.AbstractDomain;
+import org.simplesim.model.BasicDomain;
 import org.simplesim.model.Agent;
 import org.simplesim.model.MessageForwardingStrategy;
 
@@ -27,7 +27,7 @@ import org.simplesim.model.MessageForwardingStrategy;
 public abstract class AbstractSimulator implements Simulator {
 
 	// top node of the simulation model
-	private final AbstractDomain rootDomain;
+	private final BasicDomain rootDomain;
 
 	// current simulation time
 	private Time simTime=Time.ZERO;
@@ -62,7 +62,7 @@ public abstract class AbstractSimulator implements Simulator {
 	 * @param queue      the queue implementation to use as global event queue
 	 * @param forwarding the strategy to use for message forwarding
 	 */
-	public AbstractSimulator(AbstractDomain root, EventQueue<Agent> queue, MessageForwardingStrategy forwarding) {
+	public AbstractSimulator(BasicDomain root, EventQueue<Agent> queue, MessageForwardingStrategy forwarding) {
 		rootDomain=root;
 		geq=queue;
 		mfs=forwarding;
@@ -93,7 +93,7 @@ public abstract class AbstractSimulator implements Simulator {
 	}
 
 	@Override
-	public AbstractDomain getRootDomain() { return rootDomain; }
+	public BasicDomain getRootDomain() { return rootDomain; }
 
 	@Override
 	public Time getSimulationTime() { return simTime; }

@@ -22,14 +22,14 @@ import org.simplesim.examples.elevator.shared.Request;
 import org.simplesim.examples.elevator.shared.Visitor;
 import org.simplesim.examples.elevator.shared.VisitorState;
 import org.simplesim.examples.elevator.shared.VisitorState.ACTIVITY;
-import org.simplesim.model.AbstractAgent;
+import org.simplesim.model.BasicAgent;
 
 /**
  * Part of the static elevator example
  *
  * @see org.simplesim.examples.elevator.StaticMain StaticMain
  */
-public final class StaticVisitor extends AbstractAgent<VisitorState, Visitor.Event> implements Visitor {
+public final class StaticVisitor extends BasicAgent<VisitorState, Visitor.Event> implements Visitor {
 
 	private static final Random random=new Random();
 	private int currentFloor=LOBBY; // usually, this should be a state variable
@@ -95,7 +95,7 @@ public final class StaticVisitor extends AbstractAgent<VisitorState, Visitor.Eve
 	}
 
 	@Override
-	public void sendRequest(AbstractAgent<?, ?> dest, int destination, Time time) {
+	public void sendRequest(BasicAgent<?, ?> dest, int destination, Time time) {
 		final Request request=new Request(this,getCurrentFloor(),destination,time);
 		getOutport().write(new Message(this,request)); // send request to elevator
 	}

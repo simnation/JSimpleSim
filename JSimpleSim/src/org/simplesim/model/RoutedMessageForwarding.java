@@ -19,14 +19,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.simplesim.core.messaging.AbstractPort;
+import org.simplesim.core.messaging.Port;
 
 /**
  * Implementation of {@code ForwardingStrategy} for the routing concept.
  * <p>
  * This implementation first assigns outports with messages to layers according
- * to the level of their parent {@link AbstractDomain}. Then forwarding starts
- * at the bottom most port and works its way up to the root. In a second step,
+ * to the level of their parent {@link BasicDomain}. Then forwarding starts at
+ * the bottom most port and works its way up to the root. In a second step,
  * messages are copied in the root node of the model tree. In a third step,
  * messages are forwarded top-down in a similar way.
  * <p>
@@ -39,7 +39,7 @@ import org.simplesim.core.messaging.AbstractPort;
 public final class RoutedMessageForwarding implements MessageForwardingStrategy {
 
 	private final RoutingDomain root;
-	private final List<Set<AbstractPort>> layers=new ArrayList<>();
+	private final List<Set<Port>> layers=new ArrayList<>();
 
 	public RoutedMessageForwarding(RoutingDomain r) { root=r; }
 
@@ -47,11 +47,11 @@ public final class RoutedMessageForwarding implements MessageForwardingStrategy 
 	public void forwardMessages(Collection<Agent> agentList) {
 		// part I: build a list of sets, each set representing a level of the overall
 		// model and containing all respective ports with outgoing messages
-		final Collection<AbstractPort> sources=listPortsWithOutgoingMsg(agentList);
+		final Collection<Port> sources=listPortsWithOutgoingMsg(agentList);
 		if (sources.isEmpty()) return;
-		for (final AbstractPort port : sources) {
+		for (final Port port : sources) {
 			final int level=port.getParent().getLevel();
-			while (layers.size()<=level) layers.add(new HashSet<AbstractPort>());
+			while (layers.size()<=level) layers.add(new HashSet<Port>());
 			layers.get(level).add(port);
 		}
 		// part II: copy all message from bottom most level upwards to the root layer
@@ -63,7 +63,7 @@ public final class RoutedMessageForwarding implements MessageForwardingStrategy 
 		// part IV: copy messages from root layer down to their destination
 		doHierarchicalCopyingDown();
 		// part V: recycling - empty sets for next usage to save memory and time
-		for (final Set<AbstractPort> set : layers) set.clear();
+		for (final Set<Port> set : layers) set.clear();
 	}
 
 	/**
@@ -71,9 +71,9 @@ public final class RoutedMessageForwarding implements MessageForwardingStrategy 
 	 */
 	private void doHierarchicalCopyingUp() {
 		for (int level=layers.size()-1; level>ROOT_LEVEL; level--) {
-			final Set<AbstractPort> sources=layers.get(level);
-			final Set<AbstractPort> destinations=layers.get(level-1);
-			for (final AbstractPort src : sources) {
+			final Set<Port> sources=layers.get(level);
+			final Set<Port> destinations=layers.get(level-1);
+			for (final Port src : sources) {
 				// make sure there is another connection
 				if (src.isEndPoint()) continue;
 				// copy messages and add new destinations to list
@@ -88,9 +88,9 @@ public final class RoutedMessageForwarding implements MessageForwardingStrategy 
 	 */
 	private void doHierarchicalCopyingDown() {
 		for (int level=ROOT_LEVEL+1; level<layers.size(); level++) {
-			final Set<AbstractPort> sources=layers.get(level-1);
-			final Set<AbstractPort> destinations=layers.get(level);
-			for (final AbstractPort src : sources) {
+			final Set<Port> sources=layers.get(level-1);
+			final Set<Port> destinations=layers.get(level);
+			for (final Port src : sources) {
 				// make sure there is another connection
 				if (src.isEndPoint()) continue;
 				// copy messages and add new destinations to list

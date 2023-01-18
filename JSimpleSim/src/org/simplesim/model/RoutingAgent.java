@@ -18,11 +18,11 @@ import org.simplesim.core.scheduling.EventQueue;
  * <p>
  * Note: Connection of ports is done automatically when adding this agent to a {@code RoutingDomain}.
  *
- * @see AbstractAgent
+ * @see BasicAgent
  * @see RoutingDomain
  * @see org.simplesim.core.messaging.RoutedMessage RoutedMessage
  */
-public abstract class RoutingAgent<S extends State, E> extends AbstractAgent<S, E> {
+public abstract class RoutingAgent<S extends State, E> extends BasicAgent<S, E> {
 
 	/**
 	 * {@inheritDoc}

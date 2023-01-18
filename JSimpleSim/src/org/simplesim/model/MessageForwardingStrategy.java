@@ -14,7 +14,7 @@ package org.simplesim.model;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.simplesim.core.messaging.AbstractPort;
+import org.simplesim.core.messaging.Port;
 
 /**
  * Interface for various strategies to forward messages during simulation
@@ -28,7 +28,7 @@ public interface MessageForwardingStrategy {
 	 *
 	 */
 	@SuppressWarnings("serial")
-	static class ForwardingFailureException extends RuntimeException {
+	static final class ForwardingFailureException extends RuntimeException {
 		public ForwardingFailureException(String message) {
 			super(message);
 		}
@@ -48,10 +48,10 @@ public interface MessageForwardingStrategy {
 	 * @param agentList collection of agents with outgoing messages
 	 * @return collection of outports with outgoing messages to be processed
 	 */
-	default Collection<AbstractPort> listPortsWithOutgoingMsg(Collection<Agent> agentList) {
-		final Collection<AbstractPort> result=new ArrayList<>();
+	default Collection<Port> listPortsWithOutgoingMsg(Collection<Agent> agentList) {
+		final Collection<Port> result=new ArrayList<>();
 		for (final Agent agent : agentList) {
-			AbstractPort port=((BasicModelEntity) agent).getOutport();
+			Port port=agent.getOutport();
 			if (port.hasMessages()) result.add(port);
 		}
 		return result;

@@ -59,7 +59,7 @@ public class DynamicMain {
 		model.addEntity(elevator);
 		final Floor lobby=new Floor(Limits.LOBBY);
 		model.addEntity(lobby);
-		lobby.addEntity(new InstrumentationDecorator(new DynamicVisitor(model)));
+		//lobby.addEntity(new InstrumentationDecorator(new DynamicVisitor(model)));
 		for (int i=0; i<Limits.VISITORS; i++) lobby.addEntity(new DynamicVisitor(model));
 		for (int floor=1; floor<=Limits.MAX_FLOOR; floor++) model.addEntity(new Floor(floor));
 

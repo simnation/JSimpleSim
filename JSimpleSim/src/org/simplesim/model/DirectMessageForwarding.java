@@ -4,17 +4,17 @@
  *
  * This software is published as open source and licensed under the terms of GNU
  * GPLv3.
- * 
+ *
  * Contributors:
  * 	- Rene Kuhlemann - development and initial implementation
- * 
+ *
  */
 package org.simplesim.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.simplesim.core.messaging.AbstractPort;
+import org.simplesim.core.messaging.Port;
 
 /**
  * Strategy for direct message forwarding.
@@ -30,11 +30,11 @@ public final class DirectMessageForwarding implements MessageForwardingStrategy 
 	@Override
 	public void forwardMessages(Collection<Agent> agentList) {
 		// part I: get list of all ports carrying an outgoing message
-		final Collection<AbstractPort> destinations=new ArrayList<>();
-		final Collection<AbstractPort> sources=listPortsWithOutgoingMsg(agentList);
+		final Collection<Port> destinations=new ArrayList<>();
+		final Collection<Port> sources=listPortsWithOutgoingMsg(agentList);
 		// part II: do forwarding of messages, only one Step because of the direct
 		// connections
-		for (final AbstractPort src : sources) destinations.addAll(src.forwardMessages());
+		for (final Port src : sources) destinations.addAll(src.forwardMessages());
 		// Only one copy cycle because there should be only direct connections
 	}
 

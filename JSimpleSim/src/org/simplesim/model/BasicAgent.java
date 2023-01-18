@@ -11,6 +11,7 @@
 package org.simplesim.model;
 
 import java.io.PrintStream;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import org.simplesim.core.dynamic.ChangeRequest;
@@ -36,16 +37,16 @@ import org.simplesim.simulator.DynamicDecorator;
  * ({@link org.simplesim.core.scheduling.Time})
  * </ol>
  * <p>
- * Agents are always embedded in an {@code AbstractDomain} for
+ * Agents are always embedded in an {@code Domain} for
  * compartmentalization.
  *
  * @param <S> type of the agent state containing all state variables
  * @param <E> type of the events
  * 
- * @see AbstractDomain
+ * @see BasicDomain
  * @see EventQueue
  */
-public abstract class AbstractAgent<S extends State, E> extends BasicModelEntity implements Agent {
+public abstract class BasicAgent<S extends State, E> extends BasicModelEntity implements Agent {
 
 	/** the internal state of the agent */
 	private final S state;
@@ -54,13 +55,13 @@ public abstract class AbstractAgent<S extends State, E> extends BasicModelEntity
 	private final EventQueue<E> leq;
 	
 	/** Queue for model change requests, only used by dynamic simulators. */
-	private final static ConcurrentLinkedDeque<ChangeRequest> queue=new ConcurrentLinkedDeque<>();
+	private final static Queue<ChangeRequest> queue=new ConcurrentLinkedDeque<>();
 	
 	/** Flag to indicate if the simulation is running. */
 	private static volatile boolean simulationIsRunning=false;
 	
 	@SuppressWarnings("serial")
-	public static class UnknownEventType extends RuntimeException {
+	public static final class UnknownEventType extends RuntimeException {
 		public UnknownEventType(String msg) {
 			super(msg);
 		}
@@ -75,13 +76,13 @@ public abstract class AbstractAgent<S extends State, E> extends BasicModelEntity
 	 * @param queue the local event queue
 	 * @param s     the state of the agent
 	 */
-	public AbstractAgent(EventQueue<E> queue, S s) {
+	public BasicAgent(EventQueue<E> queue, S s) {
 		super();
 		state=s;
 		leq=queue;
 	}
 
-	public AbstractAgent(S s) {
+	public BasicAgent(S s) {
 		this(new HeapEventQueue<E>(),s);
 	}
 

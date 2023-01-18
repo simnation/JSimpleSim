@@ -14,8 +14,8 @@ import java.util.concurrent.Future;
 
 import org.simplesim.core.scheduling.EventQueue;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.model.AbstractAgent;
-import org.simplesim.model.AbstractDomain;
+import org.simplesim.model.BasicAgent;
+import org.simplesim.model.BasicDomain;
 import org.simplesim.model.Agent;
 import org.simplesim.model.MessageForwardingStrategy;
 
@@ -38,7 +38,7 @@ public final class ConcurrentDESimulator extends SequentialDESimulator {
 	 * @param queue      the queue implementation to use as global event queue
 	 * @param forwarding the strategy to use for message forwarding
 	 */
-	public ConcurrentDESimulator(AbstractDomain root, EventQueue<Agent> queue, MessageForwardingStrategy forwarding) {
+	public ConcurrentDESimulator(BasicDomain root, EventQueue<Agent> queue, MessageForwardingStrategy forwarding) {
 		super(root,queue,forwarding);
 	}
 
@@ -51,7 +51,7 @@ public final class ConcurrentDESimulator extends SequentialDESimulator {
 	 *
 	 * @param root the root domain of the model
 	 */
-	public ConcurrentDESimulator(AbstractDomain root) {
+	public ConcurrentDESimulator(BasicDomain root) {
 		super(root);
 	}
 
@@ -70,7 +70,7 @@ public final class ConcurrentDESimulator extends SequentialDESimulator {
 		final ExecutorService executor=Executors.newWorkStealingPool();
 		final List<Future<Time>> futures=new ArrayList<>();
 		while (getSimulationTime().compareTo(stop)<0) {
-			AbstractAgent.toggleSimulationIsRunning(true);
+			BasicAgent.toggleSimulationIsRunning(true);
 			// part I: process all current events by calling the agents' doEvent method
 			// and enqueue the next events of the agents
 			setCurrentEventList(getGlobalEventQueue().dequeueAll());
@@ -92,7 +92,7 @@ public final class ConcurrentDESimulator extends SequentialDESimulator {
 			}
 			// part II: do the message forwarding
 			getMessageForwardingStrategy().forwardMessages(getCurrentEventList());
-			AbstractAgent.toggleSimulationIsRunning(false);
+			BasicAgent.toggleSimulationIsRunning(false);
 			futures.clear(); // free futures again
 			hookEventsProcessed();
 			setSimulationTime(getGlobalEventQueue().getMin());

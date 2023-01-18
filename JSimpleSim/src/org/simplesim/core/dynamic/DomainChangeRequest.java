@@ -7,7 +7,7 @@
 package org.simplesim.core.dynamic;
 
 import org.simplesim.model.BasicModelEntity;
-import org.simplesim.model.AbstractDomain;
+import org.simplesim.model.BasicDomain;
 
 /**
  * Request to move an entity from one domain to an other.
@@ -17,7 +17,7 @@ import org.simplesim.model.AbstractDomain;
  */
 public class DomainChangeRequest extends EntityRemoveRequest {
 	
-	private final AbstractDomain toDomain;
+	private final BasicDomain toDomain;
 	
 	/**
 	 * Sets the entity to be moved and the new domain.
@@ -25,7 +25,7 @@ public class DomainChangeRequest extends EntityRemoveRequest {
 	 * @param what entity to be moved
 	 * @param dest new domain of the entity
 	 */
-	public DomainChangeRequest(BasicModelEntity what, AbstractDomain dest) {
+	public DomainChangeRequest(BasicModelEntity what, BasicDomain dest) {
 		super(what);	
 		toDomain=dest;
 	}

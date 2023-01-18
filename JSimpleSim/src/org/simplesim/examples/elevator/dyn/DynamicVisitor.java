@@ -22,7 +22,7 @@ import org.simplesim.examples.elevator.shared.Request;
 import org.simplesim.examples.elevator.shared.Visitor;
 import org.simplesim.examples.elevator.shared.VisitorState;
 import org.simplesim.examples.elevator.shared.VisitorState.ACTIVITY;
-import org.simplesim.model.AbstractAgent;
+import org.simplesim.model.BasicAgent;
 import org.simplesim.model.RoutingAgent;
 
 /**
@@ -106,7 +106,7 @@ public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.Eve
 	}
 
 	@Override
-	public void sendRequest(AbstractAgent<?, ?> dest, int destination, Time time) {
+	public void sendRequest(BasicAgent<?, ?> dest, int destination, Time time) {
 		final Request request=new Request(this,getCurrentFloor(),destination,time);
 		final RoutedMessage msg=new RoutedMessage(this.getAddress(),dest.getAddress(),request);
 		getOutport().write(msg); // send request to elevator

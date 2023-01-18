@@ -15,7 +15,7 @@ import org.simplesim.examples.elevator.shared.ElevatorState;
 import org.simplesim.examples.elevator.shared.ElevatorStrategy;
 import org.simplesim.examples.elevator.shared.Limits;
 import org.simplesim.examples.elevator.shared.Request;
-import org.simplesim.model.AbstractAgent;
+import org.simplesim.model.BasicAgent;
 import org.simplesim.model.RoutingAgent;
 
 /**
@@ -73,7 +73,7 @@ public final class DynamicElevator extends RoutingAgent<ElevatorState, Elevator.
 	 * org.simplesim.examples.elevator.Request)
 	 */
 	@Override
-	public void sendMessage(AbstractAgent<?, ?> recipient, Request content) {
+	public void sendMessage(BasicAgent<?, ?> recipient, Request content) {
 		getOutport().write(new RoutedMessage(this.getAddress(),recipient.getAddress(),content));
 	}
 

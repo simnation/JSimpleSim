@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.simplesim.core.instrumentation.Listener;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.model.AbstractDomain;
+import org.simplesim.model.BasicDomain;
 import org.simplesim.model.Agent;
 import org.simplesim.simulator.AbstractSimulator.InvalidSimulatorStateException;
 
@@ -28,7 +28,7 @@ public interface Simulator {
 	 */
 	void runSimulation(Time stop);
 
-	AbstractDomain getRootDomain();
+	BasicDomain getRootDomain();
 
 	Time getSimulationTime();
 

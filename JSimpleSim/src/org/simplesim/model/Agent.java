@@ -1,7 +1,7 @@
 /*
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy way. This software is published as open
  * source and licensed under the terms of GNU GPLv3.
- * 
+ *
  * Contributors: - Rene Kuhlemann - development and initial implementation
  */
 package org.simplesim.model;
@@ -9,27 +9,32 @@ package org.simplesim.model;
 import org.simplesim.core.scheduling.Time;
 
 /**
- * 
+ * Agents are the acting entities of the simulation model.
+ * <p>
+ * Agents should implement a strategy within their {@code doEvent} method and
+ * provide the scheduler with the time of next internal event (tonie). Data
+ * should be stored separately within the agent's state. Agents are always
+ * embedded within a {@code Domain} for compartmentalization of the model.
  *
  */
-public interface Agent {
-	
+public interface Agent extends ModelEntity {
+
 	/**
 	 * Returns the agent's state containing all internal variables
 	 *
 	 * @return the agent's internal state
 	 */
 	<S extends State> S getState();
-	
+
 	/**
-	 * Returns the time of the next internal event.
+	 * Returns the time of the next internal event (tonie).
 	 * <p>
 	 * This method is called by the simulator to update the global event queue.
 	 *
 	 * @return time of the next internal event
 	 */
-	public Time getTimeOfNextEvent();
-	
+	Time getTimeOfNextEvent();
+
 	/**
 	 * Calculates new outputs from the available inputs and implements the agent's
 	 * strategy.
@@ -64,40 +69,5 @@ public interface Agent {
 	 * @see org.simplesim.core.messaging.AbstractPort AbstractPort
 	 */
 	Time doEvent(Time time);
-			
-	/**
-	 * Returns the name of this model entity
-	 * <p>
-	 * Returns an empty string as default, may be overridden in derived classes.
-	 *
-	 * @return the name of this model entity, may be an empty string but not null
-	 */
-	String getName();
-	
-	/**
-	 * Returns the full name of a model, concatenating the names of the parent entities.
-	 * <p>
-	 * Example: If A and B are parents of this entity and this entity is named C, then the full name is A.B.C
-	 *
-	 * @return the full name of this entity
-	 */
-	String getFullName();	
-	
-	/**
-	 * Gets the entity address. Can be null.
-	 * <p>
-	 * Note: The address of the root domain is {@code int[0]}. Another dimension has to be added per model level. The
-	 * value of each dimension is the index within the corresponding level.
-	 *
-	 * @return the address
-	 */
-	int[] getAddress(); 
-	
-	/**
-	 * Checks whether there is at least one input at any inport.
-	 *
-	 * @return true if any inport has an input
-	 */
-	boolean hasInput(); 
 
 }

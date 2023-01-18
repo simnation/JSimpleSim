@@ -7,6 +7,7 @@ package org.simplesim.model;
 
 import org.simplesim.core.instrumentation.Listener;
 import org.simplesim.core.instrumentation.ListenerSupport;
+import org.simplesim.core.messaging.AbstractPort;
 import org.simplesim.core.scheduling.Time;
 
 /**
@@ -59,7 +60,7 @@ public class InstrumentationDecorator implements Agent {
 	}
 
 	@Override
-	public Time doEvent(Time time) {
+	public final Time doEvent(Time time) {
 		beforeExecutionListeners.notifyListeners(time,this);
 		agent.doEvent(time);
 		afterExecutionListeners.notifyListeners(time,this);
@@ -67,21 +68,30 @@ public class InstrumentationDecorator implements Agent {
 	}
 
 	@Override
-	public <S extends State> S getState() { return agent.getState(); }
+	public final <S extends State> S getState() { return agent.getState(); }
 
 	@Override
-	public Time getTimeOfNextEvent() { return agent.getTimeOfNextEvent(); }
+	public final Time getTimeOfNextEvent() { return agent.getTimeOfNextEvent(); }
 
 	@Override
-	public String getName() { return agent.getName(); }
+	public final String getName() { return agent.getName(); }
 
 	@Override
-	public String getFullName() { return agent.getFullName(); }
+	public final String getFullName() { return agent.getFullName(); }
 
 	@Override
-	public boolean hasInput() { return agent.hasInput(); }
+	public final int[] getAddress() { return agent.getAddress(); }
 
 	@Override
-	public int[] getAddress() { return agent.getAddress(); }
+	public final Domain getParent() { return agent.getParent(); }
+
+	@Override
+	public final int getLevel() { return agent.getLevel(); }
+
+	@Override
+	public final AbstractPort getInport() { return agent.getInport(); }
+
+	@Override
+	public final AbstractPort getOutport() { return agent.getOutport(); }
 
 }

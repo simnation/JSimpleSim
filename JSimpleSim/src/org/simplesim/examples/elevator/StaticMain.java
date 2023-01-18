@@ -57,8 +57,8 @@ public class StaticMain {
 		for (int index=1; index<=Limits.VISITORS; index++) {
 			final StaticVisitor visitor=new StaticVisitor();
 			model.addEntity(visitor);
-			elevator.connectTo(visitor);
-			visitor.connectTo(elevator);
+			elevator.getOutport().connect(visitor.getInport());
+			visitor.getOutport().connect(elevator.getInport());
 		}
 
 		final View view=new View(elevator.getState());
