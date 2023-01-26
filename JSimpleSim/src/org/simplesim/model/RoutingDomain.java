@@ -7,6 +7,7 @@ package org.simplesim.model;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 
 import org.simplesim.core.messaging.AbstractPort;
 import org.simplesim.core.messaging.Port;
@@ -74,7 +75,7 @@ public abstract class RoutingDomain extends BasicDomain {
 			while (hasMessages()) {
 				final RoutedMessage msg=poll(); // message is also removed in this step!
 				final int index=msg.getDestIndex(getLevel()); // destination index corresponding to entity level in model
-				final ModelEntity entity=getBasicEntityList().get(index); // find the right entity for forwarding
+				final ModelEntity entity=listDomainEntities().get(index); // find the right entity for forwarding
 				final Port dest=entity.getInport(); // find the right port for forwarding
 				dest.write(msg);
 				result.add(dest);
@@ -117,7 +118,7 @@ public abstract class RoutingDomain extends BasicDomain {
 	 * @throws NullPointerException               if entity is null
 	 */
 	@Override
-	public final <T extends BasicModelEntity> T addEntity(T entity) {
+	<T extends BasicModelEntity> T addEntity(T entity) {
 		super.addEntity(entity);
 		entity.getOutport().connect(getOutport()); // upstream coupling through the domain towards the root
 		// Note: The downstream coupling is handled by the RoutingPort itself!
@@ -135,17 +136,16 @@ public abstract class RoutingDomain extends BasicDomain {
 	 * @return the removed entity if the domain contained it, null otherwise
 	 */
 	@Override
-	public final <T extends BasicModelEntity> T removeEntity(T entity) {
-		final int start=getBasicEntityList().indexOf(entity);
-		if (start==-1) return null; // unknown entity
-		getBasicEntityList().remove(start);
-		entity.setParent(null);
+	<T extends BasicModelEntity> void removeEntity(T entity) {
+		final int start=listDomainEntities().indexOf(entity);
+		if (start==-1) throw new NoSuchElementException("Entity not part of parent domain: "+entity.getFullName());
 		entity.getOutport().disconnect(getOutport()); // remove connection towards domain root
+		entity.setParent(null);
+		getModifiableEntityList().remove(start);
 		for (int index=start; index<countDomainEntities(); index++) {
-			final BasicModelEntity bme=(BasicModelEntity) getBasicEntityList().get(index);
+			final BasicModelEntity bme=(BasicModelEntity) listDomainEntities().get(index);
 			bme.resetAddress(index);
 		}
-		return entity;
 	}
 
 	/**
@@ -161,7 +161,7 @@ public abstract class RoutingDomain extends BasicDomain {
 		super.resetAddress(value); // update address of this domain
 		// recursively update addresses of all child entities
 		for (int index=0; index<countDomainEntities(); index++) {
-			final BasicModelEntity bme=(BasicModelEntity) getBasicEntityList().get(index);
+			final BasicModelEntity bme=(BasicModelEntity) listDomainEntities().get(index);
 			bme.resetAddress(index);
 		}
 	}

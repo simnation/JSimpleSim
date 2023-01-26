@@ -5,7 +5,7 @@
  */
 package org.simplesim.model;
 
-import org.simplesim.core.messaging.AbstractPort;
+import org.simplesim.core.messaging.Port;
 import org.simplesim.core.messaging.SinglePort;
 
 /**
@@ -29,41 +29,62 @@ public abstract class BasicModelEntity implements ModelEntity {
 	private Domain parent=null;
 
 	/** The inport (is always a SinglePort) */
-	private AbstractPort inport=new SinglePort(this);
+	private Port inport=new SinglePort(this);
 
 	/** The outport */
-	private AbstractPort outport=null;
+	private Port outport=null;
 
 	/** Address in numbers, describing the model's branch within the model tree */
 	private int[] address=null;
 
 	/** The level in the hierarchy the model is located at. */
 	private int level=INIT_LEVEL;
+	
+	
+	@Override
+	public void addToDomain(BasicDomain domain) {
+		domain.addEntity(this);
+	}
+
+	@Override 
+	public void removeFromParent() {
+		((BasicDomain) getParent()).removeEntity(this);
+	}
 
 	@Override
 	public String getName() { return ""; }
 
 	@Override
-	public final String getFullName() {
+	public String getFullName() {
 		if (parent==null) return getName();
 		return parent.getFullName()+'.'+getName();
 	}
 
 	@Override
-	public final Domain getParent() { return parent; }
+	public Domain getParent() { return parent; }
 
 	@Override
-	public final int[] getAddress() { return address; }
+	public int[] getAddress() { return address; }
 
 	@Override
-	public final AbstractPort getInport() { return inport; }
+	public Port getInport() { return inport; }
 
 	@Override
-	public final AbstractPort getOutport() { return outport; }
+	public Port getOutport() { return outport; }
 
-	protected final AbstractPort setInport(AbstractPort port) { return (inport=port); }
+	@Override
+	public int getLevel() {
+		// if there is no level information yet, re-compute it
+		if (level==INIT_LEVEL) {
+			if (parent==null) level=ROOT_LEVEL;
+			else level=parent.getLevel()+1;
+		}
+		return level;
+	}
 
-	protected final AbstractPort setOutport(AbstractPort port) { return (outport=port); }
+	protected Port setInport(Port port) { return (inport=port); }
+
+	protected Port setOutport(Port port) { return (outport=port); }
 
 	/**
 	 * Sets the address of this model. Should only be used internally when changing
@@ -80,24 +101,14 @@ public abstract class BasicModelEntity implements ModelEntity {
 		resetLevel();
 	}
 
-	@Override
-	public int getLevel() {
-		// if there is no level information yet, re-compute it
-		if (level==INIT_LEVEL) {
-			if (parent==null) level=ROOT_LEVEL;
-			else level=parent.getLevel()+1;
-		}
-		return level;
-	}
-
 	/**
 	 * Resets the entity's address based on its position in the model structure.
 	 * <p>
 	 * Uses the parent's address and an additional index given by the caller. This
 	 * method should be called if the structure changes (e.g. this entity is moved
-	 * to another domain) It can also be use to initialize the address.
+	 * to another domain). It can also be use to initialize the address.
 	 *
-	 * @param index the new index value of this entity
+	 * @param index the new index value of this entity within its domain
 	 */
 	void resetAddress(int index) {
 		resetLevel();
@@ -114,7 +125,7 @@ public abstract class BasicModelEntity implements ModelEntity {
 	 *
 	 * @param parent which should become the parent of this model
 	 */
-	void setParent(BasicDomain par) {
+	void setParent(Domain par) {
 		parent=par;
 		// any updating which is related to setting a new parent must be done in
 		// the reset method - this method is overwritten in descendant classes
@@ -138,11 +149,6 @@ public abstract class BasicModelEntity implements ModelEntity {
 		return this==other;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return getFullName();

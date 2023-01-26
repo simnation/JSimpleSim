@@ -44,7 +44,7 @@ public final class StaticVisitor extends BasicAgent<VisitorState, Visitor.Event>
 	}
 
 	@Override
-	public Time doEvent(Time time) {
+	public void doEvent(Time time) {
 		switch (getEventQueue().dequeue()) {
 		case WAITING:
 			waitForElevator(time);
@@ -57,7 +57,6 @@ public final class StaticVisitor extends BasicAgent<VisitorState, Visitor.Event>
 		default:
 			throw new UnknownEventType("Unknown event type occured in "+toString());
 		}
-		return getTimeOfNextEvent();
 	}
 
 	/**
@@ -94,6 +93,8 @@ public final class StaticVisitor extends BasicAgent<VisitorState, Visitor.Event>
 		getEventQueue().enqueue(Event.WAITING,time.add(IDLE_TIME)); // wait for elevator
 	}
 
+	private void setCurrentFloor(int value) { currentFloor=value; }
+
 	@Override
 	public void sendRequest(BasicAgent<?, ?> dest, int destination, Time time) {
 		final Request request=new Request(this,getCurrentFloor(),destination,time);
@@ -102,20 +103,21 @@ public final class StaticVisitor extends BasicAgent<VisitorState, Visitor.Event>
 
 	/*
 	 * (non-Javadoc)
+	 *
 	 * @see org.simplesim.examples.elevator.core.Visitor#getCurrentFloor()
 	 */
 	@Override
-	public int getCurrentFloor() {
-		return currentFloor;
-	}
+	public int getCurrentFloor() { return currentFloor; }
 
-	private void setCurrentFloor(int value) {
-		currentFloor=value;
+	@Override
+	public Mood getCurrentMood(Time simTime) {
+		final long diff=simTime.getTicks()-getState().getStartWaitingTime().getTicks();
+		int index=(int) Math.floorDiv(diff,Limits.ACCEPTABLE_WAITING_TIME.getTicks());
+		if (index>=Mood.values().length) index=Mood.values().length-1;
+		return Mood.values()[index];
 	}
 
 	@Override
-	public String getName() {
-		return "visitor";
-	}
+	public String getName() { return "visitor"; }
 
 }

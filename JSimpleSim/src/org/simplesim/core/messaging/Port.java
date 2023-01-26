@@ -8,7 +8,6 @@ package org.simplesim.core.messaging;
 
 import java.util.Collection;
 
-import org.simplesim.model.MessageForwardingStrategy;
 import org.simplesim.model.ModelEntity;
 
 /**

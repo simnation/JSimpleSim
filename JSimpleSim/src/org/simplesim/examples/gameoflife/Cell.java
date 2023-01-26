@@ -21,7 +21,7 @@ public final class Cell extends BasicAgent<CellState, Object> {
 	}
 
 	@Override
-	public Time doEvent(Time time) {
+	public void doEvent(Time time) {
 		if (getInport().hasMessages()) {
 			int neighbours=0;
 			while (getInport().hasMessages()) {
@@ -31,7 +31,6 @@ public final class Cell extends BasicAgent<CellState, Object> {
 			else getState().setLife(false);
 		}
 		getOutport().write(new Message(this,getState().isLife()));
-		return null;
 	}
 
 	@Override

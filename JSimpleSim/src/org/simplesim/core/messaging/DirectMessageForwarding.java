@@ -9,12 +9,12 @@
  * 	- Rene Kuhlemann - development and initial implementation
  *
  */
-package org.simplesim.model;
+package org.simplesim.core.messaging;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.simplesim.core.messaging.Port;
+import org.simplesim.model.Agent;
 
 /**
  * Strategy for direct message forwarding.

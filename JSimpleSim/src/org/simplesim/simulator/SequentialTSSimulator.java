@@ -10,12 +10,12 @@
  */
 package org.simplesim.simulator;
 
+import org.simplesim.core.messaging.MessageForwardingStrategy;
+import org.simplesim.core.messaging.RecursiveMessageForwarding;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.BasicAgent;
 import org.simplesim.model.BasicDomain;
 import org.simplesim.model.Agent;
-import org.simplesim.model.MessageForwardingStrategy;
-import org.simplesim.model.RecursiveMessageForwarding;
 
 /**
  * Simulator for sequential time step simulation
@@ -27,7 +27,7 @@ import org.simplesim.model.RecursiveMessageForwarding;
  * This implementation is especially useful to run cellular automata.
  *
  */
-public class SequentialTSSimulator extends AbstractSimulator {
+public class SequentialTSSimulator extends BasicSimulator {
 
 	// the constant time step, no event queue
 	private final Time timeStep=Time.TICK;
@@ -56,7 +56,7 @@ public class SequentialTSSimulator extends AbstractSimulator {
 			BasicAgent.toggleSimulationIsRunning(true);
 			// part I: process all current events by calling the agents' doEvent method
 			// in time step, iterate over ALL agents, ignore time of next event
-			for (Agent agent : getCurrentEventList()) agent.doEvent(getSimulationTime());
+			for (Agent agent : getCurrentEventList()) ((BasicAgent<?,?>) agent).doEventSim(getSimulationTime());
 			// part II: do the message forwarding
 			getMessageForwardingStrategy().forwardMessages(getCurrentEventList());
 			BasicAgent.toggleSimulationIsRunning(false);

@@ -9,7 +9,7 @@
  * 	- Rene Kuhlemann - development and initial implementation
  *
  */
-package org.simplesim.model;
+package org.simplesim.core.messaging;
 
 import static org.simplesim.model.BasicModelEntity.ROOT_LEVEL;
 
@@ -19,13 +19,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.simplesim.core.messaging.Port;
+import org.simplesim.model.Domain;
+import org.simplesim.model.Agent;
+import org.simplesim.model.RoutingDomain;
 
 /**
  * Implementation of {@code ForwardingStrategy} for the routing concept.
  * <p>
  * This implementation first assigns outports with messages to layers according
- * to the level of their parent {@link BasicDomain}. Then forwarding starts at
+ * to the level of their parent {@link Domain}. Then forwarding starts at
  * the bottom most port and works its way up to the root. In a second step,
  * messages are copied in the root node of the model tree. In a third step,
  * messages are forwarded top-down in a similar way.

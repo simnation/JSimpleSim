@@ -14,20 +14,21 @@ import java.util.List;
 
 import org.simplesim.core.instrumentation.Listener;
 import org.simplesim.core.instrumentation.ListenerSupport;
+import org.simplesim.core.messaging.MessageForwardingStrategy;
 import org.simplesim.core.scheduling.EventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.BasicDomain;
+import org.simplesim.model.Domain;
 import org.simplesim.model.Agent;
-import org.simplesim.model.MessageForwardingStrategy;
 
 /**
  * Implements the core functionality of a simulator.
  *
  */
-public abstract class AbstractSimulator implements Simulator {
+public abstract class BasicSimulator implements Simulator {
 
 	// top node of the simulation model
-	private final BasicDomain rootDomain;
+	private final Domain rootDomain;
 
 	// current simulation time
 	private Time simTime=Time.ZERO;
@@ -39,20 +40,10 @@ public abstract class AbstractSimulator implements Simulator {
 	private final MessageForwardingStrategy mfs;
 
 	// listeners to notify after all agents of a cycle have been processed
-	private final ListenerSupport<AbstractSimulator> eventsProcessedListeners=new ListenerSupport<>();
+	private final ListenerSupport<Simulator> eventsProcessedListeners=new ListenerSupport<>();
 
 	// list of agents processed in current simulation cycle
 	private List<Agent> currentEventList;
-
-	/**
-	 * Exception to be thrown if an invalid state occurs during simulation
-	 */
-	@SuppressWarnings("serial")
-	public static class InvalidSimulatorStateException extends RuntimeException {
-		public InvalidSimulatorStateException(String message) {
-			super(message);
-		}
-	}
 
 	/**
 	 * Constructs a new simulator with given model, queue implementation and
@@ -62,7 +53,7 @@ public abstract class AbstractSimulator implements Simulator {
 	 * @param queue      the queue implementation to use as global event queue
 	 * @param forwarding the strategy to use for message forwarding
 	 */
-	public AbstractSimulator(BasicDomain root, EventQueue<Agent> queue, MessageForwardingStrategy forwarding) {
+	public BasicSimulator(BasicDomain root, EventQueue<Agent> queue, MessageForwardingStrategy forwarding) {
 		rootDomain=root;
 		geq=queue;
 		mfs=forwarding;
@@ -73,7 +64,7 @@ public abstract class AbstractSimulator implements Simulator {
 	 *
 	 * @param stop simulation time when the simulation should stop
 	 *
-	 * @exception InvalidSimulatorStateException if there is an error during
+	 * @exception Simulator.InvalidSimulatorStateException if there is an error during
 	 *                                           simulation
 	 */
 	@Override
@@ -87,13 +78,13 @@ public abstract class AbstractSimulator implements Simulator {
 		for (Agent agent : getRootDomain().listAllAgents(true)) {
 			final Time tone=agent.getTimeOfNextEvent();
 			if (tone==null)
-				throw new InvalidSimulatorStateException("Local event queue empty in agent "+agent.getFullName());
+				throw new Simulator.InvalidSimulatorStateException("Local event queue empty in agent "+agent.getFullName());
 			getGlobalEventQueue().enqueue(agent,tone);
 		}
 	}
 
 	@Override
-	public BasicDomain getRootDomain() { return rootDomain; }
+	public Domain getRootDomain() { return rootDomain; }
 
 	@Override
 	public Time getSimulationTime() { return simTime; }
@@ -101,12 +92,12 @@ public abstract class AbstractSimulator implements Simulator {
 	protected void setSimulationTime(Time time) { simTime=time; }
 
 	@Override
-	public void registerEventsProcessedListener(Listener<AbstractSimulator> listener) {
+	public void registerEventsProcessedListener(Listener<Simulator> listener) {
 		eventsProcessedListeners.registerListener(listener);
 	}
 
 	@Override
-	public void unregisterEventsProcessedListener(Listener<AbstractSimulator> listener) {
+	public void unregisterEventsProcessedListener(Listener<Simulator> listener) {
 		eventsProcessedListeners.unregisterListener(listener);
 	}
 

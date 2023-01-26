@@ -35,7 +35,7 @@ public class DomainChangeRequest extends EntityRemoveRequest {
 	 */
 	public void doModelChange() {
 		super.doModelChange(); // remove the entity
-		toDomain.addEntity(entity);
+		entity.addToDomain(toDomain);
 	}
 
 }

@@ -5,8 +5,8 @@
  */
 package org.simplesim.examples.gameoflife;
 
+import org.simplesim.core.messaging.DirectMessageForwarding;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.model.DirectMessageForwarding;
 import org.simplesim.simulator.SequentialTSSimulator;
 import org.simplesim.simulator.Simulator;
 

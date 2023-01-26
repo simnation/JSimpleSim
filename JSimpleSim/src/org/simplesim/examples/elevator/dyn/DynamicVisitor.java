@@ -27,9 +27,9 @@ import org.simplesim.model.RoutingAgent;
 
 /**
  * Part of the dynamic elevator example
- * 
- * @see org.simplesim.examples.elevator.DynamicMain DynamicMain 
- * 
+ *
+ * @see org.simplesim.examples.elevator.DynamicMain DynamicMain
+ *
  */
 public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.Event> implements Visitor {
 
@@ -46,7 +46,7 @@ public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.Eve
 	}
 
 	@Override
-	public Time doEvent(Time time) {
+	public void doEvent(Time time) {
 		switch (getEventQueue().dequeue()) {
 		case WAITING:
 			waitForElevator(time);
@@ -59,7 +59,6 @@ public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.Eve
 		default:
 			throw new UnknownEventType("Unknown event type occured in "+toString());
 		}
-		return getTimeOfNextEvent();
 	}
 
 	/**
@@ -73,7 +72,6 @@ public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.Eve
 			// request model change to new floor
 			final Floor dest=building.getFloor(request.getDestinationFloor());
 			addModelChangeRequest(new DomainChangeRequest(this,dest));
-
 			if ((time.compareTo(END_WORK)>=1)&&(request.getDestinationFloor()==LOBBY))
 				getEventQueue().enqueue(Event.GO_HOME,Time.INFINITY); // work is over, going home
 			// go to another floor after staying here for a random time period
@@ -86,8 +84,14 @@ public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.Eve
 	}
 
 	@Override
-	public int getCurrentFloor() {
-		return ((Floor) getParent()).getFloor();
+	public int getCurrentFloor() { return ((Floor) getParent()).getFloor(); }
+
+	@Override
+	public Mood getCurrentMood(Time simTime) {
+		final long diff=simTime.getTicks()-getState().getStartWaitingTime().getTicks();
+		int index=(int) Math.floorDiv(diff,Limits.ACCEPTABLE_WAITING_TIME.getTicks());
+		if (index>=Mood.values().length) index=Mood.values().length-1;
+		return Mood.values()[index];
 	}
 
 	/**
@@ -113,8 +117,6 @@ public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.Eve
 	}
 
 	@Override
-	public String getName() {
-		return "DynamicVisitor";
-	}
+	public String getName() { return "DynamicVisitor"; }
 
 }

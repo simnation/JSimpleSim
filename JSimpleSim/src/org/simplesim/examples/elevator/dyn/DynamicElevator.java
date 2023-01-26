@@ -15,7 +15,7 @@ import org.simplesim.examples.elevator.shared.ElevatorState;
 import org.simplesim.examples.elevator.shared.ElevatorStrategy;
 import org.simplesim.examples.elevator.shared.Limits;
 import org.simplesim.examples.elevator.shared.Request;
-import org.simplesim.model.BasicAgent;
+import org.simplesim.model.Agent;
 import org.simplesim.model.RoutingAgent;
 
 /**
@@ -38,7 +38,7 @@ public final class DynamicElevator extends RoutingAgent<ElevatorState, Elevator.
 	}
 
 	@Override
-	public Time doEvent(Time time) {
+	public void doEvent(Time time) {
 		switch (getEventQueue().dequeue()) {
 		case MOVED: // just arrived on new floor
 			getState().setCurrentFloor(getState().getDestinationFloor());
@@ -51,7 +51,6 @@ public final class DynamicElevator extends RoutingAgent<ElevatorState, Elevator.
 		default:
 			throw new UnknownEventType("Unknown event type occured in ElevatorStrategy");
 		}
-		return getTimeOfNextEvent();
 	}
 
 	/*
@@ -73,7 +72,7 @@ public final class DynamicElevator extends RoutingAgent<ElevatorState, Elevator.
 	 * org.simplesim.examples.elevator.Request)
 	 */
 	@Override
-	public void sendMessage(BasicAgent<?, ?> recipient, Request content) {
+	public void sendMessage(Agent recipient, Request content) {
 		getOutport().write(new RoutedMessage(this.getAddress(),recipient.getAddress(),content));
 	}
 

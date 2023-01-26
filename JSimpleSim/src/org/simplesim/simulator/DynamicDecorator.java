@@ -10,9 +10,9 @@ import java.util.List;
 import org.simplesim.core.dynamic.ChangeRequest;
 import org.simplesim.core.instrumentation.Listener;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.model.BasicAgent;
-import org.simplesim.model.BasicDomain;
 import org.simplesim.model.Agent;
+import org.simplesim.model.BasicAgent;
+import org.simplesim.model.Domain;
 
 /**
  * Decorator class to enable dynamic changes of the model during simulation run.
@@ -32,15 +32,15 @@ import org.simplesim.model.Agent;
  * @see ChangeRequest
  * @see BasicAgent
  */
-public class DynamicDecorator implements Simulator {
+public final class DynamicDecorator implements Simulator {
 
 	/* the encapsulated simulator */
-	private final AbstractSimulator simulator;
+	private final Simulator simulator;
 
-	public DynamicDecorator(AbstractSimulator value) {
+	public DynamicDecorator(Simulator value) {
 		simulator=value;
 		// The change listener is notified after a simulation loop. It does not need any time or object info
-		simulator.registerEventsProcessedListener((time,sim) -> doModelChanges());
+		simulator.registerEventsProcessedListener((time, sim) -> doModelChanges());
 	}
 
 	/**
@@ -56,12 +56,10 @@ public class DynamicDecorator implements Simulator {
 	}
 
 	@Override
-	public void runSimulation(Time stop) {
-		simulator.runSimulation(stop);
-	}
+	public void runSimulation(Time stop) { simulator.runSimulation(stop); }
 
 	@Override
-	public BasicDomain getRootDomain() { return simulator.getRootDomain(); }
+	public Domain getRootDomain() { return simulator.getRootDomain(); }
 
 	@Override
 	public Time getSimulationTime() { return simulator.getSimulationTime(); }
@@ -70,12 +68,12 @@ public class DynamicDecorator implements Simulator {
 	public List<Agent> getCurrentEventList() { return simulator.getCurrentEventList(); }
 
 	@Override
-	public void registerEventsProcessedListener(Listener<AbstractSimulator> listener) {
+	public void registerEventsProcessedListener(Listener<Simulator> listener) {
 		simulator.registerEventsProcessedListener(listener);
 	}
 
 	@Override
-	public void unregisterEventsProcessedListener(Listener<AbstractSimulator> listener) {
+	public void unregisterEventsProcessedListener(Listener<Simulator> listener) {
 		simulator.unregisterEventsProcessedListener(listener);
 	}
 

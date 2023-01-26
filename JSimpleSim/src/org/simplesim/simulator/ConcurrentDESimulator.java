@@ -12,12 +12,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.simplesim.core.messaging.MessageForwardingStrategy;
 import org.simplesim.core.scheduling.EventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.BasicAgent;
 import org.simplesim.model.BasicDomain;
 import org.simplesim.model.Agent;
-import org.simplesim.model.MessageForwardingStrategy;
 
 /**
  * Concurrent simulator for discrete event models using multiple threads
@@ -76,17 +76,17 @@ public final class ConcurrentDESimulator extends SequentialDESimulator {
 			setCurrentEventList(getGlobalEventQueue().dequeueAll());
 			// start multi-threaded execution
 			for (Agent agent : getCurrentEventList())
-				futures.add(executor.submit(() -> agent.doEvent(getSimulationTime())));
+				futures.add(executor.submit(() -> ((BasicAgent<?,?>) agent).doEventSim(getSimulationTime())));
 			// join threads again and collect results
 			for (int index=0; index<futures.size(); index++) try {
 				final Agent agent=getCurrentEventList().get(index);
-				final Time tonie=futures.get(index).get();
-				if (tonie==null) throw new InvalidSimulatorStateException(
+				final Time tone=futures.get(index).get();
+				if (tone==null) throw new Simulator.InvalidSimulatorStateException(
 						"Local event queue is empty in agent "+agent.getFullName());
-				if (tonie.compareTo(getSimulationTime())<0) throw new InvalidSimulatorStateException(
-						"Tonie "+tonie.toString()+" is before current simulation time "+getSimulationTime().toString()
+				if (tone.compareTo(getSimulationTime())<0) throw new Simulator.InvalidSimulatorStateException(
+						"Tone "+tone.toString()+" is before current simulation time "+getSimulationTime().toString()
 								+" in agent "+agent.getFullName());
-				getGlobalEventQueue().enqueue(agent,tonie);
+				getGlobalEventQueue().enqueue(agent,tone);
 			} catch (InterruptedException|ExecutionException exception) {
 				exception.printStackTrace();
 			}

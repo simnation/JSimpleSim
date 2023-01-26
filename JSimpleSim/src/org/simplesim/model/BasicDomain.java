@@ -8,6 +8,7 @@ package org.simplesim.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Implements all basic functionality of a domain.
@@ -28,38 +29,16 @@ public abstract class BasicDomain extends BasicModelEntity implements Domain {
 	public static final int ROOT_ADDRESS[]=new int[0];
 
 	/** set of child entities (agents or domains). */
-	private final List<BasicModelEntity> entityList=new ArrayList<>();
+	private final List<ModelEntity> entityList=new ArrayList<>(); // Only to be used internally!
 	
 	/** unmodifiable external view of the entityList*/
 	private final List<ModelEntity> unmodifiableEntityList=Collections.unmodifiableList(entityList);
 	
 	
 	@Override
-	public <T extends BasicModelEntity> T addEntity(T entity) {
-		if (entity==null) throw new NullPointerException("Cannot add null pointer to domain "+getFullName());
-		if (containsEntity(entity)) throw new UniqueConstraintViolationException(
-				"Model "+entity.toString()+" added twice to domain "+this.getFullName());
-		entity.setParent(this);
-		getBasicEntityList().add(entity);
-		return entity;
-	}
-
-	@Override
-	public <T extends BasicModelEntity> T removeEntity(T entity) {
-		if (!getBasicEntityList().remove(entity)) return null;
-		entity.setParent(null);
-		return entity;
-	}
-
-	@Override
-	public final int countDomainEntities() {
-		return getBasicEntityList().size();
-	}
-
-	@Override
 	public final List<Agent> listAllAgents(boolean recursive) {
 		final List<Agent> result=new ArrayList<>();
-		for (final ModelEntity iter : getBasicEntityList())
+		for (final ModelEntity iter : listDomainEntities())
 			if (iter instanceof Agent) result.add((Agent) iter);
 			else if (recursive&&(iter instanceof Domain))
 				result.addAll(((Domain) iter).listAllAgents(true));
@@ -71,34 +50,27 @@ public abstract class BasicDomain extends BasicModelEntity implements Domain {
 		return unmodifiableEntityList;
 	}
 
-	@Override
-	public final boolean containsEntity(ModelEntity model) {
-		return getBasicEntityList().contains(model);
-	}
-	
-	@Override
-	public final boolean isRoot() {
-		return getParent()==null;
+	<T extends BasicModelEntity> T addEntity(T entity) {
+		if (entity==null) throw new NullPointerException("Cannot add null pointer to domain "+getFullName());
+		if (containsEntity(entity)) throw new UniqueConstraintViolationException(
+				"Model "+entity.toString()+" added twice to domain "+this.getFullName());
+		entity.setParent(this);
+		getModifiableEntityList().add(entity);
+		return entity;
 	}
 
-	@Override
-	public final Domain getRoot() {
-		if (isRoot()) return this;
-		return getParent().getRoot();
+	<T extends BasicModelEntity> void removeEntity(T entity) {
+		if (!getModifiableEntityList().remove(entity)) throw new NoSuchElementException("Entity not part of parent domain: "+entity.getFullName());
+		entity.setParent(null);
+		return;
 	}
-	
-	@Override
-	public final boolean isEmpty() {
-		return getBasicEntityList().isEmpty();
-	}
-	
-	
+
 	/**
-	 * Direct access to {@code entityList} - should only be used internally.
-	 *
-	 * @return the modifiable list of entities of this domain
+	 * The modifiable list should only be used internally to add and remove entities.
+	 * For all other purposes use {@code listDomainEntities()}.
+	 * 
 	 */
-	List<BasicModelEntity> getBasicEntityList() {
+	List<ModelEntity> getModifiableEntityList() {
 		return entityList;
 	}
 

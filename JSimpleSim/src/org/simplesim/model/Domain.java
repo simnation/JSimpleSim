@@ -25,8 +25,8 @@ public interface Domain extends ModelEntity {
 	 *                                            this domain
 	 * @throws NullPointerException               if entity is null
 	 * @return the given entity for further usage
-	 */
-	<T extends BasicModelEntity> T addEntity(T entity);
+	 *
+	<T extends BasicModelEntity> T addEntity(T entity);*/
 
 	/**
 	 * Removes the given entity from this domain.
@@ -38,15 +38,8 @@ public interface Domain extends ModelEntity {
 	 *
 	 * @param entity the model to be removed
 	 * @return the removed entity if the domain contained it, null otherwise
-	 */
-	<T extends BasicModelEntity> T removeEntity(T entity);
-
-	/**
-	 * Returns the number of entities of the domain.
 	 *
-	 * @return the sub model count
-	 */
-	int countDomainEntities();
+	<T extends BasicModelEntity> T removeEntity(T entity);*/
 
 	/**
 	 * Returns all agents within this domain
@@ -66,27 +59,48 @@ public interface Domain extends ModelEntity {
 	List<ModelEntity> listDomainEntities();
 
 	/**
-	 * Checks, if this domain contains a given submodel.
+	 * Checks, if this domain contains a given entity.
 	 *
 	 * @param model the model
-	 * @return true, if this domain contains the given submodel
+	 * @return true, if this domain contains the entity
 	 */
-	boolean containsEntity(ModelEntity entity);
+	default boolean containsEntity(ModelEntity entity) {
+		return listDomainEntities().contains(entity);
+	}
+
 
 	/**
-	 * Checks if this domain is the root of the model.
+	 * Returns the number of entities of the domain.
 	 *
-	 * @return true if this domain it the root of the model
+	 * @return the sub model count
 	 */
-	boolean isRoot();
+	default int countDomainEntities() {
+		return listDomainEntities().size();
+	}
 
 	/**
 	 * Returns the root domain of the model.
 	 *
 	 * @return the root domain
 	 */
-	Domain getRoot();
+	default Domain getRoot() {
+		if (isRoot()) return this;
+		return getParent().getRoot();
+	}
 
-	boolean isEmpty();
+	/**
+	 * Checks if this domain is the root of the model.
+	 *
+	 * @return true if this domain it the root of the model
+	 */
+	default boolean isRoot() {
+		return getParent()==null;
+	}
+
+
+	default boolean isEmpty() {
+		return listDomainEntities().isEmpty();
+	}
+	
 
 }

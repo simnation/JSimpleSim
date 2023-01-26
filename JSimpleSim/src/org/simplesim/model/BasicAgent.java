@@ -10,13 +10,13 @@
  */
 package org.simplesim.model;
 
-import java.io.PrintStream;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import org.simplesim.core.dynamic.ChangeRequest;
-import org.simplesim.core.scheduling.HeapEventQueue;
+import org.simplesim.core.instrumentation.Listener;
 import org.simplesim.core.scheduling.EventQueue;
+import org.simplesim.core.scheduling.HeapEventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.simulator.DynamicDecorator;
 
@@ -37,12 +37,11 @@ import org.simplesim.simulator.DynamicDecorator;
  * ({@link org.simplesim.core.scheduling.Time})
  * </ol>
  * <p>
- * Agents are always embedded in an {@code Domain} for
- * compartmentalization.
+ * Agents are always embedded in an {@code Domain} for compartmentalization.
  *
  * @param <S> type of the agent state containing all state variables
  * @param <E> type of the events
- * 
+ *
  * @see BasicDomain
  * @see EventQueue
  */
@@ -53,13 +52,20 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 
 	/** the local event queue of the agent */
 	private final EventQueue<E> leq;
-	
+
+	// private Listener<Agent> bel=DUMMY_LISTENER; 
+	/** After event listener for agent instrumentation */
+	private Listener<Agent> ael=DUMMY_LISTENER;
+
 	/** Queue for model change requests, only used by dynamic simulators. */
 	private final static Queue<ChangeRequest> queue=new ConcurrentLinkedDeque<>();
-	
+
 	/** Flag to indicate if the simulation is running. */
 	private static volatile boolean simulationIsRunning=false;
-	
+
+	/** Dummy listener for initialization of ael and bel */
+	private static final Listener<Agent> DUMMY_LISTENER=(time, source) -> {};
+
 	@SuppressWarnings("serial")
 	public static final class UnknownEventType extends RuntimeException {
 		public UnknownEventType(String msg) {
@@ -77,7 +83,6 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 	 * @param s     the state of the agent
 	 */
 	public BasicAgent(EventQueue<E> queue, S s) {
-		super();
 		state=s;
 		leq=queue;
 	}
@@ -86,10 +91,9 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 		this(new HeapEventQueue<E>(),s);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
-	public final S getState() {
-		return state;
-	}
+	public final S getState() { return state; }
 
 	/**
 	 * Gets the local event queue.
@@ -98,8 +102,16 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 	 *
 	 * @return the local event queue
 	 */
-	protected final EventQueue<E> getEventQueue() {
-		return leq;
+	protected EventQueue<E> getEventQueue() { return leq; }
+
+	/**
+	 * This method should only be called by the simulator.
+	 *
+	 */
+	public final Time doEventSim(Time time) {
+		doEvent(time);
+		ael.notifyListener(time,this); // call after execution listener
+		return getTimeOfNextEvent();
 	}
 
 	/**
@@ -109,64 +121,40 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 	 *
 	 * @return time of the next internal event
 	 */
-	public final Time getTimeOfNextEvent() {
-		return leq.getMin();
-	}
-	 
-	/**
-	 * Provides simple logging functionality to a stream with time stamp, entity name and message output.
-	 * <p>
-	 * Can be used to redirect output to a log file. May be overloaded by a more sophisticated implementation.
-	 * 
-	 * @param stream stream to be used as output
-	 * @param time current time stamp
-	 * @param msg message to print 
-	 */	
-	public void log(PrintStream stream, Time time, String msg) {
-		stream.println(time.toString()+this.toString()+": "+msg);
-	}
-	
-	/**
-	 * Provides simple logging functionality to a stream - only message output.
-	 * <p>
-	 * Can be used to redirect output to a log file. May be overloaded by a more sophisticated implementation.
-	 * 
-	 * @param stream stream to be used as output
-	 * @param msg message to print 
-	 */	
-	public void log(PrintStream stream, String msg) {
-		stream.println(msg);
-	}
+	@Override
+	public final Time getTimeOfNextEvent() { return leq.getMin(); }
 
 	/**
-	 * Provides simple logging functionality to System.out with time stamp, entity name and message output.
-	 * <p>
-	 * Can be used to redirect output to a log file. May be overloaded by a more sophisticated implementation.
-	 * 
-	 * @param time current time stamp
-	 * @param msg message to print 
-	 */	
-	public void log(Time time, String msg) {
-		log(System.out,time,msg);
-	}
+	 * Sets a listener that is called after the agent's event processing
+	 *
+	 * @param listener the listener
+	 */
+	public final void setAfterExecutionListener(Listener<Agent> listener) { ael=listener; }
+
+	/**
+	 * Removes any listener activity.
+	 *
+	 */
+	public final void resetAfterExecutionListener(Listener<Agent> listener) { ael=DUMMY_LISTENER; }
 	
 	/**
-	 * Provides simple logging functionality to System.out - only message output.
+	 * Returns the current after event listener.
 	 * <p>
-	 * Can be used to redirect output to a log file. May be overloaded by a more sophisticated implementation.
+	 * This can be used to add a new listener without losing the old one. Several listeners can be
+	 * called by chaining them (listener 1 calls listener 2).
 	 * 
-	 * @param msg message to print 
-	 */	
-	public void log(String msg) {
-		log(System.out,msg);
-	}
+	 * @param listener the listener
+	 */
+	public Listener<Agent> getAfterExecutionListener() { return ael; }
 
 	/**
 	 * Sets the status of simulation run.
 	 * <p>
-	 * Static method and variable to be accessible for all entities of the simulation model
+	 * Static method and variable to be accessible for all agents of the simulation
+	 * model
 	 *
-	 * @param toggle the status of the simulation, {@code true} means simulation is running
+	 * @param toggle the status of the simulation, {@code true} means simulation is
+	 *               running
 	 */
 	public static final void toggleSimulationIsRunning(boolean toggle) {
 		simulationIsRunning=toggle;
@@ -175,26 +163,25 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 	/**
 	 * Gets the status of simulation run.
 	 * <p>
-	 * Static method and variable to be accessible for all entities of the simulation model
+	 * Static method and variable to be accessible for all entities of the
+	 * simulation model
 	 *
 	 * @return current simulation status, {@code true} means simulation is running
 	 */
-	public static final boolean isSimulationRunning() {
-		return simulationIsRunning;
-	}
-	
+	public static final boolean isSimulationRunning() { return simulationIsRunning; }
+
 	/**
 	 * Add a model change request to the queue
 	 * <p>
-	 * Change request are processed by a dynamic simulator after each simulation cycle. Has no effect when using other
-	 * simulator implementations.
+	 * Change request are processed by a dynamic simulator after each simulation
+	 * cycle. Has no effect when using other simulator implementations.
 	 * <p>
 	 * This method is thread-safe.
 	 *
 	 * @param cr the request
 	 * @see DynamicDecorator
 	 */
-	public static void addModelChangeRequest(ChangeRequest cr) {
+	public static final void addModelChangeRequest(ChangeRequest cr) {
 		queue.add(cr);
 	}
 
@@ -207,7 +194,7 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 	 *
 	 * @return next model change request or null if queue is empty
 	 */
-	public static ChangeRequest pollModelChangeRequest() {
+	public static final ChangeRequest pollModelChangeRequest() {
 		return queue.poll();
 	}
 

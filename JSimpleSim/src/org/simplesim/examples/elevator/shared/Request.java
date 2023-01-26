@@ -7,20 +7,20 @@
 package org.simplesim.examples.elevator.shared;
 
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.model.BasicAgent;
+import org.simplesim.model.Agent;
 
 /**
  * Content of messages between elevator and visitor
  */
 public class Request implements Comparable<Request> {
 	
-	private final BasicAgent<?,?> visitor;
+	private final Agent visitor;
 	private final int startingFloor; // origin
 	private final int destinationFloor; // destination floor
 	private final Time requestTime; // time of request (button pressed in starting floor)
 	private Time arrivalTime; // time of arrival in destination floor
 
-	public Request(BasicAgent<?,?> v, int start, int dest, Time currTime) {
+	public Request(Agent v, int start, int dest, Time currTime) {
 		visitor=v;
 		startingFloor=start;
 		destinationFloor=dest;
@@ -28,7 +28,7 @@ public class Request implements Comparable<Request> {
 		arrivalTime=null;
 	}
 	
-	public BasicAgent<?,?> getVisitor() {
+	public Agent getVisitor() {
 		return visitor;
 	}
 

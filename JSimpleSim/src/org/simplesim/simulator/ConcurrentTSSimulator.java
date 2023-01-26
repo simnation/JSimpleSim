@@ -17,11 +17,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.simplesim.core.messaging.MessageForwardingStrategy;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.BasicAgent;
 import org.simplesim.model.BasicDomain;
 import org.simplesim.model.Agent;
-import org.simplesim.model.MessageForwardingStrategy;
 
 /**
  * Simulator for concurrent time step simulation
@@ -64,7 +64,7 @@ public final class ConcurrentTSSimulator extends SequentialTSSimulator {
 			// part I: process all current events by calling the agents' doEvent method
 			// in time step, iterate over ALL agents, ignore time of next event
 			for (Agent agent : getCurrentEventList())
-				futures.add(executor.submit(() -> agent.doEvent(getSimulationTime())));
+				futures.add(executor.submit(() -> ((BasicAgent<?,?>) agent).doEventSim(getSimulationTime())));
 			// wait until all threads have finished
 			try {
 				for (Future<?> item : futures) item.get();

@@ -10,14 +10,14 @@
  */
 package org.simplesim.simulator;
 
+import org.simplesim.core.messaging.MessageForwardingStrategy;
+import org.simplesim.core.messaging.RecursiveMessageForwarding;
 import org.simplesim.core.scheduling.EventQueue;
 import org.simplesim.core.scheduling.HeapEventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.BasicAgent;
 import org.simplesim.model.BasicDomain;
 import org.simplesim.model.Agent;
-import org.simplesim.model.MessageForwardingStrategy;
-import org.simplesim.model.RecursiveMessageForwarding;
 
 /**
  * Sequential simulator for discrete event models using a single threads
@@ -32,7 +32,7 @@ import org.simplesim.model.RecursiveMessageForwarding;
  * This implementation is especially useful to run DES models.
  *
  */
-public class SequentialDESimulator extends AbstractSimulator {
+public class SequentialDESimulator extends BasicSimulator {
 
 	/**
 	 * Constructs a new sequential simulator with given model, queue implementation
@@ -73,11 +73,11 @@ public class SequentialDESimulator extends AbstractSimulator {
 			setCurrentEventList(getGlobalEventQueue().dequeueAll());
 			// System.out.println("Number of concurrent events: "+list.size());
 			for (Agent agent : getCurrentEventList()) {
-				final Time tone=agent.doEvent(getSimulationTime());
-				if (tone==null) throw new InvalidSimulatorStateException(
+				final Time tone=((BasicAgent<?,?>) agent).doEventSim(getSimulationTime());
+				if (tone==null) throw new Simulator.InvalidSimulatorStateException(
 						"Local event queue is empty in agent "+agent.getFullName());
-				if (tone.compareTo(getSimulationTime())<0) throw new InvalidSimulatorStateException(
-						"Tonie "+tone.toString()+" is before current simulation time "+getSimulationTime().toString()
+				if (tone.compareTo(getSimulationTime())<0) throw new Simulator.InvalidSimulatorStateException(
+						"Tone "+tone.toString()+" is before current simulation time "+getSimulationTime().toString()
 								+" in agent "+agent.getFullName());
 				getGlobalEventQueue().enqueue(agent,tone);
 			}

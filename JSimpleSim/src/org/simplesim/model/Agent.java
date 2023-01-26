@@ -6,6 +6,8 @@
  */
 package org.simplesim.model;
 
+import java.io.PrintStream;
+
 import org.simplesim.core.scheduling.Time;
 
 /**
@@ -60,7 +62,6 @@ public interface Agent extends ModelEntity {
 	 * <b>Do not invoke from outside the simulation loop!</b>
 	 *
 	 * @param time current simulation time
-	 * @return time of the next event (tone)
 	 *
 	 * @see State
 	 * @see Time
@@ -68,6 +69,54 @@ public interface Agent extends ModelEntity {
 	 * @see org.simplesim.core.messaging.Message Message
 	 * @see org.simplesim.core.messaging.AbstractPort AbstractPort
 	 */
-	Time doEvent(Time time);
+	void doEvent(Time time);
+	
+	/**
+	 * Provides simple logging functionality to a stream with time stamp, entity name and message output.
+	 * <p>
+	 * Can be used to redirect output to a log file. May be overloaded by a more sophisticated implementation.
+	 * 
+	 * @param stream stream to be used as output
+	 * @param time current time stamp
+	 * @param msg message to print 
+	 */	
+	default void log(PrintStream stream, Time time, String msg) {
+		stream.println(time.toString()+this.toString()+": "+msg);
+	}
+	
+	/**
+	 * Provides simple logging functionality to a stream - only message output.
+	 * <p>
+	 * Can be used to redirect output to a log file. May be overloaded by a more sophisticated implementation.
+	 * 
+	 * @param stream stream to be used as output
+	 * @param msg message to print 
+	 */	
+	default void log(PrintStream stream, String msg) {
+		stream.println(msg);
+	}
 
+	/**
+	 * Provides simple logging functionality to System.out with time stamp, entity name and message output.
+	 * <p>
+	 * Can be used to redirect output to a log file. May be overloaded by a more sophisticated implementation.
+	 * 
+	 * @param time current time stamp
+	 * @param msg message to print 
+	 */	
+	default void log(Time time, String msg) {
+		log(System.out,time,msg);
+	}
+	
+	/**
+	 * Provides simple logging functionality to System.out - only message output.
+	 * <p>
+	 * Can be used to redirect output to a log file. May be overloaded by a more sophisticated implementation.
+	 * 
+	 * @param msg message to print 
+	 */	
+	default void log(String msg) {
+		log(System.out,msg);
+	}
+	
 }

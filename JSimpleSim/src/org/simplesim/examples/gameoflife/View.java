@@ -16,10 +16,10 @@ import javax.swing.WindowConstants;
 import org.simplesim.core.instrumentation.Listener;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.Agent;
-import org.simplesim.simulator.AbstractSimulator;
+import org.simplesim.simulator.Simulator;
 
 @SuppressWarnings("serial")
-public class View extends JFrame implements Listener<AbstractSimulator> {
+public class View extends JFrame implements Listener<Simulator> {
 
 	public static final int CELL_SIZE=4;
 
@@ -35,7 +35,7 @@ public class View extends JFrame implements Listener<AbstractSimulator> {
 	}
 
 	@Override
-	public void notifyListener(Time unused,AbstractSimulator source) {
+	public void notifyListener(Time unused,Simulator source) {
 		final BufferStrategy bs=getBufferStrategy();
 		do {
 			do {

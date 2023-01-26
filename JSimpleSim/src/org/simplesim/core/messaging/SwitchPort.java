@@ -18,7 +18,6 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 
 import org.simplesim.model.ModelEntity;
-import org.simplesim.model.RecursiveMessageForwarding;
 import org.simplesim.model.ModelEntity.UniqueConstraintViolationException;
 
 /**

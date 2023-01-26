@@ -6,14 +6,14 @@
  */
 package org.simplesim.examples.elevator;
 
-import org.simplesim.core.scheduling.HeapBucketQueue;
+import org.simplesim.core.messaging.DirectMessageForwarding;
+import org.simplesim.core.scheduling.HeapEventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.examples.elevator.shared.Limits;
 import org.simplesim.examples.elevator.shared.View;
 import org.simplesim.examples.elevator.stat.StaticElevator;
 import org.simplesim.examples.elevator.stat.StaticModel;
 import org.simplesim.examples.elevator.stat.StaticVisitor;
-import org.simplesim.model.DirectMessageForwarding;
 import org.simplesim.simulator.ConcurrentDESimulator;
 import org.simplesim.simulator.Simulator;
 
@@ -23,8 +23,9 @@ import org.simplesim.simulator.Simulator;
  * <p>
  * To illustrate differences of a static and a dynamic modeling approach, both
  * are used with the same simulation problem: the steering strategy of an
- * elevator. Steering algorithm, graphical representation and common data structures are shared, 
- * so the focus lies on the differences of both approaches:
+ * elevator. Steering algorithm, graphical representation and common data
+ * structures are shared, so the focus lies on the differences of both
+ * approaches:
  * <p>
  * <u>Static model:</u>
  * <ul>
@@ -36,8 +37,10 @@ import org.simplesim.simulator.Simulator;
  * <u>Dynamic model:</u>
  * <ul>
  * <li>Each floor is represented by a submodel containing its visitors.
- * <li>Change of the floor is implemented as moving to an other submodel, the model is changed repeatedly during simulation run.
- * <li>The model hierarchy Building-->Floor-->Visitor represents the real world situation comprehensibly.
+ * <li>Change of the floor is implemented as moving to an other submodel, the
+ * model is changed repeatedly during simulation run.
+ * <li>The model hierarchy Building-->Floor-->Visitor represents the real world
+ * situation comprehensibly.
  * <li>Messaging is done by a routing mechanism.
  * </ul>
  */
@@ -53,17 +56,16 @@ public class StaticMain {
 
 		// build simulation model
 		final StaticElevator elevator=model.getElevator();
-		model.addEntity(elevator);
+		elevator.addToDomain(model);
 		for (int index=1; index<=Limits.VISITORS; index++) {
 			final StaticVisitor visitor=new StaticVisitor();
-			model.addEntity(visitor);
+			visitor.addToDomain(model);
 			elevator.getOutport().connect(visitor.getInport());
 			visitor.getOutport().connect(elevator.getInport());
 		}
 
 		final View view=new View(elevator.getState());
-		final Simulator simulator=new ConcurrentDESimulator(model,new HeapBucketQueue<>(),
-				new DirectMessageForwarding());
+		final Simulator simulator=new ConcurrentDESimulator(model,new HeapEventQueue<>(),new DirectMessageForwarding());
 		// add observer
 		simulator.registerEventsProcessedListener(view);
 		simulator.runSimulation(new Time(Limits.END_DAY));

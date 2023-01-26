@@ -24,8 +24,8 @@ import org.simplesim.model.Agent;
  * @see SinglePort
  * @see MultiPort
  * @see SwitchPort
- * @see org.simplesim.model.DirectMessageForwarding
- * @see org.simplesim.model.RecursiveMessageForwarding
+ * @see org.simplesim.core.messaging.DirectMessageForwarding
+ * @see org.simplesim.core.messaging.RecursiveMessageForwarding
  * 
  */
 public final class Message extends AbstractMessage<Agent> {
