@@ -34,7 +34,7 @@ import org.simplesim.model.Domain;
  */
 public final class DynamicDecorator implements Simulator {
 
-	/* the encapsulated simulator */
+	/** the encapsulated simulator */
 	private final Simulator simulator;
 
 	public DynamicDecorator(Simulator value) {

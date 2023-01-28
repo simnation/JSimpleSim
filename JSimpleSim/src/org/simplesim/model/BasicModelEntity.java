@@ -47,7 +47,7 @@ public abstract class BasicModelEntity implements ModelEntity {
 	}
 
 	@Override 
-	public void removeFromParent() {
+	public void removeFromDomain() {
 		((BasicDomain) getParent()).removeEntity(this);
 	}
 

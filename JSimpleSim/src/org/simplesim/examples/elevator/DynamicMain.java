@@ -16,6 +16,8 @@ import org.simplesim.examples.elevator.dyn.Floor;
 import org.simplesim.examples.elevator.shared.Limits;
 import org.simplesim.examples.elevator.shared.View;
 import org.simplesim.examples.elevator.shared.Visitor;
+import org.simplesim.examples.elevator.shared.VisitorState;
+import org.simplesim.model.InstrumentationDecorator;
 import org.simplesim.simulator.ConcurrentDESimulator;
 import org.simplesim.simulator.DynamicDecorator;
 import org.simplesim.simulator.Simulator;
@@ -63,9 +65,10 @@ public class DynamicMain {
 		final Floor lobby=new Floor(Limits.LOBBY);
 		lobby.addToDomain(model);
 
-		final DynamicVisitor item=new DynamicVisitor(model);
-		item.addToDomain(lobby);
-		item.setAfterExecutionListener((time, agent) -> {
+		InstrumentationDecorator<VisitorState,Visitor.Event> id;
+		id=new InstrumentationDecorator<>(new DynamicVisitor(model));
+		id.addToDomain(lobby);
+		id.registerAfterExecutionListener((time, agent) -> {
 			final Visitor visitor=(Visitor) agent;
 			System.out.println(time.toString()+" Observing "+agent.getName()+" on floor "+visitor.getCurrentFloor()
 					+", current mood is "+visitor.getCurrentMood(time).toString());

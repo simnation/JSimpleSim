@@ -44,7 +44,7 @@ public final class StaticVisitor extends BasicAgent<VisitorState, Visitor.Event>
 	}
 
 	@Override
-	public void doEvent(Time time) {
+	public Time doEvent(Time time) {
 		switch (getEventQueue().dequeue()) {
 		case WAITING:
 			waitForElevator(time);
@@ -57,6 +57,7 @@ public final class StaticVisitor extends BasicAgent<VisitorState, Visitor.Event>
 		default:
 			throw new UnknownEventType("Unknown event type occured in "+toString());
 		}
+		return getTimeOfNextEvent();
 	}
 
 	/**

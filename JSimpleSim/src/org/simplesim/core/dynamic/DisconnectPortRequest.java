@@ -12,20 +12,18 @@ import org.simplesim.core.messaging.Port;
  * Request to disconnect two port.
  *
  */
-public class PortReconnectRequest implements ChangeRequest {
+public final class DisconnectPortRequest implements ChangeRequest {
 	
-	private final Port srcPort,oldDest, newDest;
+	private final Port fromPort, toPort;
 	
-	public PortReconnectRequest(Port port, Port oldTo, Port newTo) {
-		srcPort=port;
-		oldDest=oldTo;
-		newDest=newTo;
+	public DisconnectPortRequest(Port from, Port to) {
+		fromPort=from;
+		toPort=to;
 	}
 
 	@Override
 	public void doModelChange() {
-		srcPort.disconnect(oldDest);
-		srcPort.connect(newDest);
+		fromPort.disconnect(toPort);
 	}
 
 }

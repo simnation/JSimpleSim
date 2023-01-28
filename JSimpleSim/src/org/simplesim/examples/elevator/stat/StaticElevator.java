@@ -39,7 +39,7 @@ public final class StaticElevator extends BasicAgent<ElevatorState, Elevator.Eve
 	}
 
 	@Override
-	public void doEvent(Time time) {
+	public Time doEvent(Time time) {
 		switch (getEventQueue().dequeue()) {
 		case MOVED: // just arrived on new floor
 			getState().setCurrentFloor(getState().getDestinationFloor());
@@ -52,6 +52,7 @@ public final class StaticElevator extends BasicAgent<ElevatorState, Elevator.Eve
 		default:
 			throw new UnknownEventType("Unknown event type occured in ElevatorStrategy");
 		}
+		return getTimeOfNextEvent();
 	}
 
 	/*

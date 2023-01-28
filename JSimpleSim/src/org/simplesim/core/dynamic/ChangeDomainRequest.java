@@ -15,9 +15,10 @@ import org.simplesim.model.BasicDomain;
  * The originating domain is always the entity's parent domain.
  *
  */
-public class DomainChangeRequest extends EntityRemoveRequest {
+public final class ChangeDomainRequest implements ChangeRequest {
 	
 	private final BasicDomain toDomain;
+	private final BasicModelEntity entity;
 	
 	/**
 	 * Sets the entity to be moved and the new domain.
@@ -25,16 +26,13 @@ public class DomainChangeRequest extends EntityRemoveRequest {
 	 * @param what entity to be moved
 	 * @param dest new domain of the entity
 	 */
-	public DomainChangeRequest(BasicModelEntity what, BasicDomain dest) {
-		super(what);	
+	public ChangeDomainRequest(BasicModelEntity what, BasicDomain dest) {
+		entity=what;
 		toDomain=dest;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.simplesim.core.dynamic.ChangeRequest#doModelChange()
-	 */
 	public void doModelChange() {
-		super.doModelChange(); // remove the entity
+		entity.removeFromDomain();
 		entity.addToDomain(toDomain);
 	}
 

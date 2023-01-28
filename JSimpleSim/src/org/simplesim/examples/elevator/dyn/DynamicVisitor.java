@@ -14,7 +14,6 @@ import static org.simplesim.examples.elevator.shared.Limits.START_WORK;
 
 import java.util.Random;
 
-import org.simplesim.core.dynamic.DomainChangeRequest;
 import org.simplesim.core.messaging.RoutedMessage;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.examples.elevator.shared.Limits;
@@ -46,7 +45,7 @@ public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.Eve
 	}
 
 	@Override
-	public void doEvent(Time time) {
+	public Time doEvent(Time time) {
 		switch (getEventQueue().dequeue()) {
 		case WAITING:
 			waitForElevator(time);
@@ -59,6 +58,7 @@ public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.Eve
 		default:
 			throw new UnknownEventType("Unknown event type occured in "+toString());
 		}
+		return getTimeOfNextEvent();
 	}
 
 	/**
@@ -71,7 +71,7 @@ public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.Eve
 
 			// request model change to new floor
 			final Floor dest=building.getFloor(request.getDestinationFloor());
-			addModelChangeRequest(new DomainChangeRequest(this,dest));
+			pushChangeDomainRequest(dest);
 			if ((time.compareTo(END_WORK)>=1)&&(request.getDestinationFloor()==LOBBY))
 				getEventQueue().enqueue(Event.GO_HOME,Time.INFINITY); // work is over, going home
 			// go to another floor after staying here for a random time period

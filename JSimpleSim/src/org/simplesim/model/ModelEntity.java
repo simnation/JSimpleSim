@@ -69,10 +69,10 @@ public interface ModelEntity {
 	 * This method should never be called during a simulation cycle. If the entity
 	 * could be removed from the domain, the entity's parent is set to null.
 	 * <p>
-	 * <i>Note: Connection management has to be done externally by the caller!</i>
+	 * <i>Note: Connection management has to be done externally by the caller.</i>
 	 *
 	 */
-	void removeFromParent();
+	void removeFromDomain();
 
 	/**
 	 * Gets the entity address. Can be null.

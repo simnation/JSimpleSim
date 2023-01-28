@@ -16,7 +16,7 @@ import org.simplesim.model.Domain;
  * domain.
  *
  */
-public class EntityRemoveRequest implements ChangeRequest {
+public class RemoveEntityRequest implements ChangeRequest {
 
 	final BasicModelEntity entity;
 
@@ -25,7 +25,7 @@ public class EntityRemoveRequest implements ChangeRequest {
 	 *
 	 * @param what {@code AbtractAgent} to be moved
 	 */
-	public EntityRemoveRequest(BasicModelEntity what) {
+	public RemoveEntityRequest(BasicModelEntity what) {
 		entity=what;
 	}
 
@@ -33,7 +33,7 @@ public class EntityRemoveRequest implements ChangeRequest {
 	public void doModelChange() {
 		if ((entity instanceof Domain)&&!((Domain) entity).isEmpty()) throw new ChangeRequestException(
 				"Only empty domains may be removed. Domain "+entity.getFullName()+" still has child entities!");
-		entity.removeFromParent();
+		entity.removeFromDomain();
 	}
 
 }

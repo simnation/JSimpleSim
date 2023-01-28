@@ -9,21 +9,21 @@ package org.simplesim.core.dynamic;
 import org.simplesim.core.messaging.Port;
 
 /**
- * Request to disconnect two port.
+ * Request to connect two ports.
  *
  */
-public class PortDisconnectRequest implements ChangeRequest {
+public final class ConnectPortRequest implements ChangeRequest {
 	
 	private final Port fromPort, toPort;
 	
-	public PortDisconnectRequest(Port from, Port to) {
+	public ConnectPortRequest(Port from, Port to) {
 		fromPort=from;
 		toPort=to;
 	}
 
 	@Override
 	public void doModelChange() {
-		fromPort.disconnect(toPort);
+		fromPort.connect(toPort);
 	}
 
 }

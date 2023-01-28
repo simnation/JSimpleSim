@@ -19,11 +19,16 @@ public final class VisitorState implements State {
 	
 	private ACTIVITY activity;
 	private Time startWaitingTime=Time.ZERO;
+	private Request request=null;
 	
 
 	public ACTIVITY getActivity() {
 		return activity;
 	}
+	
+	public Request getLastRequest() { return request; }
+	
+	public void setRequest(Request value) { request=value; }
 
 	public void setActivity(ACTIVITY value) {
 		activity=value;

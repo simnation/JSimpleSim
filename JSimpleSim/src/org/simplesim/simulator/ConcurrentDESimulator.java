@@ -76,7 +76,7 @@ public final class ConcurrentDESimulator extends SequentialDESimulator {
 			setCurrentEventList(getGlobalEventQueue().dequeueAll());
 			// start multi-threaded execution
 			for (Agent agent : getCurrentEventList())
-				futures.add(executor.submit(() -> ((BasicAgent<?,?>) agent).doEventSim(getSimulationTime())));
+				futures.add(executor.submit(() -> ((BasicAgent<?,?>) agent).doEvent(getSimulationTime())));
 			// join threads again and collect results
 			for (int index=0; index<futures.size(); index++) try {
 				final Agent agent=getCurrentEventList().get(index);

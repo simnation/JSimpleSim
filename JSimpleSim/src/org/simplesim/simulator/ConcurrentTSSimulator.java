@@ -64,7 +64,7 @@ public final class ConcurrentTSSimulator extends SequentialTSSimulator {
 			// part I: process all current events by calling the agents' doEvent method
 			// in time step, iterate over ALL agents, ignore time of next event
 			for (Agent agent : getCurrentEventList())
-				futures.add(executor.submit(() -> ((BasicAgent<?,?>) agent).doEventSim(getSimulationTime())));
+				futures.add(executor.submit(() -> ((BasicAgent<?,?>) agent).doEvent(getSimulationTime())));
 			// wait until all threads have finished
 			try {
 				for (Future<?> item : futures) item.get();

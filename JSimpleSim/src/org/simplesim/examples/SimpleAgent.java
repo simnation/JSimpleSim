@@ -33,12 +33,13 @@ public class SimpleAgent extends RoutingAgent<SimpleAgent.SimpleAgentState, Simp
 	}
 
 	@Override
-	public void doEvent(Time time) {
+	public Time doEvent(Time time) {
 		while (getInport().hasMessages()) handleMessage(((RoutedMessage) getInport().poll()));
 		while (getEventQueue().getMin().equals(time)) handleEvent(getEventQueue().dequeue(),time);
 		/*
 		 * Do not forget to enqueue some new events.
 		 */
+		return getTimeOfNextEvent();
 	}
 
 	protected void sendMessage(RoutingAgent<?,?> destination, Object content) {

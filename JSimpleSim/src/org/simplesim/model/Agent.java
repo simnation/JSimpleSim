@@ -62,6 +62,8 @@ public interface Agent extends ModelEntity {
 	 * <b>Do not invoke from outside the simulation loop!</b>
 	 *
 	 * @param time current simulation time
+	 * 
+	 * @return tone - time of next event
 	 *
 	 * @see State
 	 * @see Time
@@ -69,7 +71,7 @@ public interface Agent extends ModelEntity {
 	 * @see org.simplesim.core.messaging.Message Message
 	 * @see org.simplesim.core.messaging.AbstractPort AbstractPort
 	 */
-	void doEvent(Time time);
+	Time doEvent(Time time);
 	
 	/**
 	 * Provides simple logging functionality to a stream with time stamp, entity name and message output.
