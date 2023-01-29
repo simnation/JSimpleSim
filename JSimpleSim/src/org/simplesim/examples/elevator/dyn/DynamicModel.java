@@ -5,6 +5,7 @@
  */
 package org.simplesim.examples.elevator.dyn;
 
+import org.simplesim.examples.elevator.shared.Limits;
 import org.simplesim.model.RoutingDomain;
 
 /**
@@ -20,6 +21,8 @@ public class DynamicModel extends RoutingDomain {
 	public DynamicModel() {
 		super();
 		setAsRootDomain();
+		elevator.addToDomain(this); // add elevator
+		new Floor(Limits.LOBBY).addToDomain(this); // add lobby 
 	}
 
 	public DynamicElevator getElevator() {
@@ -29,6 +32,11 @@ public class DynamicModel extends RoutingDomain {
 	public Floor getFloor(int i) {
 		return (Floor) listDomainEntities().get(i+1); // first entry is always the elevator
 	}
+	
+	public Floor getLobby() {
+		return getFloor(Limits.LOBBY);
+	}
+		
 
 	@Override
 	public String getName() {

@@ -32,7 +32,6 @@ import org.simplesim.model.BasicAgent;
 public final class StaticVisitor extends BasicAgent<VisitorState, Visitor.Event> implements Visitor {
 
 	private static final Random random=new Random();
-	private int currentFloor=LOBBY; // usually, this should be a state variable
 
 	public StaticVisitor() {
 		super(new VisitorState());
@@ -67,9 +66,9 @@ public final class StaticVisitor extends BasicAgent<VisitorState, Visitor.Event>
 		if (getInport().hasMessages()) {
 			// message from elevator agent: visitor arrived at destination floor
 			final Request request=getInport().poll().getContent();
-			setCurrentFloor(request.getDestinationFloor()); // set new floor
+			getState().setCurrentFloor(request.getDestinationFloor()); // set new floor
 			if ((time.compareTo(END_WORK)>=1)&&(request.getDestinationFloor()==LOBBY))
-				getEventQueue().enqueue(Event.GO_HOME,Time.INFINITY); // work is over, going home
+				getEventQueue().enqueue(Visitor.Event.GO_HOME,Time.INFINITY); // work is over, going home
 			// go to another floor after staying here for a random time period
 			else {
 				getState().setActivity(ACTIVITY.working);
@@ -85,37 +84,20 @@ public final class StaticVisitor extends BasicAgent<VisitorState, Visitor.Event>
 	 * @param time
 	 */
 	private void changeFloor(Time time) {
-		int destination=getCurrentFloor();
+		int destination=getState().getCurrentFloor();
 		if (time.compareTo(END_WORK)>=0) destination=LOBBY; // go to lobby after end of work
-		else while (destination==getCurrentFloor()) destination=1+random.nextInt(MAX_FLOOR);
+		else while (destination==getState().getCurrentFloor()) destination=1+random.nextInt(MAX_FLOOR);
 		sendRequest(null,destination,time);
 		getState().setActivity(ACTIVITY.waiting);
 		getState().setStartWaitingTime(time);
+		getState().setDestinationFloor(destination);
 		getEventQueue().enqueue(Event.WAITING,time.add(IDLE_TIME)); // wait for elevator
 	}
 
-	private void setCurrentFloor(int value) { currentFloor=value; }
-
 	@Override
 	public void sendRequest(BasicAgent<?, ?> dest, int destination, Time time) {
-		final Request request=new Request(this,getCurrentFloor(),destination,time);
+		final Request request=new Request(this,getState().getCurrentFloor(),destination,time);
 		getOutport().write(new Message(this,request)); // send request to elevator
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.simplesim.examples.elevator.core.Visitor#getCurrentFloor()
-	 */
-	@Override
-	public int getCurrentFloor() { return currentFloor; }
-
-	@Override
-	public Mood getCurrentMood(Time simTime) {
-		final long diff=simTime.getTicks()-getState().getStartWaitingTime().getTicks();
-		int index=(int) Math.floorDiv(diff,Limits.ACCEPTABLE_WAITING_TIME.getTicks());
-		if (index>=Mood.values().length) index=Mood.values().length-1;
-		return Mood.values()[index];
 	}
 
 	@Override

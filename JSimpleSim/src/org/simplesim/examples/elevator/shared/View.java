@@ -111,7 +111,7 @@ public class View extends JFrame implements Listener<Simulator> {
 				final int floorY=WINDOW_DY-OFFSET-(floor*FLOOR_HEIGHT)-ICON_SIZE;
 				int index=0;
 				for (final Request request : queue) {
-					final Visitor visitor=(Visitor) request.getVisitor();
+					final VisitorState visitor=request.getVisitor().getState();
 					graphics.setColor(visitor.getCurrentMood(simTime).getColor());
 					graphics.fillRect(RIGHT_FLOOR_START+(index*dx),floorY,ICON_SIZE,ICON_SIZE);
 					index++;

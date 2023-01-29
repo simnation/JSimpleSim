@@ -9,17 +9,16 @@ import org.simplesim.core.messaging.MessageForwardingStrategy;
 import org.simplesim.core.messaging.RecursiveMessageForwarding;
 import org.simplesim.core.scheduling.HeapEventQueue;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.examples.elevator.dyn.DynamicElevator;
 import org.simplesim.examples.elevator.dyn.DynamicModel;
 import org.simplesim.examples.elevator.dyn.DynamicVisitor;
 import org.simplesim.examples.elevator.dyn.Floor;
 import org.simplesim.examples.elevator.shared.Limits;
 import org.simplesim.examples.elevator.shared.View;
-import org.simplesim.examples.elevator.shared.Visitor;
 import org.simplesim.examples.elevator.shared.VisitorState;
 import org.simplesim.model.InstrumentationDecorator;
 import org.simplesim.simulator.ConcurrentDESimulator;
 import org.simplesim.simulator.DynamicDecorator;
+import org.simplesim.simulator.SequentialDESimulator;
 import org.simplesim.simulator.Simulator;
 
 /**
@@ -57,33 +56,37 @@ public class DynamicMain {
 	public static void main(String[] args) {
 		View.intro();
 
-		final DynamicModel model=new DynamicModel();
+		// build the root of the simulation model
+		final DynamicModel building=new DynamicModel(); // building already includes elevator and lobby
 
-		// build simulation model
-		final DynamicElevator elevator=model.getElevator();
-		elevator.addToDomain(model);
-		final Floor lobby=new Floor(Limits.LOBBY);
-		lobby.addToDomain(model);
+		// add floors
+		for (int floor=1; floor<=Limits.MAX_FLOOR; floor++) new Floor(floor).addToDomain(building);
 
-		InstrumentationDecorator<VisitorState,Visitor.Event> id;
-		id=new InstrumentationDecorator<>(new DynamicVisitor(model));
-		id.addToDomain(lobby);
-		id.registerAfterExecutionListener((time, agent) -> {
-			final Visitor visitor=(Visitor) agent;
-			System.out.println(time.toString()+" Observing "+agent.getName()+" on floor "+visitor.getCurrentFloor()
-					+", current mood is "+visitor.getCurrentMood(time).toString());
-		});
+		// add one instrumented visitor to lobby
+		createInstrumentedVisitor().addToDomain(building.getLobby());
 
-		for (int i=0; i<Limits.VISITORS; i++) new DynamicVisitor(model).addToDomain(lobby);
-		for (int floor=1; floor<=Limits.MAX_FLOOR; floor++) new Floor(floor).addToDomain(model);
+		// place new visitors in lobby
+		for (int i=0; i<Limits.VISITORS; i++) new DynamicVisitor().addToDomain(building.getLobby());
 
-		final View view=new View(elevator.getState());
+		final View view=new View(building.getElevator().getState());
 		final MessageForwardingStrategy fs=new RecursiveMessageForwarding();
-		final Simulator simulator=new DynamicDecorator(new ConcurrentDESimulator(model,new HeapEventQueue<>(),fs));
-		//final Simulator simulator=new DynamicDecorator(new SequentialDESimulator(model,fs));
+		//final Simulator simulator=new DynamicDecorator(new ConcurrentDESimulator(building,new HeapEventQueue<>(),fs));
+		final Simulator simulator=new DynamicDecorator(new SequentialDESimulator(building,new HeapEventQueue<>(),fs));
 		simulator.registerEventsProcessedListener(view);
 		simulator.runSimulation(new Time(Limits.END_DAY));
 		view.close();
 	}
 
+	private static InstrumentationDecorator<?, ?> createInstrumentedVisitor() {
+		final InstrumentationDecorator<?, ?> id=new InstrumentationDecorator<>(new DynamicVisitor());
+		id.registerAfterExecutionListener((time, agent) -> {
+			final VisitorState state=(VisitorState) agent.getState();
+			if (state.getCurrentFloor()==state.getDestinationFloor())
+				System.out.println(time.toString()+" agent arrived on floor "+state.getCurrentFloor());
+			else System.out.println(
+					time.toString()+" agent currently on floor "+state.getCurrentFloor()+" with destination floor "
+							+state.getDestinationFloor()+", current mood is "+state.getCurrentMood(time).toString());
+		});
+		return id;
+	}
 }

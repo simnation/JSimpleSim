@@ -6,8 +6,6 @@
  */
 package org.simplesim.examples.elevator.shared;
 
-import java.awt.Color;
-
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.Agent;
 import org.simplesim.model.BasicAgent;
@@ -22,29 +20,6 @@ public interface Visitor extends Agent {
 		CHANGE_FLOOR, WAITING, GO_HOME
 	}
 
-	enum Mood {
-		GOOD(Color.GREEN, "good"), NERVOUS(Color.YELLOW, "nervous"), AGITATED(Color.YELLOW, "agitated"),
-		ANGRY(Color.RED, "angry");
-
-		final Color color;
-		final String str;
-
-		Mood(Color c, String s) {
-			color=c;
-			str=s;
-		}
-
-		public Color getColor() { return color; }
-
-		@Override
-		public String toString() { return str; }
-
-	}
-
-	int getCurrentFloor();
-
 	void sendRequest(BasicAgent<?, ?> dest, int destination, Time time);
-
-	Mood getCurrentMood(Time simTime);
 
 }

@@ -33,16 +33,19 @@ import org.simplesim.model.RoutingAgent;
 public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.Event> implements Visitor {
 
 	private static final Random random=new Random();
-	private final DynamicModel building;
 
-	public DynamicVisitor(DynamicModel model) {
+
+	public DynamicVisitor() {
 		super(new VisitorState());
-		building=model;
 		getState().setActivity(ACTIVITY.waiting);
 		// init arrival time at lobby with a random value before start of work
 		final Time time=START_DAY.add(random.nextInt((int) (START_WORK.getTicks()-START_DAY.getTicks())));
 		getEventQueue().enqueue(Event.CHANGE_FLOOR,time);
 	}
+	
+	private DynamicModel getBuilding() {
+		return (DynamicModel) getParent().getRoot();
+	};
 
 	@Override
 	public Time doEvent(Time time) {
@@ -70,8 +73,9 @@ public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.Eve
 			final Request request=getInport().poll().getContent();
 
 			// request model change to new floor
-			final Floor dest=building.getFloor(request.getDestinationFloor());
-			pushChangeDomainRequest(dest);
+			final Floor dest=getBuilding().getFloor(request.getDestinationFloor());
+			getState().setCurrentFloor(request.getDestinationFloor());
+			pushChangeDomainRequest(dest); // move agent to new floor / domain
 			if ((time.compareTo(END_WORK)>=1)&&(request.getDestinationFloor()==LOBBY))
 				getEventQueue().enqueue(Event.GO_HOME,Time.INFINITY); // work is over, going home
 			// go to another floor after staying here for a random time period
@@ -83,35 +87,25 @@ public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.Eve
 		else getEventQueue().enqueue(Event.WAITING,time.add(IDLE_TIME));
 	}
 
-	@Override
-	public int getCurrentFloor() { return ((Floor) getParent()).getFloor(); }
-
-	@Override
-	public Mood getCurrentMood(Time simTime) {
-		final long diff=simTime.getTicks()-getState().getStartWaitingTime().getTicks();
-		int index=(int) Math.floorDiv(diff,Limits.ACCEPTABLE_WAITING_TIME.getTicks());
-		if (index>=Mood.values().length) index=Mood.values().length-1;
-		return Mood.values()[index];
-	}
-
 	/**
 	 * Go randomly to an other floor
 	 *
 	 * @param time
 	 */
 	private void changeFloor(Time time) {
-		int destination=getCurrentFloor();
+		int destination=getState().getCurrentFloor();
 		if (time.compareTo(END_WORK)>=0) destination=LOBBY; // go to lobby after end of work
-		else while (destination==getCurrentFloor()) destination=1+random.nextInt(MAX_FLOOR);
-		sendRequest(building.getElevator(),destination,time);
+		else while (destination==getState().getCurrentFloor()) destination=1+random.nextInt(MAX_FLOOR);
+		sendRequest(getBuilding().getElevator(),destination,time);
 		getState().setActivity(ACTIVITY.waiting);
 		getState().setStartWaitingTime(time);
+		getState().setDestinationFloor(destination);
 		getEventQueue().enqueue(Event.WAITING,time.add(IDLE_TIME));
 	}
 
 	@Override
 	public void sendRequest(BasicAgent<?, ?> dest, int destination, Time time) {
-		final Request request=new Request(this,getCurrentFloor(),destination,time);
+		final Request request=new Request(this,getState().getCurrentFloor(),destination,time);
 		final RoutedMessage msg=new RoutedMessage(this.getAddress(),dest.getAddress(),request);
 		getOutport().write(msg); // send request to elevator
 	}
