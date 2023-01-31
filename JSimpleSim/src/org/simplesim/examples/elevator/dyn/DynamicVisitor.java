@@ -14,7 +14,6 @@ import static org.simplesim.examples.elevator.shared.Limits.START_WORK;
 
 import java.util.Random;
 
-import org.simplesim.core.dynamic.DomainChangeRequest;
 import org.simplesim.core.messaging.RoutedMessage;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.examples.elevator.shared.Limits;
@@ -22,31 +21,35 @@ import org.simplesim.examples.elevator.shared.Request;
 import org.simplesim.examples.elevator.shared.Visitor;
 import org.simplesim.examples.elevator.shared.VisitorState;
 import org.simplesim.examples.elevator.shared.VisitorState.ACTIVITY;
-import org.simplesim.model.AbstractAgent;
+import org.simplesim.model.Agent;
+import org.simplesim.model.BasicAgent;
 import org.simplesim.model.RoutingAgent;
 
 /**
  * Part of the dynamic elevator example
- * 
- * @see org.simplesim.examples.elevator.DynamicMain DynamicMain 
- * 
+ *
+ * @see org.simplesim.examples.elevator.DynamicMain DynamicMain
+ *
  */
 public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.Event> implements Visitor {
 
 	private static final Random random=new Random();
-	private final DynamicModel building;
 
-	public DynamicVisitor(DynamicModel model) {
+
+	public DynamicVisitor() {
 		super(new VisitorState());
-		building=model;
 		getState().setActivity(ACTIVITY.waiting);
 		// init arrival time at lobby with a random value before start of work
 		final Time time=START_DAY.add(random.nextInt((int) (START_WORK.getTicks()-START_DAY.getTicks())));
 		getEventQueue().enqueue(Event.CHANGE_FLOOR,time);
 	}
+	
+	private DynamicModel getBuilding() {
+		return (DynamicModel) getParent().getRoot();
+	};
 
 	@Override
-	protected Time doEvent(Time time) {
+	public Time doEvent(Time time) {
 		switch (getEventQueue().dequeue()) {
 		case WAITING:
 			waitForElevator(time);
@@ -57,7 +60,7 @@ public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.Eve
 		case GO_HOME:
 			throw new RuntimeException("Never should get here!");
 		default:
-			throw new UnknownEventType("Unknown event type occured in "+toString());
+			throw new Agent.UnknownEventType("Unknown event type occured in "+toString());
 		}
 		return getTimeOfNextEvent();
 	}
@@ -71,9 +74,9 @@ public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.Eve
 			final Request request=getInport().poll().getContent();
 
 			// request model change to new floor
-			final Floor dest=building.getFloor(request.getDestinationFloor());
-			addModelChangeRequest(new DomainChangeRequest(this,dest));
-
+			final Floor dest=getBuilding().getFloor(request.getDestinationFloor());
+			getState().setCurrentFloor(request.getDestinationFloor());
+			pushChangeDomainRequest(dest); // move agent to new floor / domain
 			if ((time.compareTo(END_WORK)>=1)&&(request.getDestinationFloor()==LOBBY))
 				getEventQueue().enqueue(Event.GO_HOME,Time.INFINITY); // work is over, going home
 			// go to another floor after staying here for a random time period
@@ -85,35 +88,30 @@ public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.Eve
 		else getEventQueue().enqueue(Event.WAITING,time.add(IDLE_TIME));
 	}
 
-	@Override
-	public int getCurrentFloor() {
-		return ((Floor) getParent()).getFloor();
-	}
-
 	/**
 	 * Go randomly to an other floor
 	 *
 	 * @param time
 	 */
 	private void changeFloor(Time time) {
-		int destination=getCurrentFloor();
+		int destination=getState().getCurrentFloor();
 		if (time.compareTo(END_WORK)>=0) destination=LOBBY; // go to lobby after end of work
-		else while (destination==getCurrentFloor()) destination=1+random.nextInt(MAX_FLOOR);
-		sendRequest(building.getElevator(),destination,time);
+		else while (destination==getState().getCurrentFloor()) destination=1+random.nextInt(MAX_FLOOR);
+		sendRequest(getBuilding().getElevator(),destination,time);
 		getState().setActivity(ACTIVITY.waiting);
+		getState().setStartWaitingTime(time);
+		getState().setDestinationFloor(destination);
 		getEventQueue().enqueue(Event.WAITING,time.add(IDLE_TIME));
 	}
 
 	@Override
-	public void sendRequest(AbstractAgent<?, ?> dest, int destination, Time time) {
-		final Request request=new Request(this,getCurrentFloor(),destination,time);
+	public void sendRequest(BasicAgent<?, ?> dest, int destination, Time time) {
+		final Request request=new Request(this,getState().getCurrentFloor(),destination,time);
 		final RoutedMessage msg=new RoutedMessage(this.getAddress(),dest.getAddress(),request);
 		getOutport().write(msg); // send request to elevator
 	}
 
 	@Override
-	public String getName() {
-		return "DynamicVisitor";
-	}
+	public String getName() { return "DynamicVisitor"; }
 
 }

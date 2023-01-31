@@ -9,7 +9,6 @@ import static org.simplesim.examples.elevator.shared.Limits.LOBBY;
 import static org.simplesim.examples.elevator.shared.Limits.START_DAY;
 
 import org.simplesim.core.messaging.Message;
-import org.simplesim.core.messaging.SinglePort;
 import org.simplesim.core.messaging.SwitchPort;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.examples.elevator.shared.Elevator;
@@ -17,20 +16,20 @@ import org.simplesim.examples.elevator.shared.ElevatorState;
 import org.simplesim.examples.elevator.shared.ElevatorStrategy;
 import org.simplesim.examples.elevator.shared.Limits;
 import org.simplesim.examples.elevator.shared.Request;
-import org.simplesim.model.AbstractAgent;
+import org.simplesim.model.Agent;
+import org.simplesim.model.BasicAgent;
 
 /**
  * Part of the static elevator example
  *
  * @see org.simplesim.examples.elevator.StaticMain StaticMain
  */
-public final class StaticElevator extends AbstractAgent<ElevatorState, Elevator.Event> implements Elevator {
+public final class StaticElevator extends BasicAgent<ElevatorState, Elevator.Event> implements Elevator {
 
 	private final ElevatorStrategy strategy;
 
 	public StaticElevator() {
 		super(new ElevatorState());
-		setInport(new SinglePort(this));
 		setOutport(new SwitchPort(this));
 		strategy=new ElevatorStrategy(this);
 		getState().setCurrentFloor(LOBBY);
@@ -40,7 +39,7 @@ public final class StaticElevator extends AbstractAgent<ElevatorState, Elevator.
 	}
 
 	@Override
-	protected Time doEvent(Time time) {
+	public Time doEvent(Time time) {
 		switch (getEventQueue().dequeue()) {
 		case MOVED: // just arrived on new floor
 			getState().setCurrentFloor(getState().getDestinationFloor());
@@ -51,7 +50,7 @@ public final class StaticElevator extends AbstractAgent<ElevatorState, Elevator.
 			else enqueueEvent(Event.IDLE,time.add(Limits.IDLE_TIME));
 			break;
 		default:
-			throw new UnknownEventType("Unknown event type occured in ElevatorStrategy");
+			throw new Agent.UnknownEventType("Unknown event type occured in ElevatorStrategy");
 		}
 		return getTimeOfNextEvent();
 	}
@@ -75,7 +74,7 @@ public final class StaticElevator extends AbstractAgent<ElevatorState, Elevator.
 	 * org.simplesim.examples.elevator.Request)
 	 */
 	@Override
-	public void sendMessage(AbstractAgent<?, ?> recipient, Request content) {
+	public void sendMessage(Agent recipient, Request content) {
 		getOutport().write(new Message(this,recipient,content));
 	}
 

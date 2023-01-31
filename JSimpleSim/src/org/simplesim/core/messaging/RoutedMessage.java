@@ -26,10 +26,6 @@ package org.simplesim.core.messaging;
 
 public final class RoutedMessage extends AbstractMessage<int[]> {
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 */
 	public RoutedMessage(int[] source, int[] destination, Object content) {
 		super(source,destination,content);
 	}
@@ -38,10 +34,6 @@ public final class RoutedMessage extends AbstractMessage<int[]> {
 		return getDestination()[level];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "Message [content="+getContent().toString()+", dest="+getDestination()+", src="+getSource()+"]";

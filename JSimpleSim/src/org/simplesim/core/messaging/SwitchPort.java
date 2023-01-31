@@ -17,8 +17,8 @@ import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
-import org.simplesim.model.BasicModelEntity;
-import org.simplesim.model.BasicModelEntity.UniqueConstraintViolationException;
+import org.simplesim.model.ModelEntity;
+import org.simplesim.model.ModelEntity.UniqueConstraintViolationException;
 
 /**
  * Port to send a message to one of several inports.
@@ -35,22 +35,22 @@ import org.simplesim.model.BasicModelEntity.UniqueConstraintViolationException;
  */
 public final class SwitchPort extends AbstractPort {
 
-	private final Map<BasicModelEntity, AbstractPort> destinations=new IdentityHashMap<>();
+	private final Map<ModelEntity, Port> destinations=new IdentityHashMap<>();
 
-	public SwitchPort(BasicModelEntity model) {
+	public SwitchPort(ModelEntity model) {
 		super(model);
 	}
 
 	@Override
-	public void connectTo(AbstractPort port) {
+	public void connect(Port port) {
 		if (isConnectedTo(port)) throw new UniqueConstraintViolationException("SwitchPort in "
 				+this.getParent().getFullName()+" may not be connected twice to "+port.getParent().getFullName());
 		destinations.put(port.getParent(),port);
 	}
 
 	@Override
-	public void disconnect(AbstractPort port) {
-		if (!destinations.remove(port.getParent(),port)) throw new PortConnectionException(
+	public void disconnect(Port port) {
+		if (!destinations.remove(port.getParent(),port)) throw new ModelEntity.PortConnectionException(
 				"Cannot disconnect from a port that has never been connected in "+getParent().getFullName());
 	}
 
@@ -60,12 +60,12 @@ public final class SwitchPort extends AbstractPort {
 	}
 
 	@Override
-	public Collection<AbstractPort> forwardMessages() {
+	public Collection<Port> forwardMessages() {
 		if (!hasMessages()) return Collections.emptyList();
-		Collection<AbstractPort> result=new HashSet<>();
+		Collection<Port> result=new HashSet<>();
 		for (AbstractMessage<?> msg : readAll()) {
-			AbstractPort port=destinations.get(msg.getDestination());
-			if (port==null) throw new PortConnectionException(
+			Port port=destinations.get(msg.getDestination());
+			if (port==null) throw new ModelEntity.PortConnectionException(
 					"No destination port found for "+msg.toString()+" in "+getParent().getFullName());
 			port.write(msg);
 			result.add(port);
@@ -75,7 +75,7 @@ public final class SwitchPort extends AbstractPort {
 	}
 
 	@Override
-	public boolean isConnectedTo(AbstractPort port) {
+	public boolean isConnectedTo(Port port) {
 		return destinations.containsValue(port);
 	}
 

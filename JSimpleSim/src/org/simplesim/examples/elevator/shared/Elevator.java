@@ -6,7 +6,7 @@
 package org.simplesim.examples.elevator.shared;
 
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.model.AbstractAgent;
+import org.simplesim.model.Agent;
 
 /**
  * Basic interface to encapsulate elevator functionality and events
@@ -20,7 +20,7 @@ public interface Elevator {
 
 	void processMessages();
 
-	void sendMessage(AbstractAgent<?,?> recipient, Request content);
+	void sendMessage(Agent recipient, Request content);
 
 	void enqueueEvent(Event event, Time time);
 

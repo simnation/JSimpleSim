@@ -1,35 +1,50 @@
 /*
  * JSimpleSim is a framework to build multi-agent systems in a quick and easy way. This software is published as open
  * source and licensed under the terms of GNU GPLv3.
- * 
+ *
  * Contributors: - Rene Kuhlemann - development and initial implementation
  */
 package org.simplesim.model;
 
+import java.io.PrintStream;
+
 import org.simplesim.core.scheduling.Time;
 
 /**
- * 
+ * Agents are the acting entities of the simulation model.
+ * <p>
+ * Agents should implement a strategy within their {@code doEvent} method and
+ * provide the scheduler with the time of next event (tone). Data
+ * should be stored separately within the agent's state. Agents are always
+ * embedded within a {@code Domain} for compartmentalization of the model.
  *
  */
-public interface Agent {
-	
+public interface Agent extends ModelEntity {
+
+	/** Exception to be thrown if the current event is unknown. */
+	@SuppressWarnings("serial") 
+	static final class UnknownEventType extends RuntimeException {
+		public UnknownEventType(String msg) {
+			super(msg);
+		}
+	}
+
 	/**
 	 * Returns the agent's state containing all internal variables
 	 *
 	 * @return the agent's internal state
 	 */
 	<S extends State> S getState();
-	
+
 	/**
-	 * Returns the time of the next internal event.
+	 * Returns the time of the next event (tone).
 	 * <p>
 	 * This method is called by the simulator to update the global event queue.
 	 *
-	 * @return time of the next internal event
+	 * @return time of the next event
 	 */
-	public Time getTimeOfNextEvent();
-	
+	Time getTimeOfNextEvent();
+
 	/**
 	 * Calculates new outputs from the available inputs and implements the agent's
 	 * strategy.
@@ -52,17 +67,61 @@ public interface Agent {
 	 * implementation of its parent domain or the root domain for additional
 	 * external parameters.
 	 * <p>
-	 * Note: Do not invoke from outside the simulation loop!
+	 * <b>Do not invoke from outside the simulation loop!</b>
 	 *
 	 * @param time current simulation time
-	 * @return time of the next event (tone)
+	 * 
+	 * @return tone - time of next event
 	 *
-	 * @see State
-	 * @see Time
-	 * @see org.simplesim.core.scheduling.EventQueue EventQueue
-	 * @see org.simplesim.core.messaging.Message Message
-	 * @see org.simplesim.core.messaging.AbstractPort AbstractPort
 	 */
 	Time doEvent(Time time);
+	
+	/**
+	 * Provides simple logging functionality to a stream with time stamp, entity name and message output.
+	 * <p>
+	 * Can be used to redirect output to a log file. May be overloaded by a more sophisticated implementation.
+	 * 
+	 * @param stream stream to be used as output
+	 * @param time current time stamp
+	 * @param msg message to print 
+	 */	
+	default void log(PrintStream stream, Time time, String msg) {
+		stream.println(time.toString()+this.toString()+": "+msg);
+	}
+	
+	/**
+	 * Provides simple logging functionality to a stream - only message output.
+	 * <p>
+	 * Can be used to redirect output to a log file. May be overloaded by a more sophisticated implementation.
+	 * 
+	 * @param stream stream to be used as output
+	 * @param msg message to print 
+	 */	
+	default void log(PrintStream stream, String msg) {
+		stream.println(msg);
+	}
 
+	/**
+	 * Provides simple logging functionality to System.out with time stamp, entity name and message output.
+	 * <p>
+	 * Can be used to redirect output to a log file. May be overloaded by a more sophisticated implementation.
+	 * 
+	 * @param time current time stamp
+	 * @param msg message to print 
+	 */	
+	default void log(Time time, String msg) {
+		log(System.out,time,msg);
+	}
+	
+	/**
+	 * Provides simple logging functionality to System.out - only message output.
+	 * <p>
+	 * Can be used to redirect output to a log file. May be overloaded by a more sophisticated implementation.
+	 * 
+	 * @param msg message to print 
+	 */	
+	default void log(String msg) {
+		log(System.out,msg);
+	}
+	
 }

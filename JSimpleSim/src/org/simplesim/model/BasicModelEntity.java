@@ -5,10 +5,12 @@
  */
 package org.simplesim.model;
 
-import org.simplesim.core.messaging.AbstractPort;
+import org.simplesim.core.messaging.Port;
+import org.simplesim.core.messaging.SinglePort;
 
 /**
- * Provides basic functionality needed by all entities within the simulation model.
+ * Provides basic functionality needed by all entities within the simulation
+ * model.
  * <p>
  * In more detail, that is:
  * <ul>
@@ -18,185 +20,96 @@ import org.simplesim.core.messaging.AbstractPort;
  * <li>providing relevant exceptions
  * </ul>
  */
-public abstract class BasicModelEntity {
+public abstract class BasicModelEntity implements ModelEntity {
 
-	public static final int ROOT_LEVEL=0;
 	private static final int INIT_LEVEL=Integer.MIN_VALUE;
 
 	/** Parent entity in model hierarchy. */
-	private AbstractDomain parent=null;
+	private Domain parent=null;
 
-	/** The inport */
-	private AbstractPort inport=null;
+	/** The inport (is always a SinglePort) */
+	private Port inport=new SinglePort(this);
 
 	/** The outport */
-	private AbstractPort outport=null;
+	private Port outport=null;
 
 	/** Address in numbers, describing the model's branch within the model tree */
 	private int[] address=null;
 
 	/** The level in the hierarchy the model is located at. */
 	private int level=INIT_LEVEL;
-
-	/**
-	 * Exception to be thrown if an invalid operation occurs when adding or removing a port.
-	 */
-	@SuppressWarnings("serial")
-	public static class InvalidPortException extends RuntimeException {
-		public InvalidPortException(String message) {
-			super(message);
-		}
+	
+	
+	@Override
+	public void addToDomain(BasicDomain domain) {
+		domain.addEntity(this);
 	}
 
-	/**
-	 * Exception to be thrown if a duplicate object is used where only a unique one is allowed.
-	 */
-	@SuppressWarnings("serial")
-	public static class UniqueConstraintViolationException extends RuntimeException {
-		public UniqueConstraintViolationException(String message) {
-			super(message);
-		}
+	@Override 
+	public void removeFromDomain() {
+		((BasicDomain) getParent()).removeEntity(this);
 	}
 
-	/**
-	 * Adds a new inport to the model.
-	 *
-	 * @param <P>  class of port
-	 * @param port the port to add
-	 * @return reference to the new port for further usage
-	 * @throws UnsupportedOperationException      if the simulation is running
-	 * @throws UniqueConstraintViolationException if the same port is added twice
-	 */
-	public final <P extends AbstractPort> P setInport(P port) {
-		inport=port;
-		return port;
+	@Override
+	public String getName() { return ""; }
+
+	@Override
+	public String getFullName() {
+		if (parent==null) return getName();
+		return parent.getFullName()+'.'+getName();
 	}
 
-	/**
-	 * Adds a new outport to the model.
-	 * <p>
-	 * Addition will fail if the same object is already used as a port.
-	 *
-	 * @param <P>  class of port
-	 * @param port the port to add
-	 * @return reference to the new port for further usage
-	 * @throws UnsupportedOperationException      if the simulation is running
-	 * @throws UniqueConstraintViolationException if the same port is added twice
-	 */
-	public final <P extends AbstractPort> P setOutport(P port) {
-		outport=port;
-		return port;
-	}
+	@Override
+	public Domain getParent() { return parent; }
 
-	public final AbstractPort getInport() {
-		return inport;
-	}
+	@Override
+	public int[] getAddress() { return address; }
 
-	public final AbstractPort getOutport() {
-		return outport;
-	}
+	@Override
+	public Port getInport() { return inport; }
 
-	/**
-	 * Returns the level of the current domain within the model hierarchy
-	 * <p>
-	 * Models may be organized in a hierarchy, so that each entity resides in a definite domain level of the model tree.
-	 * The level information is generated when the getLevel() method is called first. The level of the root node is
-	 * always {@value #ROOT_LEVEL}, the "no valid" level value is {@value #INIT_LEVEL}.
-	 *
-	 * @return the level of this entity in the model hierarchy
-	 */
-	public final int getLevel() {
+	@Override
+	public Port getOutport() { return outport; }
+
+	@Override
+	public int getLevel() {
 		// if there is no level information yet, re-compute it
 		if (level==INIT_LEVEL) {
-			if (parent==null) level=ROOT_LEVEL;
+			if (parent==null) level=ModelEntity.ROOT_LEVEL;
 			else level=parent.getLevel()+1;
 		}
 		return level;
 	}
 
+	protected Port setInport(Port port) { return (inport=port); }
+
+	protected Port setOutport(Port port) { return (outport=port); }
+
 	/**
-	 * Gets the entity address. Can be null.
+	 * Sets the address of this model. Should only be used internally when changing
+	 * the model.
 	 * <p>
-	 * Note: The address of the root domain is {@code int[0]}. Another dimension has to be added per model level. The
-	 * value of each dimension is the index within the corresponding level.
-	 *
-	 * @return the address
-	 */
-	public final int[] getAddress() {
-		return address;
-	}
-
-	/**
-	 * Returns the name of this model entity
-	 * <p>
-	 * Returns an empty string as default, may be overridden in derived classes.
-	 *
-	 * @return the name of this model entity, may be an empty string but not null
-	 */
-	public String getName() {
-		return "";
-	}
-
-	/**
-	 * Returns the full name of a model, concatenating the names of the parent entities.
-	 * <p>
-	 * Example: If A and B are parents of this entity and this entity is named C, then the full name is A.B.C
-	 *
-	 * @return the full name of this entity
-	 */
-	public final String getFullName() {
-		if (parent==null) return getName();
-		return parent.getFullName()+'.'+getName();
-	}
-
-	/**
-	 * Returns the parent of this model.
-	 *
-	 * @return the parent of this model
-	 */
-	public final AbstractDomain getParent() {
-		return parent;
-	}
-
-	/**
-	 * Checks whether there is at least one input at any inport.
-	 *
-	 * @return true if any inport has an input
-	 */
-	public final boolean hasExternalInput() {
-		if (getInport()==null) return false;
-		return getInport().hasMessages();
-	}
-
-	/**
-	 * Sets the address of this model. Should only be used internally when changing the model.
-	 * <p>
-	 * Note: The address of the root domain is {@code int[0]}. Another dimension has to be added per model level. The
-	 * value of each dimension is the index within the corresponding level.
+	 * Note: The address of the root domain is {@code int[0]}. Another dimension has
+	 * to be added per model level. The value of each dimension is the index within
+	 * the corresponding level.
 	 *
 	 * @param addr address as branching code
 	 */
-	public final void setAddress(int[] addr) {
+	void setAddress(int[] addr) {
 		address=addr;
 		resetLevel();
 	}
 
 	/**
-	 * Used internally for updating cached values if the structure changes (e.g. model is moved to another parent)
-	 */
-	public final void resetLevel() {
-		level=INIT_LEVEL;
-	}
-
-	/**
 	 * Resets the entity's address based on its position in the model structure.
 	 * <p>
-	 * Uses the parent's address and an additional index given by the caller. This method should be called if the
-	 * structure changes (e.g. this entity is moved to another domain) It can also be use to initialize the address.
+	 * Uses the parent's address and an additional index given by the caller. This
+	 * method should be called if the structure changes (e.g. this entity is moved
+	 * to another domain). It can also be use to initialize the address.
 	 *
-	 * @param index the new index value of this entity
+	 * @param index the new index value of this entity within its domain
 	 */
-	public void resetAddress(int index) {
+	void resetAddress(int index) {
 		resetLevel();
 		final int[] pAddr=getParent().getAddress();
 		if ((address==null)||(address.length!=(pAddr.length+1))) address=new int[pAddr.length+1];
@@ -211,12 +124,18 @@ public abstract class BasicModelEntity {
 	 *
 	 * @param parent which should become the parent of this model
 	 */
-	final void setParent(AbstractDomain par) {
+	void setParent(Domain par) {
 		parent=par;
 		// any updating which is related to setting a new parent must be done in
 		// the reset method - this method is overwritten in descendant classes
 		resetLevel();
 	}
+
+	/**
+	 * Used internally for updating cached values if the structure changes (e.g.
+	 * model is moved to another parent)
+	 */
+	private void resetLevel() { level=INIT_LEVEL; }
 
 	/**
 	 * Tests if two model entities are equal (equality by identity)
@@ -229,10 +148,6 @@ public abstract class BasicModelEntity {
 		return this==other;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return getFullName();

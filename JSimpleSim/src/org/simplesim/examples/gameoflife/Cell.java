@@ -7,38 +7,37 @@ package org.simplesim.examples.gameoflife;
 
 import org.simplesim.core.messaging.Message;
 import org.simplesim.core.messaging.MultiPort;
-import org.simplesim.core.messaging.SinglePort;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.model.AbstractAgent;
+import org.simplesim.model.BasicAgent;
 
-public final class Cell extends AbstractAgent<CellState, Object> {
+/**
+ * Agent representing a cell of the grid. 
+ */
+public final class Cell extends BasicAgent<CellState, Object> {
 
 	public Cell(int posX, int posY, boolean life) {
 		super(null,new CellState());
 		getState().setPosX(posX);
 		getState().setPosY(posY);
-		getState().setLife(life);
-		setInport(new SinglePort(this));
+		getState().setAlive(life);
 		setOutport(new MultiPort(this));
 	}
 
 	@Override
-	protected Time doEvent(Time time) {
+	public Time doEvent(Time time) {
 		if (getInport().hasMessages()) {
 			int neighbours=0;
 			while (getInport().hasMessages()) {
 				if ((Boolean) getInport().poll().getContent()) neighbours++;
 			}
-			if ((getState().isLife()&&(neighbours==2))||(neighbours==3)) getState().setLife(true);
-			else getState().setLife(false);
+			if ((getState().isAlive()&&(neighbours==2))||(neighbours==3)) getState().setAlive(true);
+			else getState().setAlive(false);
 		}
-		getOutport().write(new Message(this,getState().isLife()));
+		getOutport().write(new Message(this,getState().isAlive()));
 		return null;
 	}
 
 	@Override
-	public String getName() {
-		return "cell";
-	}
+	public String getName() { return "cell"; }
 
 }

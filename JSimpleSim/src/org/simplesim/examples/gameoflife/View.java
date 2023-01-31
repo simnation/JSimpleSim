@@ -13,12 +13,13 @@ import java.awt.image.BufferStrategy;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-import org.simplesim.core.observation.Listener;
-import org.simplesim.model.AbstractAgent;
-import org.simplesim.simulator.AbstractSimulator;
+import org.simplesim.core.instrumentation.Listener;
+import org.simplesim.core.scheduling.Time;
+import org.simplesim.model.Agent;
+import org.simplesim.simulator.Simulator;
 
 @SuppressWarnings("serial")
-public class View extends JFrame implements Listener<AbstractSimulator> {
+public class View extends JFrame implements Listener<Simulator> {
 
 	public static final int CELL_SIZE=4;
 
@@ -34,16 +35,16 @@ public class View extends JFrame implements Listener<AbstractSimulator> {
 	}
 
 	@Override
-	public void notifyListener(AbstractSimulator source) {
+	public void notifyListener(Time unused,Simulator source) {
 		final BufferStrategy bs=getBufferStrategy();
 		do {
 			do {
 				// Get a new graphics context every time through the loop
 				// to make sure the strategy is validated
 				final Graphics g=bs.getDrawGraphics();
-				for (final AbstractAgent<?, ?> cell : source.getCurrentEventList()) {
+				for (Agent cell : source.getCurrentEventList()) {
 					final CellState cs=((Cell) cell).getState();
-					if (cs.isLife()) g.setColor(Color.YELLOW);
+					if (cs.isAlive()) g.setColor(Color.YELLOW);
 					else g.setColor(Color.BLUE);
 					final int x=cs.getPosX()*CELL_SIZE;
 					final int y=cs.getPosY()*CELL_SIZE;

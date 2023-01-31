@@ -7,20 +7,20 @@
 package org.simplesim.examples.elevator.shared;
 
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.model.AbstractAgent;
+import org.simplesim.model.Agent;
 
 /**
  * Content of messages between elevator and visitor
  */
 public class Request implements Comparable<Request> {
 	
-	private final AbstractAgent<?,?> visitor;
+	private final Agent visitor;
 	private final int startingFloor; // origin
 	private final int destinationFloor; // destination floor
 	private final Time requestTime; // time of request (button pressed in starting floor)
 	private Time arrivalTime; // time of arrival in destination floor
 
-	public Request(AbstractAgent<?,?> v, int start, int dest, Time currTime) {
+	public Request(Agent v, int start, int dest, Time currTime) {
 		visitor=v;
 		startingFloor=start;
 		destinationFloor=dest;
@@ -28,7 +28,7 @@ public class Request implements Comparable<Request> {
 		arrivalTime=null;
 	}
 	
-	public AbstractAgent<?,?> getVisitor() {
+	public Agent getVisitor() {
 		return visitor;
 	}
 
@@ -38,10 +38,6 @@ public class Request implements Comparable<Request> {
 
 	public int getDestinationFloor() {
 		return destinationFloor;
-	}
-
-	public Time getRequestTime() {
-		return requestTime;
 	}
 
 	public Time getArrivalTime() {
@@ -71,13 +67,6 @@ public class Request implements Comparable<Request> {
 		return arrivalTime.sub(requestTime);
 	}
 	
-	public Time calcWaitingTime(Time currTime) {
-		return currTime.sub(getRequestTime());
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
 	public int compareTo(Request other) {
 		return requestTime.compareTo(other.requestTime);
 	}

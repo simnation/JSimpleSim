@@ -7,7 +7,9 @@
  * 	- Rene Kuhlemann - development and initial implementation
  * 
  */
-package org.simplesim.core.observation;
+package org.simplesim.core.instrumentation;
+
+import org.simplesim.core.scheduling.Time;
 
 /**
  * Part of the observer patter to be implemented by observers listening to the source.
@@ -18,8 +20,9 @@ public interface Listener<T> {
 	/**
 	 * Notifies all listeners of a specific event or hook
 	 * 
+	 * @param time time-stamp of the call. Can be {@code null}
 	 * @param source the source object of the call
 	 */
-	public void notifyListener(T source);
+	public void notifyListener(Time time, T source);
 	
 }

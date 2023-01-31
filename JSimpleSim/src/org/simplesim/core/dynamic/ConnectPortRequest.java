@@ -6,26 +6,23 @@
  */
 package org.simplesim.core.dynamic;
 
-import org.simplesim.core.messaging.AbstractPort;
+import org.simplesim.core.messaging.Port;
 
 /**
- * Request to disconnect two port.
- *
+ * Request to connect two ports.
  */
-public class PortDisconnectRequest implements ChangeRequest {
+public final class ConnectPortRequest implements ChangeRequest {
 	
-	private final AbstractPort fromPort, toPort;
+	private final Port fromPort, toPort;
 	
-	public PortDisconnectRequest(AbstractPort from, AbstractPort to) {
+	public ConnectPortRequest(Port from, Port to) {
 		fromPort=from;
 		toPort=to;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.simplesim.core.dynamic.ChangeRequest#doModelChange()
-	 */
+	@Override
 	public void doModelChange() {
-		fromPort.disconnect(toPort);
+		fromPort.connect(toPort);
 	}
 
 }

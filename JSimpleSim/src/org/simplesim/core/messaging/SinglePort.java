@@ -15,75 +15,52 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.simplesim.model.AbstractAgent;
-import org.simplesim.model.AbstractDomain;
-import org.simplesim.model.BasicModelEntity;
+import org.simplesim.model.ModelEntity;
 
 /**
- * Port to connect an outport with a single inport.
+ * Port to connect a port to exactly one other port.
  * <p>
- * The parent entities of either port may be an {@link AbstractAgent} or an {@link AbstractDomain}
+ * Inports are always a {@code SingePort} by default.
  *
  * @see Message
- * @see MultiPort
  */
 public final class SinglePort extends AbstractPort {
 
 	/**
 	 * Save single destination port in a list with fixed size of one. This facilitates message forwarding.
 	 */
-	private List<AbstractPort> destination=Collections.emptyList();
+	private List<Port> destination=Collections.emptyList();
 
-	public SinglePort(BasicModelEntity model) {
+	public SinglePort(ModelEntity model) {
 		super(model);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.simplesim.core.messaging.AbstractPort#connectTo(org.simplesim.core.messaging.AbstractPort)
-	 */
 	@Override
-	public void connectTo(AbstractPort port) {
+	public void connect(Port port) {
 		if (!isEndPoint())
-			throw new PortConnectionException("Connection of SinglePort alread in use in "+getParent().getFullName());
+			throw new ModelEntity.PortConnectionException("Connection of SinglePort alread in use in "+getParent().getFullName());
 		destination=Collections.singletonList(port);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.simplesim.core.messaging.AbstractPort#disconnect(org.simplesim.core.messaging.AbstractPort)
-	 */
 	@Override
-	public void disconnect(AbstractPort port) {
-		if (!isConnectedTo(port)) throw new PortConnectionException(
+	public void disconnect(Port port) {
+		if (!isConnectedTo(port)) throw new ModelEntity.PortConnectionException(
 				"Cannot disconnect from a port that has never been connected in "+getParent().getFullName());
 		destination=Collections.emptyList();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.simplesim.core.messaging.AbstractPort#isEndPoint()
-	 */
 	@Override
 	public boolean isEndPoint() {
 		return destination.isEmpty();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.simplesim.core.messaging.AbstractPort#isConnectedTo(org.simplesim.core.messaging.AbstractPort)
-	 */
 	@Override
-	public boolean isConnectedTo(AbstractPort port) {
+	public boolean isConnectedTo(Port port) {
 		return port.equals(getConnection());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.simplesim.core.messaging.AbstractPort#copyMessages()
-	 */
 	@Override
-	public Collection<AbstractPort> forwardMessages() {
+	public Collection<Port> forwardMessages() {
 		if (!hasMessages()) return Collections.emptyList();
 		getConnection().writeAll(this.readAll());
 		clearMessages();
@@ -95,7 +72,7 @@ public final class SinglePort extends AbstractPort {
 	 *
 	 * @return destination port of this connection
 	 */
-	public AbstractPort getConnection() {
+	public Port getConnection() {
 		return destination.get(0);
 	}
 

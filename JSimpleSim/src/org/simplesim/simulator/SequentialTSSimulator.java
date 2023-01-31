@@ -10,11 +10,12 @@
  */
 package org.simplesim.simulator;
 
+import org.simplesim.core.messaging.MessageForwardingStrategy;
 import org.simplesim.core.messaging.RecursiveMessageForwarding;
-import org.simplesim.core.messaging.ForwardingStrategy;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.model.AbstractAgent;
-import org.simplesim.model.AbstractDomain;
+import org.simplesim.model.BasicAgent;
+import org.simplesim.model.BasicDomain;
+import org.simplesim.model.Agent;
 
 /**
  * Simulator for sequential time step simulation
@@ -26,22 +27,24 @@ import org.simplesim.model.AbstractDomain;
  * This implementation is especially useful to run cellular automata.
  *
  */
-public class SequentialTSSimulator extends AbstractSimulator {
+public class SequentialTSSimulator extends BasicSimulator {
 
 	// the constant time step, no event queue
-	private final Time timeStep;
+	private final Time timeStep=Time.TICK;
 
-	public SequentialTSSimulator(AbstractDomain rt, Time step, ForwardingStrategy forwarding) {
+	public SequentialTSSimulator(BasicDomain rt, MessageForwardingStrategy forwarding) {
 		super(rt,null,forwarding);
-		timeStep=step;
 	}
 
-	public SequentialTSSimulator(AbstractDomain root, ForwardingStrategy forwarding) {
-		this(root,new Time(Time.TICKS_PER_MINUTE),forwarding);
-	}
-
-	public SequentialTSSimulator(AbstractDomain root) {
-		this(root,new Time(Time.TICKS_PER_MINUTE),new RecursiveMessageForwarding());
+	/**
+	 * Quick start constructor of a sequential time-step simulator with a given model
+	 * <p>
+	 * Uses {@code RecursiveMessageForwarding} as default option.
+	 *
+	 * @param root the root domain of the model
+	 */
+	public SequentialTSSimulator(BasicDomain root) {
+		this(root,new RecursiveMessageForwarding());
 	}
 
 	@Override
@@ -50,13 +53,13 @@ public class SequentialTSSimulator extends AbstractSimulator {
 		setCurrentEventList(getRootDomain().listAllAgents(true));
 		setSimulationTime(Time.ZERO);
 		while (getSimulationTime().compareTo(stop)<0) {
-			AbstractAgent.toggleSimulationIsRunning(true);
+			BasicAgent.toggleSimulationIsRunning(true);
 			// part I: process all current events by calling the agents' doEvent method
 			// in time step, iterate over ALL agents, ignore time of next event
-			for (final AbstractAgent<?, ?> agent : getCurrentEventList()) agent.doEventSim(getSimulationTime());
+			for (Agent agent : getCurrentEventList()) ((BasicAgent<?,?>) agent).doEvent(getSimulationTime());
 			// part II: do the message forwarding
 			getMessageForwardingStrategy().forwardMessages(getCurrentEventList());
-			AbstractAgent.toggleSimulationIsRunning(false);
+			BasicAgent.toggleSimulationIsRunning(false);
 			hookEventsProcessed();
 			// part III: add the time step
 			setSimulationTime(getSimulationTime().add(getTimeStep()));
@@ -64,8 +67,6 @@ public class SequentialTSSimulator extends AbstractSimulator {
 		}
 	}
 
-	public Time getTimeStep() {
-		return timeStep;
-	}
+	public Time getTimeStep() { return timeStep; }
 
 }

@@ -6,8 +6,9 @@
  */
 package org.simplesim.examples;
 
-import org.simplesim.core.messaging.ForwardingStrategy;
+import org.simplesim.core.messaging.MessageForwardingStrategy;
 import org.simplesim.core.messaging.RoutedMessageForwarding;
+import org.simplesim.core.scheduling.HeapEventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.RoutingDomain;
 import org.simplesim.simulator.DynamicDecorator;
@@ -27,13 +28,13 @@ public class SimpleDomain extends RoutingDomain {
 	public static void main(String[] args) {
 		SimpleDomain root=new SimpleDomain();
 		root.setAsRootDomain();
-		root.addEntity(new SimpleAgent());
+		new SimpleAgent().addToDomain(root);;
 		SimpleDomain subdomain=new SimpleDomain();
-		subdomain.addEntity(new SimpleAgent());
-		subdomain.addEntity(new SimpleAgent());
-		root.addEntity(subdomain);
-		ForwardingStrategy fs=new RoutedMessageForwarding(root);
-		Simulator simulator=new DynamicDecorator(new SequentialDESimulator(root,fs));
+		new SimpleAgent().addToDomain(subdomain);
+		new SimpleAgent().addToDomain(subdomain);
+		subdomain.addToDomain(root);
+		MessageForwardingStrategy fs=new RoutedMessageForwarding(root);
+		Simulator simulator=new DynamicDecorator(new SequentialDESimulator(root,new HeapEventQueue<>(),fs));
 		simulator.runSimulation(new Time(Time.INFINITY));
 	}
 

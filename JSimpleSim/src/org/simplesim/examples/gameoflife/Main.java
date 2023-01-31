@@ -23,6 +23,7 @@ public final class Main {
 		model.connectCells();
 		final View view=new View("JSimpleSim exmaple: Conway's Game of Life",GRID_DX,GRID_DY);
 		final Simulator simulator=new SequentialTSSimulator(model,new DirectMessageForwarding());
+		// final Simulator simulator=new ConcurrentTSSimulator(model,new DirectMessageForwarding());
 		simulator.registerEventsProcessedListener(view);
 		simulator.runSimulation(Time.INFINITY);
 		view.close();
