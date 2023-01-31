@@ -33,7 +33,7 @@ import org.simplesim.simulator.Simulator;
  * <p>
  * <u>Static model:</u>
  * <ul>
- * <li>There are no model changes.
+ * <li>There are no model changes during the simulation run.
  * <li>Visitors store their current floor as part of their state.
  * <li>Ports of elevator and visitor are connected directly.
  * <li>Direct message forwarding is used.
@@ -47,6 +47,7 @@ import org.simplesim.simulator.Simulator;
  * situation comprehensibly.
  * <li>Messaging is done by a routing mechanism.
  * </ul>
+ * Both approaches contain one agent whose state is observed by the instrumentation feature.
  */
 public class DynamicMain {
 
@@ -78,8 +79,8 @@ public class DynamicMain {
 	}
 
 	private static InstrumentationDecorator<?, ?> createInstrumentedVisitor() {
-		final InstrumentationDecorator<?, ?> id=new InstrumentationDecorator<>(new DynamicVisitor());
-		id.registerAfterExecutionListener((time, agent) -> {
+		final InstrumentationDecorator<?, ?> instrumentedVisitor=new InstrumentationDecorator<>(new DynamicVisitor());
+		instrumentedVisitor.registerAfterExecutionListener((time, agent) -> {
 			final VisitorState state=(VisitorState) agent.getState();
 			if (state.getCurrentFloor()==state.getDestinationFloor())
 				System.out.println(time.toString()+" agent arrived on floor "+state.getCurrentFloor());
@@ -87,6 +88,6 @@ public class DynamicMain {
 					time.toString()+" agent currently on floor "+state.getCurrentFloor()+" with destination floor "
 							+state.getDestinationFloor()+", current mood is "+state.getCurrentMood(time).toString());
 		});
-		return id;
+		return instrumentedVisitor;
 	}
 }

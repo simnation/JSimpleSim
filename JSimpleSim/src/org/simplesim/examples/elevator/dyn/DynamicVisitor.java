@@ -21,6 +21,7 @@ import org.simplesim.examples.elevator.shared.Request;
 import org.simplesim.examples.elevator.shared.Visitor;
 import org.simplesim.examples.elevator.shared.VisitorState;
 import org.simplesim.examples.elevator.shared.VisitorState.ACTIVITY;
+import org.simplesim.model.Agent;
 import org.simplesim.model.BasicAgent;
 import org.simplesim.model.RoutingAgent;
 
@@ -59,7 +60,7 @@ public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.Eve
 		case GO_HOME:
 			throw new RuntimeException("Never should get here!");
 		default:
-			throw new UnknownEventType("Unknown event type occured in "+toString());
+			throw new Agent.UnknownEventType("Unknown event type occured in "+toString());
 		}
 		return getTimeOfNextEvent();
 	}

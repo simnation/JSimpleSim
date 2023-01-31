@@ -14,12 +14,20 @@ import org.simplesim.core.scheduling.Time;
  * Agents are the acting entities of the simulation model.
  * <p>
  * Agents should implement a strategy within their {@code doEvent} method and
- * provide the scheduler with the time of next internal event (tonie). Data
+ * provide the scheduler with the time of next event (tone). Data
  * should be stored separately within the agent's state. Agents are always
  * embedded within a {@code Domain} for compartmentalization of the model.
  *
  */
 public interface Agent extends ModelEntity {
+
+	/** Exception to be thrown if the current event is unknown. */
+	@SuppressWarnings("serial") 
+	static final class UnknownEventType extends RuntimeException {
+		public UnknownEventType(String msg) {
+			super(msg);
+		}
+	}
 
 	/**
 	 * Returns the agent's state containing all internal variables
@@ -29,11 +37,11 @@ public interface Agent extends ModelEntity {
 	<S extends State> S getState();
 
 	/**
-	 * Returns the time of the next internal event (tonie).
+	 * Returns the time of the next event (tone).
 	 * <p>
 	 * This method is called by the simulator to update the global event queue.
 	 *
-	 * @return time of the next internal event
+	 * @return time of the next event
 	 */
 	Time getTimeOfNextEvent();
 
@@ -65,11 +73,6 @@ public interface Agent extends ModelEntity {
 	 * 
 	 * @return tone - time of next event
 	 *
-	 * @see State
-	 * @see Time
-	 * @see org.simplesim.core.scheduling.EventQueue EventQueue
-	 * @see org.simplesim.core.messaging.Message Message
-	 * @see org.simplesim.core.messaging.AbstractPort AbstractPort
 	 */
 	Time doEvent(Time time);
 	

@@ -27,7 +27,7 @@ public interface ModelEntity {
 	 * is allowed.
 	 */
 	@SuppressWarnings("serial")
-	public static final class UniqueConstraintViolationException extends RuntimeException {
+	static final class UniqueConstraintViolationException extends RuntimeException {
 		public UniqueConstraintViolationException(String message) {
 			super(message);
 		}
@@ -37,7 +37,7 @@ public interface ModelEntity {
 	 * Exception to be thrown if a port cannot be added or removed.
 	 */
 	@SuppressWarnings("serial")
-	public static final class PortOperationException extends RuntimeException {
+	static final class PortOperationException extends RuntimeException {
 		public PortOperationException(String message) {
 			super(message);
 		}
@@ -47,11 +47,13 @@ public interface ModelEntity {
 	 * Exception to be thrown if a port cannot be connected or disconnected.
 	 */
 	@SuppressWarnings("serial")
-	public class PortConnectionException extends RuntimeException {
+	static final class PortConnectionException extends RuntimeException {
 		public PortConnectionException(String message) {
 			super(message);
 		}
 	}
+
+	int ROOT_LEVEL=0;
 	
 	/**
 	 * Adds this entity to a domain.
@@ -118,8 +120,7 @@ public interface ModelEntity {
 	 * Models may be organized in a hierarchy, so that each entity resides in a
 	 * definite domain level of the model tree. The level information is generated
 	 * when the getLevel() method is called first. The level of the root node is
-	 * always {@value #ROOT_LEVEL}, the "no valid" level value is
-	 * {@value #INIT_LEVEL}.
+	 * always {@value #ROOT_LEVEL}.
 	 *
 	 * @return the level of this entity in the model hierarchy
 	 */

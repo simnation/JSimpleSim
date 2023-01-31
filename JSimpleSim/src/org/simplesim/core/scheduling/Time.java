@@ -74,11 +74,11 @@ public final class Time implements Comparable<Time> {
 	 * Constructor converting a given date into ticks
 	 *
 	 * @param year  the year (counting starts at zero)
-	 * @param month the month (0<x<12, counting starts at zero)
-	 * @param day   the day (0<x<30, counting starts at zero)
-	 * @param hour  the hour (0<x<24)
-	 * @param min   the minute (0<x<60)
-	 * @param sec   the second (0<x<60)
+	 * @param month the month (between 0 and 12, counting starts at zero)
+	 * @param day   the day (between 0 and 30, counting starts at zero)
+	 * @param hour  the hour (between 0 and 24)
+	 * @param min   the minute (between 0 and 60)
+	 * @param sec   the second (between 0 and 60)
 	 */
 	public Time(int year, int month, int day, int hour, int min, int sec) {
 		this((year*TICKS_PER_YEAR)+(month*TICKS_PER_MONTH)+(day*TICKS_PER_DAY)+(hour*TICKS_PER_HOUR)
@@ -90,8 +90,8 @@ public final class Time implements Comparable<Time> {
 	 * spans.
 	 *
 	 * @param day  the day (counting starts at zero)
-	 * @param hour the hour (0<x<24)
-	 * @param min  the minute (0<x<60)
+	 * @param hour the hour (between 0 and 24)
+	 * @param min  the minute (between 0 and 60)
 	 */
 	public Time(int day, int hour, int min) {
 		this((day*TICKS_PER_DAY)+(hour*TICKS_PER_HOUR)+(min*TICKS_PER_MINUTE));

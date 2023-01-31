@@ -7,10 +7,13 @@ package org.simplesim.examples.gameoflife;
 
 import org.simplesim.model.State;
 
+/**
+ * The state of the cell.
+ */
 public class CellState implements State {
 
 	private int posX, posY; // the cell position
-	private boolean life;   // is it alive?
+	private boolean alive;   // is it alive?
 
 	public int getPosX() { return posX; }
 
@@ -20,8 +23,8 @@ public class CellState implements State {
 
 	void setPosY(int y) { posY=y; }
 
-	public boolean isLife() { return life; }
+	public boolean isAlive() { return alive; }
 
-	public void setLife(boolean value) { life=value; }
+	public void setAlive(boolean value) { alive=value; }
 
 }

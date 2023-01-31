@@ -15,7 +15,13 @@ import org.simplesim.core.scheduling.EventQueue;
 import org.simplesim.core.scheduling.Time;
 
 /**
- *
+ * Decorator to add instrumentation functionality to an agent.
+ * <p>
+ * The decorator adds listeners to the {@code doEvent} method, so that the
+ * agent's state can be queried before and after the execution of the agent's
+ * strategy. This enables snapshots for data time series and debugging.
+ * <p>
+ * The agent's state should considered as <u>read only</u>.
  *
  */
 public final class InstrumentationDecorator<S extends State, E> extends BasicAgent<S, E> {
@@ -30,7 +36,7 @@ public final class InstrumentationDecorator<S extends State, E> extends BasicAge
 	private final ListenerSupport<BasicAgent<?, ?>> ael=new ListenerSupport<>();
 
 	public InstrumentationDecorator(BasicAgent<S, E> who) {
-		super(null,null); // no state, no event queue
+		super(null,null); // the decorator has no state, no event queue
 		agent=who;
 		agent.setDomainChangeStrategy(new DomainChangeStrategy() {
 

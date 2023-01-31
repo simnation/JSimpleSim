@@ -18,12 +18,11 @@ import java.util.List;
 import org.simplesim.model.ModelEntity;
 
 /**
- * Port to connect an outport with a single inport.
+ * Port to connect a port to exactly one other port.
  * <p>
- * The parent entities of either port may be an {@link BasicAgent} or an {@link BasicDomain}
+ * Inports are always a {@code SingePort} by default.
  *
  * @see Message
- * @see MultiPort
  */
 public final class SinglePort extends AbstractPort {
 

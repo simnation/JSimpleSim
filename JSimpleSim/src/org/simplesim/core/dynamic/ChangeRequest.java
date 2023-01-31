@@ -7,13 +7,12 @@
 package org.simplesim.core.dynamic;
 
 /**
- * 
- *
+ * Interface for all model changes during simulation run time.
  */
 public interface ChangeRequest {
 	
 	/**
-	 * Exception to be thrown if a change request is unsuccessful
+	 * Exception to be thrown if a change request is unsuccessful.
 	 */
 	@SuppressWarnings("serial")
 	public static class ChangeRequestException extends RuntimeException {
@@ -22,6 +21,9 @@ public interface ChangeRequest {
 		}
 	}
 	
+	/**
+	 * Does the actual mode change.
+	 */
 	void doModelChange();
 
 }

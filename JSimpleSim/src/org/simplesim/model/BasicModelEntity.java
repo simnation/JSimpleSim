@@ -22,7 +22,6 @@ import org.simplesim.core.messaging.SinglePort;
  */
 public abstract class BasicModelEntity implements ModelEntity {
 
-	public static final int ROOT_LEVEL=0;
 	private static final int INIT_LEVEL=Integer.MIN_VALUE;
 
 	/** Parent entity in model hierarchy. */
@@ -76,7 +75,7 @@ public abstract class BasicModelEntity implements ModelEntity {
 	public int getLevel() {
 		// if there is no level information yet, re-compute it
 		if (level==INIT_LEVEL) {
-			if (parent==null) level=ROOT_LEVEL;
+			if (parent==null) level=ModelEntity.ROOT_LEVEL;
 			else level=parent.getLevel()+1;
 		}
 		return level;

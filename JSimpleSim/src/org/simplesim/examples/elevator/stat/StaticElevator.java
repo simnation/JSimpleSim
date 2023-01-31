@@ -50,7 +50,7 @@ public final class StaticElevator extends BasicAgent<ElevatorState, Elevator.Eve
 			else enqueueEvent(Event.IDLE,time.add(Limits.IDLE_TIME));
 			break;
 		default:
-			throw new UnknownEventType("Unknown event type occured in ElevatorStrategy");
+			throw new Agent.UnknownEventType("Unknown event type occured in ElevatorStrategy");
 		}
 		return getTimeOfNextEvent();
 	}

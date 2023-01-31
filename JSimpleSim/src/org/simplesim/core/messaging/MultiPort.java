@@ -24,12 +24,10 @@ import static org.simplesim.model.BasicModelEntity.UniqueConstraintViolationExce
 /**
  * Port to send the same message to several inports.
  * <p>
- * Messages from the outport are copied to all connected inports. Does not need the destination information
- * of a message, The parent entities of any port may be an {@link BasicAgent} or an {@link BasicDomain}.
+ * Messages of the outport are copied to all connected inports. Does not need the destination information
+ * of a message.
  * <p>
- * Note: Can be used with {@code DefaultMessageForwarding} or {@code DirectMessageForwarding}.
- * <p>
- * Note: Only use as outport.
+ * Only use as outport. Can be used with {@code DefaultMessageForwarding} or {@code DirectMessageForwarding}.
  *
  * @see Message
  * @see SinglePort

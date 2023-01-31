@@ -10,13 +10,16 @@ import org.simplesim.core.messaging.MultiPort;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.BasicAgent;
 
+/**
+ * Agent representing a cell of the grid. 
+ */
 public final class Cell extends BasicAgent<CellState, Object> {
 
 	public Cell(int posX, int posY, boolean life) {
 		super(null,new CellState());
 		getState().setPosX(posX);
 		getState().setPosY(posY);
-		getState().setLife(life);
+		getState().setAlive(life);
 		setOutport(new MultiPort(this));
 	}
 
@@ -27,10 +30,10 @@ public final class Cell extends BasicAgent<CellState, Object> {
 			while (getInport().hasMessages()) {
 				if ((Boolean) getInport().poll().getContent()) neighbours++;
 			}
-			if ((getState().isLife()&&(neighbours==2))||(neighbours==3)) getState().setLife(true);
-			else getState().setLife(false);
+			if ((getState().isAlive()&&(neighbours==2))||(neighbours==3)) getState().setAlive(true);
+			else getState().setAlive(false);
 		}
-		getOutport().write(new Message(this,getState().isLife()));
+		getOutport().write(new Message(this,getState().isAlive()));
 		return null;
 	}
 

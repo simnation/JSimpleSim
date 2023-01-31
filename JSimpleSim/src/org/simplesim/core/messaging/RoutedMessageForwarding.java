@@ -11,8 +11,6 @@
  */
 package org.simplesim.core.messaging;
 
-import static org.simplesim.model.BasicModelEntity.ROOT_LEVEL;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -20,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.simplesim.model.Domain;
+import org.simplesim.model.ModelEntity;
 import org.simplesim.model.Agent;
 import org.simplesim.model.RoutingDomain;
 
@@ -60,8 +59,8 @@ public final class RoutedMessageForwarding implements MessageForwardingStrategy 
 		doHierarchicalCopyingUp();
 		// part III: copy messages from outport to inport of root layer
 		root.getOutport().forwardMessages();
-		layers.get(ROOT_LEVEL).clear();
-		layers.get(ROOT_LEVEL).add(root.getInport());
+		layers.get(ModelEntity.ROOT_LEVEL).clear();
+		layers.get(ModelEntity.ROOT_LEVEL).add(root.getInport());
 		// part IV: copy messages from root layer down to their destination
 		doHierarchicalCopyingDown();
 		// part V: recycling - empty sets for next usage to save memory and time
@@ -72,7 +71,7 @@ public final class RoutedMessageForwarding implements MessageForwardingStrategy 
 	 * Copy messages from bottom most model to the top of the model tree.
 	 */
 	private void doHierarchicalCopyingUp() {
-		for (int level=layers.size()-1; level>ROOT_LEVEL; level--) {
+		for (int level=layers.size()-1; level>ModelEntity.ROOT_LEVEL; level--) {
 			final Set<Port> sources=layers.get(level);
 			final Set<Port> destinations=layers.get(level-1);
 			for (final Port src : sources) {
@@ -89,7 +88,7 @@ public final class RoutedMessageForwarding implements MessageForwardingStrategy 
 	 * Copy messages from top of the model tree to the bottom most level.
 	 */
 	private void doHierarchicalCopyingDown() {
-		for (int level=ROOT_LEVEL+1; level<layers.size(); level++) {
+		for (int level=ModelEntity.ROOT_LEVEL+1; level<layers.size(); level++) {
 			final Set<Port> sources=layers.get(level-1);
 			final Set<Port> destinations=layers.get(level);
 			for (final Port src : sources) {

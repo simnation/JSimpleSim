@@ -24,17 +24,11 @@ import org.simplesim.core.scheduling.EventQueue;
  */
 public abstract class RoutingAgent<S extends State, E> extends BasicAgent<S, E> {
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public RoutingAgent(EventQueue<E> queue, S s) {
 		super(queue,s);
 		setOutport(new SinglePort(this));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public RoutingAgent(S s) {
 		super(s);
 		setOutport(new SinglePort(this));

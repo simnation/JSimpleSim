@@ -22,7 +22,7 @@ public class Model extends BasicDomain {
 	public void createCells(double lifeProbability) {
 		for (int y=0; y<height; y++) for (int x=0; x<width; x++) {
 			final Cell cell=new Cell(x,y,false);
-			cell.getState().setLife(Math.random()<lifeProbability);
+			cell.getState().setAlive(Math.random()<lifeProbability);
 			world[x][y]=cell;
 			cell.addToDomain(this);
 		}

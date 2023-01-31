@@ -85,13 +85,6 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 	/** Flag to indicate if the simulation is running. */
 	private static volatile boolean simulationIsRunning=false;
 
-	@SuppressWarnings("serial")
-	public static final class UnknownEventType extends RuntimeException {
-		public UnknownEventType(String msg) {
-			super(msg);
-		}
-	}
-
 	/**
 	 * Sets the agent's local event queue and the internal state.
 	 * <p>

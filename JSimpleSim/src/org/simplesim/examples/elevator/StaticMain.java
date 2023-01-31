@@ -9,11 +9,14 @@ package org.simplesim.examples.elevator;
 import org.simplesim.core.messaging.DirectMessageForwarding;
 import org.simplesim.core.scheduling.HeapEventQueue;
 import org.simplesim.core.scheduling.Time;
+import org.simplesim.examples.elevator.dyn.DynamicVisitor;
 import org.simplesim.examples.elevator.shared.Limits;
 import org.simplesim.examples.elevator.shared.View;
+import org.simplesim.examples.elevator.shared.VisitorState;
 import org.simplesim.examples.elevator.stat.StaticElevator;
 import org.simplesim.examples.elevator.stat.StaticModel;
 import org.simplesim.examples.elevator.stat.StaticVisitor;
+import org.simplesim.model.InstrumentationDecorator;
 import org.simplesim.simulator.ConcurrentDESimulator;
 import org.simplesim.simulator.Simulator;
 
@@ -29,7 +32,7 @@ import org.simplesim.simulator.Simulator;
  * <p>
  * <u>Static model:</u>
  * <ul>
- * <li>There are no model changes.
+ * <li>There are no model changes during the simulation run.
  * <li>Visitors store their current floor as part of their state.
  * <li>Ports of elevator and visitor are connected directly.
  * <li>Direct message forwarding is used.
@@ -43,6 +46,7 @@ import org.simplesim.simulator.Simulator;
  * situation comprehensibly.
  * <li>Messaging is done by a routing mechanism.
  * </ul>
+ * Both approaches contain one agent whose state is observed by the instrumentation feature.
  */
 public class StaticMain {
 
@@ -52,24 +56,39 @@ public class StaticMain {
 	public static void main(String[] args) {
 		View.intro();
 
-		final StaticModel model=new StaticModel();
+		final StaticModel building=new StaticModel(); // building already contains the elevator
 
-		// build simulation model
-		final StaticElevator elevator=model.getElevator();
-		elevator.addToDomain(model);
+		// add visitors
 		for (int index=1; index<=Limits.VISITORS; index++) {
 			final StaticVisitor visitor=new StaticVisitor();
-			visitor.addToDomain(model);
-			elevator.getOutport().connect(visitor.getInport());
-			visitor.getOutport().connect(elevator.getInport());
+			visitor.addToDomain(building);
+			building.getElevator().getOutport().connect(visitor.getInport());
+			visitor.getOutport().connect(building.getElevator().getInport());
 		}
+		
+		addInstrumentedVisitor(building);
 
-		final View view=new View(elevator.getState());
-		final Simulator simulator=new ConcurrentDESimulator(model,new HeapEventQueue<>(),new DirectMessageForwarding());
+		final View view=new View(building.getElevator().getState());
+		final Simulator simulator=new ConcurrentDESimulator(building,new HeapEventQueue<>(),new DirectMessageForwarding());
 		// add observer
 		simulator.registerEventsProcessedListener(view);
 		simulator.runSimulation(new Time(Limits.END_DAY));
 		view.close();
+	}
+	
+	private static void addInstrumentedVisitor(StaticModel building) {
+		final InstrumentationDecorator<?, ?> instrumentedVisitor=new InstrumentationDecorator<>(new StaticVisitor());
+		instrumentedVisitor.registerAfterExecutionListener((time, agent) -> {
+			final VisitorState state=(VisitorState) agent.getState();
+			if (state.getCurrentFloor()==state.getDestinationFloor())
+				System.out.println(time.toString()+" agent arrived on floor "+state.getCurrentFloor());
+			else System.out.println(
+					time.toString()+" agent currently on floor "+state.getCurrentFloor()+" with destination floor "
+							+state.getDestinationFloor()+", current mood is "+state.getCurrentMood(time).toString());
+		});
+		instrumentedVisitor.addToDomain(building);
+		building.getElevator().getOutport().connect(instrumentedVisitor.getInport());
+		instrumentedVisitor.getOutport().connect(building.getElevator().getInport());
 	}
 
 }

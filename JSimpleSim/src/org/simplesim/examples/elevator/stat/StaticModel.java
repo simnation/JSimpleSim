@@ -19,6 +19,12 @@ public final class StaticModel extends BasicDomain {
 	/* init elevator, ensure only one elevator per model */
 	private final StaticElevator elevator=new StaticElevator();
 	
+	
+	public StaticModel() {
+		super();
+		elevator.addToDomain(this);
+	}
+	
 	public StaticElevator getElevator() {
 		return elevator;
 	}

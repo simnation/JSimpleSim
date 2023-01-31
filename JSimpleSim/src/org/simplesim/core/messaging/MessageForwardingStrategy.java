@@ -22,11 +22,7 @@ import org.simplesim.model.Agent;
  */
 public interface MessageForwardingStrategy {
 
-	/**
-	 * Exception to be thrown if there is an error in the process of message
-	 * forwarding
-	 *
-	 */
+	/**Exception to be thrown if there is an error in the process of message forwarding. */
 	@SuppressWarnings("serial")
 	static final class ForwardingFailureException extends RuntimeException {
 		public ForwardingFailureException(String message) {

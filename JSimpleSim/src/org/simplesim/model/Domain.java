@@ -9,37 +9,20 @@ package org.simplesim.model;
 import java.util.List;
 
 /**
+ * Domain are submodels of the simulation model.
+ * <p>
+ * Domains serve as a compartment for other entities within the simulation model. These entities may be agents or other
+ * domains. Therefore, simulation model are build as a tree-like structure with {@code Domain} as branching and
+ * {@link BasicAgent} as leaf, resembling a composite pattern. The domain adds the following features for entity management:
+ * <ul>
+ * <li>add and remove entities to this domain
+ * <li>provide information of the entities contained in this domain
+ * <li>list all agents in this domain and its subdomains
+ * </ul>
  *
- *
+ * @see <a href="https://en.wikipedia.org/wiki/Composite_pattern">Reference for composite pattern</a>
  */
 public interface Domain extends ModelEntity {
-
-	/**
-	 * Adds the given entity to this domain.
-	 * <p>
-	 * The entity should not be added to any another domain at the same time. Also,
-	 * this method should never be called during a simulation cycle.
-	 *
-	 * @param entity the model to be added
-	 * @throws UniqueConstraintViolationException if the entity is already part of
-	 *                                            this domain
-	 * @throws NullPointerException               if entity is null
-	 * @return the given entity for further usage
-	 *
-	<T extends BasicModelEntity> T addEntity(T entity);*/
-
-	/**
-	 * Removes the given entity from this domain.
-	 * <p>
-	 * This method should never be called during a simulation cycle. If the entity
-	 * could be removed from this domain, the entity's parent is set to null!
-	 * <p>
-	 * <i>Note: Connection management has to be done externally by the caller!</i>
-	 *
-	 * @param entity the model to be removed
-	 * @return the removed entity if the domain contained it, null otherwise
-	 *
-	<T extends BasicModelEntity> T removeEntity(T entity);*/
 
 	/**
 	 * Returns all agents within this domain
@@ -61,7 +44,8 @@ public interface Domain extends ModelEntity {
 	/**
 	 * Checks, if this domain contains a given entity.
 	 *
-	 * @param model the model
+	 * @param entity the entity to be looked up
+	 * 
 	 * @return true, if this domain contains the entity
 	 */
 	default boolean containsEntity(ModelEntity entity) {

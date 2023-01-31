@@ -1,4 +1,4 @@
 /**
- * Base classes for agent development, model building and message forwarding
+ * Base classes for agent development and model building
  */
 package org.simplesim.model;

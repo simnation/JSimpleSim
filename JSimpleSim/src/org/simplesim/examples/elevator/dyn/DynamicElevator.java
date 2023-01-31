@@ -49,7 +49,7 @@ public final class DynamicElevator extends RoutingAgent<ElevatorState, Elevator.
 			else enqueueEvent(Event.IDLE,time.add(Limits.IDLE_TIME));
 			break;
 		default:
-			throw new UnknownEventType("Unknown event type occured in ElevatorStrategy");
+			throw new Agent.UnknownEventType("Unknown event type occured in ElevatorStrategy");
 		}
 		return getTimeOfNextEvent();
 	}

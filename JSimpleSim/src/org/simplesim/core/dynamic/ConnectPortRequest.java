@@ -10,7 +10,6 @@ import org.simplesim.core.messaging.Port;
 
 /**
  * Request to connect two ports.
- *
  */
 public final class ConnectPortRequest implements ChangeRequest {
 	

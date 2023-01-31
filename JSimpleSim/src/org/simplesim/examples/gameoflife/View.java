@@ -44,7 +44,7 @@ public class View extends JFrame implements Listener<Simulator> {
 				final Graphics g=bs.getDrawGraphics();
 				for (Agent cell : source.getCurrentEventList()) {
 					final CellState cs=((Cell) cell).getState();
-					if (cs.isLife()) g.setColor(Color.YELLOW);
+					if (cs.isAlive()) g.setColor(Color.YELLOW);
 					else g.setColor(Color.BLUE);
 					final int x=cs.getPosX()*CELL_SIZE;
 					final int y=cs.getPosY()*CELL_SIZE;
