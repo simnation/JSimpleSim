@@ -14,7 +14,7 @@ import static org.simplesim.examples.elevator.shared.Limits.START_WORK;
 
 import java.util.Random;
 
-import org.simplesim.core.messaging.RoutedMessage;
+import org.simplesim.core.messaging.RoutingMessage;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.examples.elevator.shared.Limits;
 import org.simplesim.examples.elevator.shared.Request;
@@ -107,7 +107,7 @@ public final class DynamicVisitor extends RoutingAgent<VisitorState, Visitor.Eve
 	@Override
 	public void sendRequest(BasicAgent<?, ?> dest, int destination, Time time) {
 		final Request request=new Request(this,getState().getCurrentFloor(),destination,time);
-		final RoutedMessage msg=new RoutedMessage(this.getAddress(),dest.getAddress(),request);
+		final RoutingMessage msg=new RoutingMessage(this.getAddress(),dest.getAddress(),request);
 		getOutport().write(msg); // send request to elevator
 	}
 

@@ -24,9 +24,9 @@ package org.simplesim.core.messaging;
  * This class is immutable and thus thread-safe.
  */
 
-public final class RoutedMessage extends AbstractMessage<int[]> {
+public final class RoutingMessage extends AbstractMessage<int[]> {
 
-	public RoutedMessage(int[] source, int[] destination, Object content) {
+	public RoutingMessage(int[] source, int[] destination, Object content) {
 		super(source,destination,content);
 	}
 

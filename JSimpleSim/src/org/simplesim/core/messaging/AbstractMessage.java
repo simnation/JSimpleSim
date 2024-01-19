@@ -22,7 +22,7 @@ package org.simplesim.core.messaging;
  * @param <A> type of addressing
  * 
  * @see Message
- * @see RoutedMessage
+ * @see RoutingMessage
  * 
  */
 public class AbstractMessage<A> {

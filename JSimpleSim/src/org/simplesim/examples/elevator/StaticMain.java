@@ -9,11 +9,9 @@ package org.simplesim.examples.elevator;
 import org.simplesim.core.messaging.DirectMessageForwarding;
 import org.simplesim.core.scheduling.HeapEventQueue;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.examples.elevator.dyn.DynamicVisitor;
 import org.simplesim.examples.elevator.shared.Limits;
 import org.simplesim.examples.elevator.shared.View;
 import org.simplesim.examples.elevator.shared.VisitorState;
-import org.simplesim.examples.elevator.stat.StaticElevator;
 import org.simplesim.examples.elevator.stat.StaticModel;
 import org.simplesim.examples.elevator.stat.StaticVisitor;
 import org.simplesim.model.InstrumentationDecorator;
@@ -46,7 +44,8 @@ import org.simplesim.simulator.Simulator;
  * situation comprehensibly.
  * <li>Messaging is done by a routing mechanism.
  * </ul>
- * Both approaches contain one agent whose state is observed by the instrumentation feature.
+ * Both approaches contain one agent whose state is observed by the
+ * instrumentation feature.
  */
 public class StaticMain {
 
@@ -65,17 +64,18 @@ public class StaticMain {
 			building.getElevator().getOutport().connect(visitor.getInport());
 			visitor.getOutport().connect(building.getElevator().getInport());
 		}
-		
+
 		addInstrumentedVisitor(building);
 
 		final View view=new View(building.getElevator().getState());
-		final Simulator simulator=new ConcurrentDESimulator(building,new HeapEventQueue<>(),new DirectMessageForwarding());
+		final Simulator simulator=new ConcurrentDESimulator(building,new HeapEventQueue<>(),
+				new DirectMessageForwarding());
 		// add observer
 		simulator.registerEventsProcessedListener(view);
 		simulator.runSimulation(new Time(Limits.END_DAY));
 		view.close();
 	}
-	
+
 	private static void addInstrumentedVisitor(StaticModel building) {
 		final InstrumentationDecorator<?, ?> instrumentedVisitor=new InstrumentationDecorator<>(new StaticVisitor());
 		instrumentedVisitor.registerAfterExecutionListener((time, agent) -> {

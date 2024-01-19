@@ -37,12 +37,12 @@ import org.simplesim.model.RoutingDomain;
  * @see RecursiveMessageForwarding
  *
  */
-public final class RoutedMessageForwarding implements MessageForwardingStrategy {
+public final class RoutingMessageForwarding implements MessageForwardingStrategy {
 
 	private final RoutingDomain root;
 	private final List<Set<Port>> layers=new ArrayList<>();
 
-	public RoutedMessageForwarding(RoutingDomain r) { root=r; }
+	public RoutingMessageForwarding(RoutingDomain r) { root=r; }
 
 	@Override
 	public void forwardMessages(Collection<Agent> agentList) {

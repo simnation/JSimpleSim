@@ -56,12 +56,12 @@ public class MultiLevelBucketQueue<E> implements EventQueue<E> {
 	private final Map<Time, List<E>> tier3=new HashMap<>(); // far future events, unsorted
 
 	private int size=0;
-	private int bucketWidth; // size of a bucket in tier 2 in time units
-	private int chunkSizeTier2=TIER2_DEFAULT_CHUNK_SIZE;
-	private int indexTier2=0; // actual index in array of tier 2
+	private int chunkSizeTier2;  // estimated number of elements per bucket in tier2 
+	private int bucketWidth; 	 // number of ticks covered by a bucket in tier 2
+	private int indexTier2=0;    // actual index in array of tier 2
 	private int maxIndexTier2=0; // maximum index in array of tier 2
 	private long minTimeTier2=0; // minimum ticks in tier 2
-	private long actTimeTier2=0;  // ticks of bucket at [indexTier2] in tier 2
+	private long actTimeTier2=0; // ticks of bucket at [indexTier2] in tier 2
 	private long minTimeTier3=0; // minimum ticks in tier 3 (equals upper bound of tier 2)
 	private long maxTimeTier3=0; // maximum ticks in tier 3
 
@@ -70,7 +70,7 @@ public class MultiLevelBucketQueue<E> implements EventQueue<E> {
 	 * tier.
 	 * <p>
 	 * Only for optimization purpose, see documentation in {@code refillTier2}.
-	 * Generally, use default constrcutor.
+	 * Generally, use default constructor.
 	 *
 	 * @param chunkSize
 	 */
@@ -78,42 +78,22 @@ public class MultiLevelBucketQueue<E> implements EventQueue<E> {
 		chunkSizeTier2=chunkSize;
 	}
 
-	public MultiLevelBucketQueue() {}
+	public MultiLevelBucketQueue() { this(TIER2_DEFAULT_CHUNK_SIZE); }
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.simplesim.core.scheduling.EventQueue#isEmptry()
-	 */
 	@Override
 	public boolean isEmpty() { return (size==0); }
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.simplesim.core.scheduling.EventQueue#size()
-	 */
 	@Override
 	public int size() {
 		return size;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.simplesim.core.scheduling.EventQueue#getMin()
-	 */
 	@Override
 	public Time getMin() {
 		if (tier1.isEmpty()) refillTier1();
 		return tier1.firstKey();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.simplesim.core.scheduling.EventQueue#enqueue(E,Time)
-	 */
 	@Override
 	public void enqueue(E event, Time time) {
 		if (time.getTicks()>=minTimeTier3) {
@@ -127,11 +107,6 @@ public class MultiLevelBucketQueue<E> implements EventQueue<E> {
 		size++;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.simplesim.core.scheduling.EventQueue#dequeue()
-	 */
 	@Override
 	public E dequeue() {
 		if (isEmpty()) return null;
@@ -144,11 +119,6 @@ public class MultiLevelBucketQueue<E> implements EventQueue<E> {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.simplesim.core.scheduling.EventQueue#dequeueAll()
-	 */
 	@Override
 	public List<E> dequeueAll() {
 		if (tier1.isEmpty()) refillTier1();
@@ -158,21 +128,11 @@ public class MultiLevelBucketQueue<E> implements EventQueue<E> {
 		return bucket;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.simplesim.core.scheduling.EventQueue#dequeueAll(Time)
-	 */
 	@Override
 	public List<E> dequeueAll(Time time) { // not yet implemented
 		throw new UnsupportedOperationException();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.simplesim.core.scheduling.EventQueue#dequeue(E)
-	 */
 	@Override
 	public Time dequeue(E event) {
 		Time result=findAndRemoveEvent(tier1,event);
@@ -186,11 +146,6 @@ public class MultiLevelBucketQueue<E> implements EventQueue<E> {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.simplesim.core.scheduling.EventQueue#getTime(E)
-	 */
 	@Override
 	public Time getTime(E event) {
 		for (Map.Entry<Time, List<E>> entry : tier1.entrySet()) {

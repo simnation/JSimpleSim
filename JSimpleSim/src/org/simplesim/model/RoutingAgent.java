@@ -20,7 +20,7 @@ import org.simplesim.core.scheduling.EventQueue;
  *
  * @see BasicAgent
  * @see RoutingDomain
- * @see org.simplesim.core.messaging.RoutedMessage RoutedMessage
+ * @see org.simplesim.core.messaging.RoutingMessage RoutedMessage
  */
 public abstract class RoutingAgent<S extends State, E> extends BasicAgent<S, E> {
 

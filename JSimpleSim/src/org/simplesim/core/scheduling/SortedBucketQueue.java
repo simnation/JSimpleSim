@@ -50,11 +50,6 @@ public final class SortedBucketQueue<E> extends AbstractBucketQueue<E,SortedMap<
 		this(new TreeMap<>());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.simplesim.core.scheduling.EventQueue#getMin()
-	 */
 	@Override
 	public Time getMin() {
 		return getMap().firstKey();

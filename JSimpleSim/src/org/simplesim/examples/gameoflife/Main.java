@@ -6,6 +6,7 @@
 package org.simplesim.examples.gameoflife;
 
 import org.simplesim.core.messaging.DirectMessageForwarding;
+import org.simplesim.core.messaging.MessageForwardingStrategy;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.simulator.SequentialTSSimulator;
 import org.simplesim.simulator.Simulator;
@@ -22,8 +23,9 @@ public final class Main {
 		model.createCells(LIFE_PROBABILITY);
 		model.connectCells();
 		final View view=new View("JSimpleSim exmaple: Conway's Game of Life",GRID_DX,GRID_DY);
-		final Simulator simulator=new SequentialTSSimulator(model,new DirectMessageForwarding());
-		// final Simulator simulator=new ConcurrentTSSimulator(model,new DirectMessageForwarding());
+		final MessageForwardingStrategy mfs=new DirectMessageForwarding();
+		final Simulator simulator=new SequentialTSSimulator(model,mfs);
+		// final Simulator simulator=new ConcurrentTSSimulator(model,mfs);
 		simulator.registerEventsProcessedListener(view);
 		simulator.runSimulation(Time.INFINITY);
 		view.close();

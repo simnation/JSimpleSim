@@ -19,10 +19,8 @@ import org.simplesim.model.Agent;
 /**
  * Strategy for direct message forwarding.
  * <p>
- * Connects agents <i>directly</i>, without taking care of a model hierarchy.
- * <p>
- * Use this implementation of a {@code ForwardingStrategy} for graphs,
- * intermeshed networks and when there is no need for a model hierarchy.
+ * Forwards messages along <i>exactly one</i> connection. Use this implementation 
+ * for graphs, intermeshed networks and when agents are connected <i>directly</i> without a model hierarchy.
  *
  */
 public final class DirectMessageForwarding implements MessageForwardingStrategy {

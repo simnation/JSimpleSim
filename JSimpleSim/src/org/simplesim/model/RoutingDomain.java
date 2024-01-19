@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
 
 import org.simplesim.core.messaging.AbstractPort;
 import org.simplesim.core.messaging.Port;
-import org.simplesim.core.messaging.RoutedMessage;
+import org.simplesim.core.messaging.RoutingMessage;
 import org.simplesim.core.messaging.SinglePort;
 
 /**
@@ -27,7 +27,7 @@ import org.simplesim.core.messaging.SinglePort;
  * </ul>
  *
  * @see RoutingAgent
- * @see org.simplesim.core.messaging.RoutedMessage RoutedMessage
+ * @see org.simplesim.core.messaging.RoutingMessage RoutedMessage
  * @see <a href="https://en.wikipedia.org/wiki/Composite_pattern">Reference for composite pattern</a>
  */
 public abstract class RoutingDomain extends BasicDomain {
@@ -36,7 +36,7 @@ public abstract class RoutingDomain extends BasicDomain {
 	 * Port for automatic message routing.
 	 * <p>
 	 * Routing is done by reading the messages' destination descriptions and sending the message along the right
-	 * connection accordingly. Thus only a {@link RoutedMessage} can be handled by this port since it contains
+	 * connection accordingly. Thus only a {@link RoutingMessage} can be handled by this port since it contains
 	 * additional address information.
 	 * <p>
 	 * The operation modus is similar to a {@link org.simplesim.core.messaging.MultiPort MultiPort}, but the messages is
@@ -73,7 +73,7 @@ public abstract class RoutingDomain extends BasicDomain {
 		public Collection<Port> forwardMessages() {
 			final Collection<Port> result=new HashSet<>(); // set to ensure no duplicates in destination list
 			while (hasMessages()) {
-				final RoutedMessage msg=poll(); // message is also removed in this step!
+				final RoutingMessage msg=poll(); // message is also removed in this step!
 				final int index=msg.getDestIndex(getLevel()); // destination index corresponding to entity level in model
 				final ModelEntity entity=listDomainEntities().get(index); // find the right entity for forwarding
 				final Port dest=entity.getInport(); // find the right port for forwarding

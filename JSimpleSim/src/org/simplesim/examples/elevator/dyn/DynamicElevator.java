@@ -8,7 +8,7 @@ package org.simplesim.examples.elevator.dyn;
 import static org.simplesim.examples.elevator.shared.Limits.LOBBY;
 import static org.simplesim.examples.elevator.shared.Limits.START_DAY;
 
-import org.simplesim.core.messaging.RoutedMessage;
+import org.simplesim.core.messaging.RoutingMessage;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.examples.elevator.shared.Elevator;
 import org.simplesim.examples.elevator.shared.ElevatorState;
@@ -74,7 +74,7 @@ public final class DynamicElevator extends RoutingAgent<ElevatorState, Elevator.
 	 */
 	@Override
 	public void sendMessage(Agent recipient, Request content) {
-		getOutport().write(new RoutedMessage(this.getAddress(),recipient.getAddress(),content));
+		getOutport().write(new RoutingMessage(this.getAddress(),recipient.getAddress(),content));
 	}
 
 	/*

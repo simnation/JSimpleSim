@@ -20,6 +20,7 @@ public final class Cell extends BasicAgent<CellState, Object> {
 		getState().setPosX(posX);
 		getState().setPosY(posY);
 		getState().setAlive(life);
+		// The inport is set to a SinglePort by the superclass constructor as default.
 		setOutport(new MultiPort(this));
 	}
 

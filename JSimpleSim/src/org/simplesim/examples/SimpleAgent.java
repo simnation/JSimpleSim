@@ -5,7 +5,7 @@
  */
 package org.simplesim.examples;
 
-import org.simplesim.core.messaging.RoutedMessage;
+import org.simplesim.core.messaging.RoutingMessage;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.RoutingAgent;
 import org.simplesim.model.State;
@@ -15,26 +15,26 @@ import org.simplesim.model.State;
  */
 public class SimpleAgent extends RoutingAgent<SimpleAgent.SimpleAgentState, SimpleAgent.Event> {
 
-	enum Event {
-		EVENT1, EVENT2, EVENT3
-	}
-
 	static class SimpleAgentState implements State {
 		/*
 		 * Place state variables, getters and setters here.
 		 */
 	}
 
+	enum Event {
+		EVENT1, EVENT2, EVENT3
+	}
+
 	public SimpleAgent() {
 		super(new SimpleAgentState());
-		/*
-		 * Do some other initialization here.
+		/* 
+		 * Do some other initialization here. Port management is done automatically by the base class.
 		 */
 	}
 
 	@Override
 	public Time doEvent(Time time) {
-		while (getInport().hasMessages()) handleMessage(((RoutedMessage) getInport().poll()));
+		while (getInport().hasMessages()) handleMessage(((RoutingMessage) getInport().poll()));
 		while (getEventQueue().getMin().equals(time)) handleEvent(getEventQueue().dequeue(),time);
 		/*
 		 * Do not forget to enqueue some new events.
@@ -43,20 +43,18 @@ public class SimpleAgent extends RoutingAgent<SimpleAgent.SimpleAgentState, Simp
 	}
 
 	protected void sendMessage(RoutingAgent<?,?> destination, Object content) {
-		RoutedMessage message=new RoutedMessage(this.getAddress(),destination.getAddress(),content);
+		RoutingMessage message=new RoutingMessage(this.getAddress(),destination.getAddress(),content);
 		getOutport().write(message);
 	}
 
-	/*
-	 * Do the message handling here.
-	 */
-	private void handleMessage(RoutedMessage message) {
 
+	private void handleMessage(RoutingMessage message) {
+		/*
+		 * Do message handling here.
+		 */
 	}
 
-	/*
-	 * Do the event handling here.
-	 */
+
 	private void handleEvent(Event event, Time time) {
 		switch(event) {
 		case EVENT1: ;

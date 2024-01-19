@@ -48,12 +48,8 @@ public class Model extends BasicDomain {
 		}
 	}
 
-	public Cell getCell(int x, int y) {
-		return world[x][y];
-	}
+	public Cell getCell(int x, int y) { return world[x][y]; }
 
-	public String getName() {
-		return "world";
-	}
+	public String getName() {	return "world"; }
 
 }

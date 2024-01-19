@@ -39,7 +39,7 @@ public final class InstrumentationDecorator<S extends State, E> extends BasicAge
 		super(null,null); // the decorator has no state, no event queue
 		agent=who;
 		agent.setDomainChangeStrategy(new DomainChangeStrategy() {
-
+			// the decorator has to hook up for any changes regarding the entity
 			@Override
 			public void sendDomainChangeRequest(BasicDomain dest) {
 				pushModelChangeRequest(new ChangeDomainRequest(InstrumentationDecorator.this,dest));

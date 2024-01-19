@@ -21,7 +21,7 @@ import org.simplesim.simulator.Simulator;
 @SuppressWarnings("serial")
 public class View extends JFrame implements Listener<Simulator> {
 
-	public static final int CELL_SIZE=4;
+	private static final int CELL_SIZE=4;
 
 	public View(String title, int width, int height) {
 		super(title);
@@ -31,7 +31,6 @@ public class View extends JFrame implements Listener<Simulator> {
 		setVisible(true);
 		pack();
 		createBufferStrategy(2);
-		System.out.println(getSize().toString());
 	}
 
 	@Override
