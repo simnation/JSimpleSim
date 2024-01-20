@@ -4,7 +4,7 @@
  *
  * Contributors: - Rene Kuhlemann - development and initial implementation
  */
-package org.simplesim.decisionmaking;
+package org.simplesim.reasoning;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

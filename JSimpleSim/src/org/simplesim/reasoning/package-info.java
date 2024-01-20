@@ -2,4 +2,4 @@
  *  Methods for decision-making and reasoning
  *
  */
-package org.simplesim.decisionmaking;
+package org.simplesim.reasoning;

@@ -24,9 +24,12 @@ import org.knowm.xchart.style.Styler.ChartTheme;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
 /**
+ * Class to display chart, pareto front and xy-series of algorithm
  */
 public class FonsecaChart {
 
+	private final static int VISIBLE_DOTS=20;
+	
 	private final XYChart chart;
 	private final Deque<Double> f1=new ArrayDeque<>();
 	private final Deque<Double> f2=new ArrayDeque<>();
@@ -34,15 +37,16 @@ public class FonsecaChart {
 	private final SwingWrapper<XYChart> sw;
 
 	public FonsecaChart(String title) {
-		chart=new XYChartBuilder().width(800).height(600).title(title).xAxisTitle("X")
-				.yAxisTitle("Y").theme(ChartTheme.Matlab).build();
+		chart=new XYChartBuilder().width(800).height(600).title(title).theme(ChartTheme.Matlab).build();
 
 		// Customize Chart
 		chart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Scatter);
 		chart.getStyler().setChartTitleVisible(false);
 		chart.getStyler().setLegendVisible(false);
-		chart.getStyler().setAxisTitlesVisible(false);
+		chart.getStyler().setAxisTitlesVisible(true);
 		chart.getStyler().setXAxisDecimalPattern("0.0");
+		chart.setXAxisTitle("f1(x)");
+		chart.setYAxisTitle("f2(x)");
 
 		XYSeries series=chart.addSeries("Algorithm",new double[1],new double[1]);
 		series.setMarkerColor(Color.BLUE);
@@ -59,13 +63,11 @@ public class FonsecaChart {
 		series.setMarker(SeriesMarkers.DIAMOND);
 	}
 
-	private final int BUFFER_SIZE=20;
-
 	public void update(double x1, double x2) {
 		f1.addFirst(x1);
-		while (f1.size()>BUFFER_SIZE) f1.removeLast();
+		while (f1.size()>VISIBLE_DOTS) f1.removeLast();
 		f2.addFirst(x2);
-		while (f2.size()>BUFFER_SIZE) f2.removeLast();
+		while (f2.size()>VISIBLE_DOTS) f2.removeLast();
 		chart.updateXYSeries("Algorithm",new ArrayList<>(f1),new ArrayList<>(f2),null);
 		sw.repaintChart();
 	}

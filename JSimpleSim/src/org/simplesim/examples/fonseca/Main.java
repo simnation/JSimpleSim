@@ -11,10 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.simplesim.decisionmaking.AspirationAdaptation;
-import org.simplesim.decisionmaking.AspirationAdaptation.Action;
-import org.simplesim.decisionmaking.AspirationAdaptation.GoalVariable;
-import org.simplesim.decisionmaking.AspirationAdaptation.STRATEGY;
+import org.simplesim.reasoning.AspirationAdaptation;
+import org.simplesim.reasoning.AspirationAdaptation.Action;
+import org.simplesim.reasoning.AspirationAdaptation.GoalVariable;
+import org.simplesim.reasoning.AspirationAdaptation.STRATEGY;
 
 /**
  * Testing the aspiration adaptation strategy by a three-parameter optimization
@@ -35,7 +35,7 @@ public class Main {
 
 	private static final NumberFormat nf2=NumberFormat.getInstance();
 	private static final NumberFormat nf6=NumberFormat.getInstance();
-	private static final int PARETO_SIZE=50; // number of dots for pareto front
+	private static final int PARETO_DOTS=50; // number of dots for pareto front
 	private static final double a=1/Math.sqrt(3.0d);
 	private static final int dim=2; // number of goal variables
 
@@ -54,10 +54,10 @@ public class Main {
 	}
 
 	private void addParetoFront() {
-		final double[] f1pareto=new double[PARETO_SIZE];
-		final double[] f2pareto=new double[PARETO_SIZE];
-		for (int i=0; i<PARETO_SIZE; i++) {
-			double f1=Math.exp(-4)+(i*((1-(2*Math.exp(-4)))/PARETO_SIZE));
+		final double[] f1pareto=new double[PARETO_DOTS];
+		final double[] f2pareto=new double[PARETO_DOTS];
+		for (int i=0; i<PARETO_DOTS; i++) {
+			double f1=Math.exp(-4)+(i*((1-(2*Math.exp(-4)))/PARETO_DOTS));
 			f1pareto[i]=f1;
 			f2pareto[i]=Math.exp(-Math.pow(2-Math.sqrt(-Math.log(f1)),2));
 		}
@@ -136,6 +136,10 @@ public class Main {
 		}
 	}
 
+	// value calculation of the Fonseca-Fleming function 
+	public static double f1(double x[]) { return Math.exp(-Math.pow(x[0]-a,2)-Math.pow(x[1]-a,2)-Math.pow(x[2]-a,2)); }
+	public static double f2(double x[]) { return Math.exp(-Math.pow(x[0]+a,2)-Math.pow(x[1]+a,2)-Math.pow(x[2]+a,2)); }
+
 	public static void main(String[] args) {
 		nf2.setMaximumFractionDigits(2);
 		nf2.setMinimumFractionDigits(2);
@@ -144,9 +148,5 @@ public class Main {
 		final Main test=new Main();
 		test.run();
 	}
-
-	public double f1(double x[]) { return Math.exp(-Math.pow(x[0]-a,2)-Math.pow(x[1]-a,2)-Math.pow(x[2]-a,2)); }
-
-	public double f2(double x[]) { return Math.exp(-Math.pow(x[0]+a,2)-Math.pow(x[1]+a,2)-Math.pow(x[2]+a,2)); }
 
 }
