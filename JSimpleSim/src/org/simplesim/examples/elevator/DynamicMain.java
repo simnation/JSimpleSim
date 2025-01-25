@@ -15,8 +15,6 @@ import org.simplesim.examples.elevator.dyn.Floor;
 import org.simplesim.examples.elevator.shared.Limits;
 import org.simplesim.examples.elevator.shared.View;
 import org.simplesim.examples.elevator.shared.VisitorState;
-import org.simplesim.model.InstrumentationDecorator;
-import org.simplesim.simulator.ConcurrentDESimulator;
 import org.simplesim.simulator.DynamicDecorator;
 import org.simplesim.simulator.SequentialDESimulator;
 import org.simplesim.simulator.Simulator;
@@ -78,9 +76,10 @@ public class DynamicMain {
 		view.close();
 	}
 
-	private static InstrumentationDecorator<?, ?> createInstrumentedVisitor() {
-		final InstrumentationDecorator<?, ?> instrumentedVisitor=new InstrumentationDecorator<>(new DynamicVisitor());
-		instrumentedVisitor.registerAfterExecutionListener((time, agent) -> {
+	private static DynamicVisitor  createInstrumentedVisitor() {
+		final DynamicVisitor visitor=new DynamicVisitor();
+		visitor.enableInstrumentation();
+		visitor.registerAfterExecutionListener((time, agent) -> {
 			final VisitorState state=(VisitorState) agent.getState();
 			if (state.getCurrentFloor()==state.getDestinationFloor())
 				System.out.println(time.toString()+" agent arrived on floor "+state.getCurrentFloor());
@@ -88,6 +87,6 @@ public class DynamicMain {
 					time.toString()+" agent currently on floor "+state.getCurrentFloor()+" with destination floor "
 							+state.getDestinationFloor()+", current mood is "+state.getCurrentMood(time).toString());
 		});
-		return instrumentedVisitor;
+		return visitor;
 	}
 }

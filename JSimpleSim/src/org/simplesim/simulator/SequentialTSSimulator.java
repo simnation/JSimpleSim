@@ -56,7 +56,7 @@ public class SequentialTSSimulator extends BasicSimulator {
 			BasicAgent.toggleSimulationIsRunning(true);
 			// part I: process all current events by calling the agents' doEvent method
 			// in time step, iterate over ALL agents, ignore time of next event
-			for (Agent agent : getCurrentEventList()) agent.doEvent(getSimulationTime());
+			for (Agent agent : getCurrentEventList()) agent.doEventSim(getSimulationTime());
 			// part II: do the message forwarding
 			getMessageForwardingStrategy().forwardMessages(getCurrentEventList());
 			BasicAgent.toggleSimulationIsRunning(false);

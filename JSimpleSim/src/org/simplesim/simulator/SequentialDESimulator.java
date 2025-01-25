@@ -73,7 +73,7 @@ public class SequentialDESimulator extends BasicSimulator {
 			setCurrentEventList(getGlobalEventQueue().dequeueAll());
 			// System.out.println("Number of concurrent events: "+list.size());
 			for (Agent agent : getCurrentEventList()) {
-				final Time tone=agent.doEvent(getSimulationTime());
+				final Time tone=agent.doEventSim(getSimulationTime());
 				if (tone==null) throw new Simulator.InvalidSimulatorStateException(
 						"Local event queue is empty in agent "+agent.getFullName());
 				if (tone.compareTo(getSimulationTime())<0) throw new Simulator.InvalidSimulatorStateException(

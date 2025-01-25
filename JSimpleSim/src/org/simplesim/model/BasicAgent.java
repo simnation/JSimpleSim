@@ -20,6 +20,8 @@ import org.simplesim.core.dynamic.ConnectPortRequest;
 import org.simplesim.core.dynamic.DisconnectPortRequest;
 import org.simplesim.core.dynamic.ReconnectPortRequest;
 import org.simplesim.core.dynamic.RemoveEntityRequest;
+import org.simplesim.core.instrumentation.Listener;
+import org.simplesim.core.instrumentation.ListenerSupport;
 import org.simplesim.core.messaging.Port;
 import org.simplesim.core.scheduling.EventQueue;
 import org.simplesim.core.scheduling.HeapEventQueue;
@@ -53,10 +55,16 @@ import org.simplesim.simulator.DynamicDecorator;
  */
 public abstract class BasicAgent<S extends State, E> extends BasicModelEntity implements Agent {
 
-	interface DomainChangeStrategy {
-		void sendDomainChangeRequest(BasicDomain dest);
+	private interface Instrumenter {
+		Time doEventSim(Time time);
 
-		void sendEntityRemoveRequest();
+		void registerBeforeExecutionListener(Listener<BasicAgent<?, ?>> listener);
+
+		void unregisterBeforeExecutionListener(Listener<BasicAgent<?, ?>> listener);
+
+		void registerAfterExecutionListener(Listener<BasicAgent<?, ?>> listener);
+
+		void unregisterAfterExecutionListener(Listener<BasicAgent<?, ?>> listener);
 	}
 
 	/** the internal state of the agent */
@@ -65,25 +73,13 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 	/** the local event queue of the agent */
 	private final EventQueue<E> leq;
 
-	private DomainChangeStrategy dcs=new DomainChangeStrategy() {
+	private Instrumenter instrumenter;
 
-		@Override
-		public void sendDomainChangeRequest(BasicDomain dest) {
-			pushModelChangeRequest(new ChangeDomainRequest(BasicAgent.this,dest));
-		}
+	/** global queue for model change requests, only used by dynamic simulators */
+	private final static Queue<ChangeRequest> queue = new ConcurrentLinkedDeque<>();
 
-		@Override
-		public void sendEntityRemoveRequest() {
-			pushModelChangeRequest(new RemoveEntityRequest(BasicAgent.this));
-		}
-
-	};
-
-	/** Queue for model change requests, only used by dynamic simulators. */
-	private final static Queue<ChangeRequest> queue=new ConcurrentLinkedDeque<>();
-
-	/** Flag to indicate if the simulation is running. */
-	private static volatile boolean simulationIsRunning=false;
+	/** flag to indicate if the simulation is running */
+	private static volatile boolean simulationIsRunning = false;
 
 	/**
 	 * Sets the agent's local event queue and the internal state.
@@ -95,17 +91,20 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 	 * @param s     the state of the agent
 	 */
 	public BasicAgent(EventQueue<E> queue, S s) {
-		state=s;
-		leq=queue;
+		state = s;
+		leq = queue;
+		disableInstrumentation();
 	}
 
 	public BasicAgent(S s) {
-		this(new HeapEventQueue<E>(),s);
+		this(new HeapEventQueue<>(), s);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public S getState() { return state; }
+	public S getState() {
+		return state;
+	}
 
 	/**
 	 * Returns the time of the next internal event.
@@ -115,7 +114,100 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 	 * @return time of the next internal event
 	 */
 	@Override
-	public Time getTimeOfNextEvent() { return leq.getMin(); }
+	public Time getTimeOfNextEvent() {
+		return leq.getMin();
+	}
+
+	@Override
+	public final Time doEventSim(Time time) {
+		return instrumenter.doEventSim(time);
+	}
+
+	/**
+	 * Enables the feature to listen to this agent's events and queue its state.
+	 */
+	public final void enableInstrumentation() {
+		instrumenter = new Instrumenter() {
+
+			/** before execution listener */
+			private final ListenerSupport<BasicAgent<?, ?>> bel = new ListenerSupport<>();
+
+			/** after execution listener */
+			private final ListenerSupport<BasicAgent<?, ?>> ael = new ListenerSupport<>();
+
+			@Override
+			public void registerBeforeExecutionListener(Listener<BasicAgent<?, ?>> listener) {
+				bel.registerListener(listener);
+			}
+
+			@Override
+			public void unregisterBeforeExecutionListener(Listener<BasicAgent<?, ?>> listener) {
+				bel.unregisterListener(listener);
+			}
+
+			@Override
+			public void registerAfterExecutionListener(Listener<BasicAgent<?, ?>> listener) {
+				ael.registerListener(listener);
+			}
+
+			@Override
+			public void unregisterAfterExecutionListener(Listener<BasicAgent<?, ?>> listener) {
+				ael.unregisterListener(listener);
+			}
+
+			@Override
+			public Time doEventSim(Time time) {
+				bel.notifyListeners(time, BasicAgent.this);
+				doEvent(time);
+				ael.notifyListeners(time, BasicAgent.this);
+				return getTimeOfNextEvent();
+			}
+		};
+	}
+
+	/**
+	 * Disables the instrumentation feature.
+	 */
+	public final void disableInstrumentation() {
+		instrumenter = new Instrumenter() {
+			@Override
+			public Time doEventSim(Time time) {
+				return BasicAgent.this.doEvent(time);
+			}
+
+			@Override
+			public void registerBeforeExecutionListener(Listener<BasicAgent<?, ?>> listener) {
+			}
+
+			@Override
+			public void unregisterBeforeExecutionListener(Listener<BasicAgent<?, ?>> listener) {
+			}
+
+			@Override
+			public void registerAfterExecutionListener(Listener<BasicAgent<?, ?>> listener) {
+			}
+
+			@Override
+			public void unregisterAfterExecutionListener(Listener<BasicAgent<?, ?>> listener) {
+			}
+		};
+	}
+
+	public void registerBeforeExecutionListener(Listener<BasicAgent<?, ?>> listener) {
+		instrumenter.registerBeforeExecutionListener(listener);
+	}
+
+	public void unregisterBeforeExecutionListener(Listener<BasicAgent<?, ?>> listener) {
+		instrumenter.unregisterBeforeExecutionListener(listener);
+	}
+
+	public void registerAfterExecutionListener(Listener<BasicAgent<?, ?>> listener) {
+		instrumenter.registerAfterExecutionListener(listener);
+	}
+
+	public void unregisterAfterExecutionListener(Listener<BasicAgent<?, ?>> listener) {
+		instrumenter.unregisterAfterExecutionListener(listener);
+	}
 
 	/**
 	 * Gets the local event queue.
@@ -124,7 +216,9 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 	 *
 	 * @return the local event queue
 	 */
-	protected EventQueue<E> getEventQueue() { return leq; }
+	protected EventQueue<E> getEventQueue() {
+		return leq;
+	}
 
 	/**
 	 * Moves this agent to an other domain.
@@ -134,7 +228,7 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 	 *
 	 */
 	protected void pushChangeDomainRequest(BasicDomain dest) {
-		dcs.sendDomainChangeRequest(dest);
+		pushModelChangeRequest(new ChangeDomainRequest(this, dest));
 	}
 
 	/**
@@ -145,7 +239,7 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 	 *
 	 */
 	protected void pushRemoveEntityRequest() {
-		dcs.sendEntityRemoveRequest();
+		pushModelChangeRequest(new RemoveEntityRequest(this));
 	}
 
 	/**
@@ -155,7 +249,7 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 	 *
 	 */
 	protected void pushAddEntityRequest(BasicModelEntity what, BasicDomain dest) {
-		pushModelChangeRequest(new AddEntityRequest(what,dest));
+		pushModelChangeRequest(new AddEntityRequest(what, dest));
 	}
 
 	/**
@@ -163,7 +257,7 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 	 *
 	 */
 	protected void pushConnectPortRequest(Port from, Port to) {
-		pushModelChangeRequest(new ConnectPortRequest(from,to));
+		pushModelChangeRequest(new ConnectPortRequest(from, to));
 	}
 
 	/**
@@ -171,7 +265,7 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 	 *
 	 */
 	protected void pushDisconnectPortRequest(Port from, Port to) {
-		pushModelChangeRequest(new DisconnectPortRequest(from,to));
+		pushModelChangeRequest(new DisconnectPortRequest(from, to));
 	}
 
 	/**
@@ -179,14 +273,8 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 	 *
 	 */
 	protected void pushReconnectPortRequest(Port port, Port oldTo, Port newTo) {
-		pushModelChangeRequest(new ReconnectPortRequest(port,oldTo,newTo));
+		pushModelChangeRequest(new ReconnectPortRequest(port, oldTo, newTo));
 	}
-
-	/**
-	 * Only to be used by the {@code InstrumentationDecorator}.
-	 *
-	 */
-	void setDomainChangeStrategy(DomainChangeStrategy strategy) { dcs=strategy; }
 
 	/**
 	 * Adds a model change request to the queue
@@ -227,7 +315,7 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 	 *               running
 	 */
 	public static final void toggleSimulationIsRunning(boolean toggle) {
-		simulationIsRunning=toggle;
+		simulationIsRunning = toggle;
 	}
 
 	/**
@@ -238,6 +326,8 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 	 *
 	 * @return current simulation status, {@code true} means simulation is running
 	 */
-	public static final boolean isSimulationRunning() { return simulationIsRunning; }
+	public static final boolean isSimulationRunning() {
+		return simulationIsRunning;
+	}
 
 }

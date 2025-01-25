@@ -49,7 +49,7 @@ public interface Agent extends ModelEntity {
 	 * Calculates new outputs from the available inputs and implements the agent's
 	 * strategy.
 	 * <p>
-	 * This method is called by the simulator every time this agent is scheduled as
+	 * This method is called every time this agent is scheduled as
 	 * an event in the global event queue. Outputs are basically massages that have
 	 * to be put onto the outport of this agent. It should implement the general
 	 * strategy of the agent and will acquire the actual simulation time from the
@@ -75,6 +75,21 @@ public interface Agent extends ModelEntity {
 	 *
 	 */
 	Time doEvent(Time time);
+
+	/**
+	 * Called by the simulator to initiate the agent's action routine.
+	 * <p>
+	 * This method can be hooked by an instrumentation routine
+	 * to listen to the agent's state. The default implementation just calls {@link #doEvent(Time)}.
+	 * <p>
+	 * <b>Do not invoke from outside the simulation loop!</b>
+	 *
+	 * @param time current simulation time
+	 * 
+	 * @return tone - time of next event
+	 *
+	 */
+	Time doEventSim(Time time);
 	
 	/**
 	 * Provides simple logging functionality to a stream with time stamp, entity name and message output.

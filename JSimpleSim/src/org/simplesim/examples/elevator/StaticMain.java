@@ -14,7 +14,6 @@ import org.simplesim.examples.elevator.shared.View;
 import org.simplesim.examples.elevator.shared.VisitorState;
 import org.simplesim.examples.elevator.stat.StaticModel;
 import org.simplesim.examples.elevator.stat.StaticVisitor;
-import org.simplesim.model.InstrumentationDecorator;
 import org.simplesim.simulator.ConcurrentDESimulator;
 import org.simplesim.simulator.Simulator;
 
@@ -77,8 +76,9 @@ public class StaticMain {
 	}
 
 	private static void addInstrumentedVisitor(StaticModel building) {
-		final InstrumentationDecorator<?, ?> instrumentedVisitor=new InstrumentationDecorator<>(new StaticVisitor());
-		instrumentedVisitor.registerAfterExecutionListener((time, agent) -> {
+		final StaticVisitor visitor=new StaticVisitor();
+		visitor.enableInstrumentation();
+		visitor.registerAfterExecutionListener((time, agent) -> {
 			final VisitorState state=(VisitorState) agent.getState();
 			if (state.getCurrentFloor()==state.getDestinationFloor())
 				System.out.println(time.toString()+" agent arrived on floor "+state.getCurrentFloor());
@@ -86,9 +86,9 @@ public class StaticMain {
 					time.toString()+" agent currently on floor "+state.getCurrentFloor()+" with destination floor "
 							+state.getDestinationFloor()+", current mood is "+state.getCurrentMood(time).toString());
 		});
-		instrumentedVisitor.addToDomain(building);
-		building.getElevator().getOutport().connect(instrumentedVisitor.getInport());
-		instrumentedVisitor.getOutport().connect(building.getElevator().getInport());
+		visitor.addToDomain(building);
+		building.getElevator().getOutport().connect(visitor.getInport());
+		visitor.getOutport().connect(building.getElevator().getInport());
 	}
 
 }
