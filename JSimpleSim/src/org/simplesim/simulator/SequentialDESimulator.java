@@ -10,6 +10,8 @@
  */
 package org.simplesim.simulator;
 
+import java.util.List;
+
 import org.simplesim.core.messaging.MessageForwardingStrategy;
 import org.simplesim.core.messaging.RecursiveMessageForwarding;
 import org.simplesim.core.scheduling.EventQueue;
@@ -67,12 +69,12 @@ public class SequentialDESimulator extends BasicSimulator {
 		initGlobalEventQueue();
 		setSimulationTime(getGlobalEventQueue().getMin());
 		while (getSimulationTime().compareTo(stop)<0) {
-			BasicAgent.toggleSimulationIsRunning(true);
+			BasicAgent.setSimulationIsRunning(true);
 			// part I: process all current events by calling the agents' doEvent method
 			// and enqueue the next events of the agents
-			setCurrentEventList(getGlobalEventQueue().dequeueAll());
+			List<Agent> cel=getGlobalEventQueue().dequeueAll(); // cel=current event list
 			// System.out.println("Number of concurrent events: "+list.size());
-			for (Agent agent : getCurrentEventList()) {
+			for (Agent agent : cel) {
 				final Time tone=agent.doEventSim(getSimulationTime());
 				if (tone==null) throw new Simulator.InvalidSimulatorStateException(
 						"Local event queue is empty in agent "+agent.getFullName());
@@ -82,8 +84,8 @@ public class SequentialDESimulator extends BasicSimulator {
 				getGlobalEventQueue().enqueue(agent,tone);
 			}
 			// part II: do the message forwarding
-			getMessageForwardingStrategy().forwardMessages(getCurrentEventList());
-			BasicAgent.toggleSimulationIsRunning(false);
+			getMessageForwardingStrategy().forwardMessages(cel);
+			BasicAgent.setSimulationIsRunning(false);
 			hookEventsProcessed();
 			setSimulationTime(getGlobalEventQueue().getMin());
 		}

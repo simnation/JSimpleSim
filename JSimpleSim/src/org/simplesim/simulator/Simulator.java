@@ -6,11 +6,8 @@
  */
 package org.simplesim.simulator;
 
-import java.util.List;
-
 import org.simplesim.core.instrumentation.Listener;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.model.Agent;
 import org.simplesim.model.Domain;
 
 /**
@@ -46,8 +43,6 @@ public interface Simulator {
 	Domain getRootDomain();
 
 	Time getSimulationTime();
-
-	List<Agent> getCurrentEventList();
 
 	/**
 	 * Registers an {@code EventsProcessedListener} to be called after each

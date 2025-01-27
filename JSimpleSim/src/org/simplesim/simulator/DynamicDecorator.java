@@ -5,12 +5,9 @@
  */
 package org.simplesim.simulator;
 
-import java.util.List;
-
 import org.simplesim.core.dynamic.ChangeRequest;
 import org.simplesim.core.instrumentation.Listener;
 import org.simplesim.core.scheduling.Time;
-import org.simplesim.model.Agent;
 import org.simplesim.model.BasicAgent;
 import org.simplesim.model.Domain;
 
@@ -40,7 +37,7 @@ public final class DynamicDecorator implements Simulator {
 	public DynamicDecorator(Simulator value) {
 		simulator=value;
 		// The change listener is notified after a simulation loop. It does not need any time or object info
-		simulator.registerEventsProcessedListener((time, sim) -> doModelChanges());
+		simulator.registerEventsProcessedListener((_, _) -> doModelChanges());
 	}
 
 	/**
@@ -63,9 +60,6 @@ public final class DynamicDecorator implements Simulator {
 
 	@Override
 	public Time getSimulationTime() { return simulator.getSimulationTime(); }
-
-	@Override
-	public List<Agent> getCurrentEventList() { return simulator.getCurrentEventList(); }
 
 	@Override
 	public void registerEventsProcessedListener(Listener<Simulator> listener) {

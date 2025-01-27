@@ -22,7 +22,7 @@ public final class Main {
 		final Model model=new Model(GRID_DX,GRID_DY);
 		model.createCells(LIFE_PROBABILITY);
 		model.connectCells();
-		final View view=new View("JSimpleSim exmaple: Conway's Game of Life",GRID_DX,GRID_DY);
+		final View view=new View("JSimpleSim exmaple: Conway's Game of Life",GRID_DX,GRID_DY,model);
 		final MessageForwardingStrategy mfs=new DirectMessageForwarding();
 		final Simulator simulator=new SequentialTSSimulator(model,mfs);
 		// final Simulator simulator=new ConcurrentTSSimulator(model,mfs);

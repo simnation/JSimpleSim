@@ -55,13 +55,7 @@ public final class ConcurrentDESimulator extends SequentialDESimulator {
 		super(root);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.simplesim.simulator.SequentialDESimulator#runSimulation(org.simplesim.
-	 * core.scheduling.Time)
-	 */
+	
 	@Override
 	public void runSimulation(Time stop) {
 		initGlobalEventQueue();
@@ -70,16 +64,16 @@ public final class ConcurrentDESimulator extends SequentialDESimulator {
 		final ExecutorService executor=Executors.newWorkStealingPool();
 		final List<Future<Time>> futures=new ArrayList<>();
 		while (getSimulationTime().compareTo(stop)<0) {
-			BasicAgent.toggleSimulationIsRunning(true);
+			BasicAgent.setSimulationIsRunning(true);
 			// part I: process all current events by calling the agents' doEvent method
 			// and enqueue the next events of the agents
-			setCurrentEventList(getGlobalEventQueue().dequeueAll());
+			List<Agent> cel=getGlobalEventQueue().dequeueAll(); // cel=current event list
 			// start multi-threaded execution
-			for (Agent agent : getCurrentEventList())
+			for (Agent agent : cel)
 				futures.add(executor.submit(() -> agent.doEventSim(getSimulationTime())));
 			// join threads again and collect results
 			for (int index=0; index<futures.size(); index++) try {
-				final Agent agent=getCurrentEventList().get(index);
+				final Agent agent=cel.get(index);
 				final Time tone=futures.get(index).get();
 				if (tone==null) throw new Simulator.InvalidSimulatorStateException(
 						"Local event queue is empty in agent "+agent.getFullName());
@@ -91,8 +85,8 @@ public final class ConcurrentDESimulator extends SequentialDESimulator {
 				exception.printStackTrace();
 			}
 			// part II: do the message forwarding
-			getMessageForwardingStrategy().forwardMessages(getCurrentEventList());
-			BasicAgent.toggleSimulationIsRunning(false);
+			getMessageForwardingStrategy().forwardMessages(cel);
+			BasicAgent.setSimulationIsRunning(false);
 			futures.clear(); // free futures again
 			hookEventsProcessed();
 			setSimulationTime(getGlobalEventQueue().getMin());

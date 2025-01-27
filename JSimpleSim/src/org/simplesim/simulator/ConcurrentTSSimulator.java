@@ -53,17 +53,16 @@ public final class ConcurrentTSSimulator extends SequentialTSSimulator {
 
 	@Override
 	public void runSimulation(Time stop) {
-		setCurrentEventList(getRootDomain().listAllAgents(true));
-		// used a variable thread pool with a maximum of as many worker threads as cpu
-		// cores
+		final List<Agent> cel=getRootDomain().listAllAgents(true); // cel=current event list
+		// used a variable thread pool with a maximum of as many worker threads as cpu cores
 		final ExecutorService executor=Executors.newWorkStealingPool();
 		final List<Future<?>> futures=new ArrayList<>();
 		setSimulationTime(Time.ZERO);
 		while (getSimulationTime().compareTo(stop)<0) {
-			BasicAgent.toggleSimulationIsRunning(true);
+			BasicAgent.setSimulationIsRunning(true);
 			// part I: process all current events by calling the agents' doEvent method
 			// in time step, iterate over ALL agents, ignore time of next event
-			for (Agent agent : getCurrentEventList())
+			for (Agent agent : cel)
 				futures.add(executor.submit(() -> agent.doEventSim(getSimulationTime())));
 			// wait until all threads have finished
 			try {
@@ -72,8 +71,8 @@ public final class ConcurrentTSSimulator extends SequentialTSSimulator {
 				exception.printStackTrace();
 			}
 			// part II: do the message forwarding
-			getMessageForwardingStrategy().forwardMessages(getCurrentEventList());
-			BasicAgent.toggleSimulationIsRunning(false);
+			getMessageForwardingStrategy().forwardMessages(cel);
+			BasicAgent.setSimulationIsRunning(false);
 			futures.clear();
 			hookEventsProcessed();
 			// part III: add the time step

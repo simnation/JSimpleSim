@@ -314,7 +314,7 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 	 * @param toggle the status of the simulation, {@code true} means simulation is
 	 *               running
 	 */
-	public static final void toggleSimulationIsRunning(boolean toggle) {
+	public static final void setSimulationIsRunning(boolean toggle) {
 		simulationIsRunning = toggle;
 	}
 

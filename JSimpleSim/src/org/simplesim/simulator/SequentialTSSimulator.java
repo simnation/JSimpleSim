@@ -10,6 +10,8 @@
  */
 package org.simplesim.simulator;
 
+import java.util.List;
+
 import org.simplesim.core.messaging.MessageForwardingStrategy;
 import org.simplesim.core.messaging.RecursiveMessageForwarding;
 import org.simplesim.core.scheduling.Time;
@@ -49,21 +51,19 @@ public class SequentialTSSimulator extends BasicSimulator {
 
 	@Override
 	public void runSimulation(Time stop) {
-		// list of all agents processed in the last event cycle
-		setCurrentEventList(getRootDomain().listAllAgents(true));
+		final List<Agent> cel=getRootDomain().listAllAgents(true); // cel=current event list
 		setSimulationTime(Time.ZERO);
 		while (getSimulationTime().compareTo(stop)<0) {
-			BasicAgent.toggleSimulationIsRunning(true);
+			BasicAgent.setSimulationIsRunning(true);
 			// part I: process all current events by calling the agents' doEvent method
 			// in time step, iterate over ALL agents, ignore time of next event
-			for (Agent agent : getCurrentEventList()) agent.doEventSim(getSimulationTime());
+			for (Agent agent : cel) agent.doEventSim(getSimulationTime());
 			// part II: do the message forwarding
-			getMessageForwardingStrategy().forwardMessages(getCurrentEventList());
-			BasicAgent.toggleSimulationIsRunning(false);
+			getMessageForwardingStrategy().forwardMessages(cel);
+			BasicAgent.setSimulationIsRunning(false);
 			hookEventsProcessed();
 			// part III: add the time step
 			setSimulationTime(getSimulationTime().add(getTimeStep()));
-			// System.out.println("Simulation time is "+getSimulationTime().toString());
 		}
 	}
 

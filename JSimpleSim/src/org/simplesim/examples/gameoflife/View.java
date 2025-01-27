@@ -22,9 +22,12 @@ import org.simplesim.simulator.Simulator;
 public class View extends JFrame implements Listener<Simulator> {
 
 	private static final int CELL_SIZE=4;
+	
+	final Model model;
 
-	public View(String title, int width, int height) {
+	public View(String title, int width, int height, Model m) {
 		super(title);
+		model=m;
 		final Dimension size=new Dimension(CELL_SIZE*width,CELL_SIZE*height);
 		setPreferredSize(size);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -41,7 +44,7 @@ public class View extends JFrame implements Listener<Simulator> {
 				// Get a new graphics context every time through the loop
 				// to make sure the strategy is validated
 				final Graphics g=bs.getDrawGraphics();
-				for (Agent cell : source.getCurrentEventList()) {
+				for (Agent cell : model.listAllAgents(false)) {
 					final CellState cs=((Cell) cell).getState();
 					if (cs.isAlive()) g.setColor(Color.YELLOW);
 					else g.setColor(Color.BLUE);
