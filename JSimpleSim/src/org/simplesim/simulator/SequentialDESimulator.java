@@ -60,10 +60,6 @@ public class SequentialDESimulator extends BasicSimulator {
 		this(root,new HeapEventQueue<Agent>(),new RecursiveMessageForwarding());
 	}
 
-	public SequentialDESimulator(BasicDomain root, EventQueue<Agent> queue) {
-		this(root,queue,new RecursiveMessageForwarding());
-	}
-
 	@Override
 	public void runSimulation(Time stop) {
 		initGlobalEventQueue();

@@ -13,7 +13,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.simplesim.core.messaging.MessageForwardingStrategy;
+import org.simplesim.core.messaging.RecursiveMessageForwarding;
 import org.simplesim.core.scheduling.EventQueue;
+import org.simplesim.core.scheduling.HeapEventQueue;
 import org.simplesim.core.scheduling.Time;
 import org.simplesim.model.BasicAgent;
 import org.simplesim.model.BasicDomain;
@@ -28,7 +30,7 @@ import org.simplesim.model.Agent;
  * <p>
  * This implementation is especially useful to run DES models.
  */
-public final class ConcurrentDESimulator extends SequentialDESimulator {
+public final class ConcurrentDESimulator extends BasicSimulator {
 
 	/**
 	 * Constructs a new concurrent simulator with given model, queue implementation
@@ -52,9 +54,8 @@ public final class ConcurrentDESimulator extends SequentialDESimulator {
 	 * @param root the root domain of the model
 	 */
 	public ConcurrentDESimulator(BasicDomain root) {
-		super(root);
+		this(root,new HeapEventQueue<Agent>(),new RecursiveMessageForwarding());
 	}
-
 	
 	@Override
 	public void runSimulation(Time stop) {
