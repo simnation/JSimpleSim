@@ -118,7 +118,7 @@ public abstract class RoutingDomain extends BasicDomain {
 	 * @throws NullPointerException               if entity is null
 	 */
 	@Override
-	<T extends BasicModelEntity> T addEntity(T entity) {
+	public <T extends BasicModelEntity> T addEntity(T entity) {
 		super.addEntity(entity);
 		entity.getOutport().connect(getOutport()); // upstream coupling through the domain towards the root
 		// Note: The downstream coupling is handled by the RoutingPort itself!
@@ -136,7 +136,7 @@ public abstract class RoutingDomain extends BasicDomain {
 	 * @return the removed entity if the domain contained it, null otherwise
 	 */
 	@Override
-	<T extends BasicModelEntity> void removeEntity(T entity) {
+	public <T extends BasicModelEntity> void removeEntity(T entity) {
 		final int start=listDomainEntities().indexOf(entity);
 		if (start==-1) throw new NoSuchElementException("Entity not part of parent domain: "+entity.getFullName());
 		entity.getOutport().disconnect(getOutport()); // remove connection towards domain root

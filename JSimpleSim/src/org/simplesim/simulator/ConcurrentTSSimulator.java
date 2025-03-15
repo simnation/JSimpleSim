@@ -11,17 +11,17 @@
 package org.simplesim.simulator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import org.simplesim.core.messaging.MessageForwardingStrategy;
 import org.simplesim.core.scheduling.Time;
+import org.simplesim.model.Agent;
 import org.simplesim.model.BasicAgent;
 import org.simplesim.model.BasicDomain;
-import org.simplesim.model.Agent;
 
 /**
  * Simulator for concurrent time step simulation
@@ -36,7 +36,7 @@ import org.simplesim.model.Agent;
 public final class ConcurrentTSSimulator extends SequentialTSSimulator {
 
 	public ConcurrentTSSimulator(BasicDomain root, MessageForwardingStrategy forwarding) {
-		super(root,forwarding);
+		super(root, forwarding);
 	}
 
 	/**
@@ -53,28 +53,35 @@ public final class ConcurrentTSSimulator extends SequentialTSSimulator {
 
 	@Override
 	public void runSimulation(Time stop) {
-		final List<Agent> cel=getRootDomain().listAllAgents(true); // cel=current event list
-		// used a variable thread pool with a maximum of as many worker threads as cpu cores
-		final ExecutorService executor=Executors.newWorkStealingPool();
-		final List<Future<?>> futures=new ArrayList<>();
 		setSimulationTime(Time.ZERO);
-		while (getSimulationTime().compareTo(stop)<0) {
+		// used a variable thread pool with a maximum of as many worker threads as cpu
+		// cores
+		final ExecutorService executor = Executors.newWorkStealingPool();
+		final List<Callable<?>> tasks = new ArrayList<>();
+		List<Agent> cel = Collections.emptyList(); // cel=current event list
+		boolean rebuildTaskList = true;
+
+		while (getSimulationTime().compareTo(stop) < 0) {
 			BasicAgent.setSimulationIsRunning(true);
-			// part I: process all current events by calling the agents' doEvent method
-			// in time step, iterate over ALL agents, ignore time of next event
-			for (Agent agent : cel)
-				futures.add(executor.submit(() -> agent.doEventSim(getSimulationTime())));
-			// wait until all threads have finished
+			// part 0: costly rebuild of list only if there are changes to the model
+			if (rebuildTaskList) {
+				tasks.clear();
+				cel = getRootDomain().listAllAgents(true);
+				for (Agent agent : cel)
+					tasks.add(() -> agent.doEventSim(getSimulationTime()));
+				rebuildTaskList = false;
+			}
+			// part I: invoke all agents
 			try {
-				for (Future<?> item : futures) item.get();
-			} catch (InterruptedException|ExecutionException exception) {
+				executor.invokeAll(tasks);
+			} catch (Exception exception) {
 				exception.printStackTrace();
 			}
 			// part II: do the message forwarding
 			getMessageForwardingStrategy().forwardMessages(cel);
+			rebuildTaskList = BasicAgent.hasModelChangeRequest();
 			BasicAgent.setSimulationIsRunning(false);
-			futures.clear();
-			hookEventsProcessed();
+			callEventsProcessedHook();
 			// part III: add the time step
 			setSimulationTime(getSimulationTime().add(getTimeStep()));
 		}

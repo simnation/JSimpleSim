@@ -25,11 +25,11 @@ public class SimpleDomain extends RoutingDomain {
 	public static void main(String[] args) {
 		SimpleDomain root=new SimpleDomain();
 		root.setAsRootDomain();
-		new SimpleAgent().addToDomain(root);
+		root.addEntity(new SimpleAgent());
 		SimpleDomain subdomain=new SimpleDomain();
-		new SimpleAgent().addToDomain(subdomain);
-		new SimpleAgent().addToDomain(subdomain);
-		subdomain.addToDomain(root);
+		subdomain.addEntity(new SimpleAgent());
+		subdomain.addEntity(new SimpleAgent());
+		root.addEntity(subdomain);
 		final MessageForwardingStrategy fs=new RecursiveMessageForwarding();
 		Simulator simulator=new SequentialDESimulator(root,new HeapEventQueue<>(),fs);
 		simulator.runSimulation(Time.INFINITY);

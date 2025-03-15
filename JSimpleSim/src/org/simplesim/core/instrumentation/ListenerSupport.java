@@ -50,6 +50,10 @@ public class ListenerSupport<T> {
 	public void notifyListeners(T source) {
 		notifyListeners(null,source);
 	}
+	
+	public boolean hasListeners() {
+		return !listeners.isEmpty();
+	}
 
 
 }

@@ -92,10 +92,10 @@ public abstract class BasicSimulator implements Simulator {
 		eventsProcessedListeners.unregisterListener(listener);
 	}
 
-	protected void hookEventsProcessed() {
+	protected void callEventsProcessedHook() {
 		eventsProcessedListeners.notifyListeners(this);
 	}
-
+	
 	protected MessageForwardingStrategy getMessageForwardingStrategy() {
 		return mfs;
 	}

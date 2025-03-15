@@ -63,7 +63,7 @@ public interface ModelEntity {
 	 * <i>Note: Connection management has to be done externally by the caller!</i>
 	 * 
 	 */
-	void addToDomain(BasicDomain domain);
+//	void addToDomain(BasicDomain domain);
 
 	/**
 	 * Removes this entity form its parent domain.
@@ -74,7 +74,7 @@ public interface ModelEntity {
 	 * <i>Note: Connection management has to be done externally by the caller.</i>
 	 *
 	 */
-	void removeFromDomain();
+//	void removeFromDomain();
 
 	/**
 	 * Gets the entity address. Can be null.

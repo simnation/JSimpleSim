@@ -33,7 +33,7 @@ public class RemoveEntityRequest implements ChangeRequest {
 	public void doModelChange() {
 		if ((entity instanceof Domain)&&!((Domain) entity).isEmpty()) throw new ChangeRequestException(
 				"Only empty domains may be removed. Domain "+entity.getFullName()+" still has child entities!");
-		entity.removeFromDomain();
+		entity.getParent().removeEntity(entity);
 	}
 
 }

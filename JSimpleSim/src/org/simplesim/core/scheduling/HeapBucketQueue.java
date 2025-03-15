@@ -51,24 +51,12 @@ public final class HeapBucketQueue<E> extends AbstractBucketQueue<E, HashMap<Tim
 		getQueue().remove(time);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.simplesim.core.scheduling.EventQueue#enqueue(java.lang.Object,
-	 * org.simplesim.core.scheduling.Time)
-	 */
 	@Override
 	public void enqueue(E event, Time time) {
 		if (!getMap().containsKey(time)) getQueue().add(time);
 		super.enqueue(event,time);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.simplesim.core.scheduling.EventQueue#dequeueAll(org.simplesim.core.
-	 * scheduling.Time)
-	 */
 	@Override
 	public List<E> dequeueAll(Time time) {
 		final List<E> bucket=super.dequeueAll(time);
@@ -76,22 +64,12 @@ public final class HeapBucketQueue<E> extends AbstractBucketQueue<E, HashMap<Tim
 		return bucket;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.simplesim.core.scheduling.EventQueue#dequeueAll()
-	 */
 	@Override
 	public List<E> dequeueAll() {
 		if (getQueue().isEmpty()) return Collections.emptyList();
 		return super.dequeueAll(getQueue().poll());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.simplesim.core.scheduling.EventQueue#getMin()
-	 */
 	@Override
 	public Time getMin() { return getQueue().peek(); }
 

@@ -32,8 +32,8 @@ public final class ChangeDomainRequest implements ChangeRequest {
 	}
 
 	public void doModelChange() {
-		entity.removeFromDomain();
-		entity.addToDomain(toDomain);
+		entity.getParent().removeEntity(entity);
+		toDomain.addEntity(entity);
 	}
 
 }

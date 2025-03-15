@@ -25,6 +25,36 @@ import java.util.List;
 public interface Domain extends ModelEntity {
 
 	/**
+	 * Adds the given entity to this domain.
+	 * <p>
+	 * The entity should not be added to any another domain at the same time. Also,
+	 * this method should never be called during a simulation cycle.
+	 *
+	 * @param entity the model to be added
+	 * @throws UniqueConstraintViolationException if the entity is already part of
+	 *                                            this domain
+	 * @throws NullPointerException               if entity is null
+	 * @return the given entity for further usage
+	 */
+	public <T extends BasicModelEntity> T addEntity(T entity);
+	
+	/**
+	 * Removes the given entity from this domain.
+	 * <p>
+	 * This method should never be called during a simulation cycle. If the entity
+	 * could be removed from this domain, the entity's parent is set to null!
+	 * <p>
+	 * <i>Note: Connection management has to be done externally by the caller!</i>
+	 *
+	 * @param entity the model to be removed
+	 * 
+	 * @return the removed entity if the domain contained it, null otherwise
+	 */
+	public <T extends BasicModelEntity> void removeEntity(T entity);
+	
+	
+	
+	/**
 	 * Returns all agents within this domain
 	 *
 	 * @param recursive true if listing should be done recursively for agents in all

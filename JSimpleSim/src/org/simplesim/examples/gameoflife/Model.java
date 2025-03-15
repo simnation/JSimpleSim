@@ -24,7 +24,7 @@ public class Model extends BasicDomain {
 			final Cell cell=new Cell(x,y,false);
 			cell.getState().setAlive(Math.random()<lifeProbability);
 			world[x][y]=cell;
-			cell.addToDomain(this);
+			addEntity(cell);
 		}
 	}
 	

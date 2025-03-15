@@ -40,7 +40,7 @@ public abstract class BasicModelEntity implements ModelEntity {
 	private int level=INIT_LEVEL;
 	
 	
-	@Override
+/*	@Override
 	public void addToDomain(BasicDomain domain) {
 		domain.addEntity(this);
 	}
@@ -49,7 +49,7 @@ public abstract class BasicModelEntity implements ModelEntity {
 	public void removeFromDomain() {
 		((BasicDomain) getParent()).removeEntity(this);
 	}
-
+*/
 	@Override
 	public String getName() { return ""; }
 

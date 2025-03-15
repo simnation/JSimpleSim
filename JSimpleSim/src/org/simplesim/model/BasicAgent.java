@@ -292,6 +292,18 @@ public abstract class BasicAgent<S extends State, E> extends BasicModelEntity im
 	}
 
 	/**
+	 * Checks if there are any chage requests
+	 * <p>
+	 * This method is thread-safe.
+	 *
+	 * @return true if there are model change requests
+	 * @see DynamicDecorator
+	 */
+	public static final boolean hasModelChangeRequest() {
+		return !queue.isEmpty();
+	}
+	
+	/**
 	 * Removes first model change request in queue
 	 * <p>
 	 * Should only be used by a dynamic simulator implementation and by an agent

@@ -82,7 +82,7 @@ public class SequentialDESimulator extends BasicSimulator {
 			// part II: do the message forwarding
 			getMessageForwardingStrategy().forwardMessages(cel);
 			BasicAgent.setSimulationIsRunning(false);
-			hookEventsProcessed();
+			callEventsProcessedHook();
 			setSimulationTime(getGlobalEventQueue().getMin());
 		}
 	}

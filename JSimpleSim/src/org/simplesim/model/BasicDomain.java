@@ -50,19 +50,8 @@ public abstract class BasicDomain extends BasicModelEntity implements Domain {
 		return unmodifiableEntityList;
 	}
 
-	/**
-	 * Adds the given entity to this domain.
-	 * <p>
-	 * The entity should not be added to any another domain at the same time. Also,
-	 * this method should never be called during a simulation cycle.
-	 *
-	 * @param entity the model to be added
-	 * @throws UniqueConstraintViolationException if the entity is already part of
-	 *                                            this domain
-	 * @throws NullPointerException               if entity is null
-	 * @return the given entity for further usage
-	 */
-	<T extends BasicModelEntity> T addEntity(T entity) {
+	@Override
+	public <T extends BasicModelEntity> T addEntity(T entity) {
 		if (entity==null) throw new NullPointerException("Cannot add null pointer to domain "+getFullName());
 		if (containsEntity(entity)) throw new UniqueConstraintViolationException(
 				"Model "+entity.toString()+" added twice to domain "+this.getFullName());
@@ -71,19 +60,8 @@ public abstract class BasicDomain extends BasicModelEntity implements Domain {
 		return entity;
 	}
 
-	/**
-	 * Removes the given entity from this domain.
-	 * <p>
-	 * This method should never be called during a simulation cycle. If the entity
-	 * could be removed from this domain, the entity's parent is set to null!
-	 * <p>
-	 * <i>Note: Connection management has to be done externally by the caller!</i>
-	 *
-	 * @param entity the model to be removed
-	 * 
-	 * @return the removed entity if the domain contained it, null otherwise
-	 */
-	<T extends BasicModelEntity> void removeEntity(T entity) {
+	@Override
+	public <T extends BasicModelEntity> void removeEntity(T entity) {
 		if (!getModifiableEntityList().remove(entity)) throw new NoSuchElementException("Entity not part of parent domain: "+entity.getFullName());
 		entity.setParent(null);
 		return;

@@ -38,21 +38,11 @@ public class HeapEventQueue<E> extends AbstractEventQueue<E, PriorityQueue<Event
 		super(new PriorityQueue<>());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.simplesim.core.scheduling.EventQueue#getMin()
-	 */
 	@Override
 	public Time getMin() {
 		return getQueue().peek().getTime();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.simplesim.core.scheduling.EventQueue#dequeue()
-	 */
 	@Override
 	public E dequeue() {
 		if (isEmpty()) return null;

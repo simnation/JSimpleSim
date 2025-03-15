@@ -30,7 +30,7 @@ public final class AddEntityRequest implements ChangeRequest {
 	}
 
 	public void doModelChange() {
-		entity.addToDomain(toDomain);
+		toDomain.addEntity(entity);
 	}
 
 }

@@ -7,7 +7,6 @@ package org.simplesim.simulator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -73,23 +72,24 @@ public final class ConcurrentDESimulator extends BasicSimulator {
 			for (Agent agent : cel)
 				futures.add(executor.submit(() -> agent.doEventSim(getSimulationTime())));
 			// join threads again and collect results
-			for (int index=0; index<futures.size(); index++) try {
-				final Agent agent=cel.get(index);
-				final Time tone=futures.get(index).get();
-				if (tone==null) throw new Simulator.InvalidSimulatorStateException(
-						"Local event queue is empty in agent "+agent.getFullName());
-				if (tone.compareTo(getSimulationTime())<0) throw new Simulator.InvalidSimulatorStateException(
-						"Tone "+tone.toString()+" is before current simulation time "+getSimulationTime().toString()
-								+" in agent "+agent.getFullName());
-				getGlobalEventQueue().enqueue(agent,tone);
-			} catch (InterruptedException|ExecutionException exception) {
+			try {
+				for (int index=0; index<futures.size(); index++) {
+					final Agent agent=cel.get(index);
+					final Time tone=futures.get(index).get();
+					if (tone==null) throw new Simulator.InvalidSimulatorStateException(
+							"Local event queue is empty in agent "+agent.getFullName());
+					if (tone.compareTo(getSimulationTime())<0) throw new Simulator.InvalidSimulatorStateException(
+							"Tone "+tone.toString()+" is before current simulation time "+getSimulationTime().toString()
+							+" in agent "+agent.getFullName());
+					getGlobalEventQueue().enqueue(agent,tone);}
+			} catch (Exception exception) {
 				exception.printStackTrace();
 			}
 			// part II: do the message forwarding
 			getMessageForwardingStrategy().forwardMessages(cel);
 			BasicAgent.setSimulationIsRunning(false);
 			futures.clear(); // free futures again
-			hookEventsProcessed();
+			callEventsProcessedHook();
 			setSimulationTime(getGlobalEventQueue().getMin());
 		}
 		executor.shutdown();

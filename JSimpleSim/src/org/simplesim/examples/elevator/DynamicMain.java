@@ -59,13 +59,13 @@ public class DynamicMain {
 		final DynamicModel building=new DynamicModel(); // building already includes elevator and lobby
 
 		// add floors
-		for (int floor=1; floor<=Limits.MAX_FLOOR; floor++) new Floor(floor).addToDomain(building);
+		for (int floor=1; floor<=Limits.MAX_FLOOR; floor++) building.addEntity(new Floor(floor));
 
 		// add one instrumented visitor to lobby
-		createInstrumentedVisitor().addToDomain(building.getLobby());
+		building.getLobby().addEntity(createInstrumentedVisitor());
 
 		// place new visitors in lobby
-		for (int i=0; i<Limits.VISITORS; i++) new DynamicVisitor().addToDomain(building.getLobby());
+		for (int i=0; i<Limits.VISITORS; i++) building.getLobby().addEntity(new DynamicVisitor());
 
 		final View view=new View(building.getElevator().getState());
 		final MessageForwardingStrategy fs=new RecursiveMessageForwarding();

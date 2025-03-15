@@ -47,42 +47,22 @@ abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> i
 		return queue;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.simplesim.core.scheduling.EventQueue#getTime(java.lang.Object)
-	 */
 	@Override
 	public Time getTime(E event) {
 		for (final EventQueueEntry<E> entry : getQueue()) if (entry.getEvent().equals(event)) return entry.getTime();
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.simplesim.core.scheduling.EventQueue#isEmpty()
-	 */
 	@Override
 	public boolean isEmpty() {
 		return getQueue().isEmpty();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.simplesim.core.scheduling.EventQueue#size()
-	 */
 	@Override
 	public int size() {
 		return getQueue().size();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.simplesim.core.scheduling.EventQueue#dequeue(java.lang.Object)
-	 */
 	@Override
 	public Time dequeue(E event) {
 		final Iterator<EventQueueEntry<E>> iterator=getQueue().iterator();
@@ -96,23 +76,11 @@ abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> i
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.simplesim.core.scheduling.EventQueue#enqueue(java.lang.Object,
-	 * org.simplesim.core.scheduling.Time)
-	 */
 	@Override
 	public void enqueue(E event, Time time) {
 		getQueue().add(new EventQueueEntry<E>(time,event));
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.simplesim.core.scheduling.EventQueue#dequeueAll(org.simplesim.core.
-	 * scheduling.Time)
-	 */
 	@Override
 	public List<E> dequeueAll(Time time) {
 		if (time.equals(getMin())) return dequeueAll();
@@ -129,11 +97,6 @@ abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> i
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.simplesim.core.scheduling.EventQueue#dequeueAll()
-	 */
 	@Override
 	public List<E> dequeueAll() {
 		final List<E> result=new ArrayList<>();
@@ -142,11 +105,6 @@ abstract class AbstractEventQueue<E, Q extends Collection<EventQueueEntry<E>>> i
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		final StringBuffer sb=new StringBuffer();

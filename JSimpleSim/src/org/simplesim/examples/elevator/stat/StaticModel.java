@@ -22,7 +22,7 @@ public final class StaticModel extends BasicDomain {
 	
 	public StaticModel() {
 		super();
-		elevator.addToDomain(this);
+		addEntity(elevator);
 	}
 	
 	public StaticElevator getElevator() {

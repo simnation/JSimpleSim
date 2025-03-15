@@ -51,17 +51,25 @@ public class SequentialTSSimulator extends BasicSimulator {
 
 	@Override
 	public void runSimulation(Time stop) {
-		final List<Agent> cel=getRootDomain().listAllAgents(true); // cel=current event list
 		setSimulationTime(Time.ZERO);
+		List<Agent> cel=getRootDomain().listAllAgents(true); // cel=current event list
+		boolean rebuildTaskList = false;
+
 		while (getSimulationTime().compareTo(stop)<0) {
 			BasicAgent.setSimulationIsRunning(true);
+			// part 0: costly rebuild of list only if there are changes to the model
+			if (rebuildTaskList) {
+				cel = getRootDomain().listAllAgents(true);
+				rebuildTaskList = false;
+			}
 			// part I: process all current events by calling the agents' doEvent method
 			// in time step, iterate over ALL agents, ignore time of next event
 			for (Agent agent : cel) agent.doEventSim(getSimulationTime());
 			// part II: do the message forwarding
 			getMessageForwardingStrategy().forwardMessages(cel);
+			rebuildTaskList = BasicAgent.hasModelChangeRequest();
 			BasicAgent.setSimulationIsRunning(false);
-			hookEventsProcessed();
+			callEventsProcessedHook();
 			// part III: add the time step
 			setSimulationTime(getSimulationTime().add(getTimeStep()));
 		}

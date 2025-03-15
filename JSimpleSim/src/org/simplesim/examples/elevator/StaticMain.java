@@ -59,7 +59,7 @@ public class StaticMain {
 		// add visitors
 		for (int index=1; index<=Limits.VISITORS; index++) {
 			final StaticVisitor visitor=new StaticVisitor();
-			visitor.addToDomain(building);
+			building.addEntity(visitor);
 			building.getElevator().getOutport().connect(visitor.getInport());
 			visitor.getOutport().connect(building.getElevator().getInport());
 		}
@@ -86,7 +86,7 @@ public class StaticMain {
 					time.toString()+" agent currently on floor "+state.getCurrentFloor()+" with destination floor "
 							+state.getDestinationFloor()+", current mood is "+state.getCurrentMood(time).toString());
 		});
-		visitor.addToDomain(building);
+		building.addEntity(visitor);
 		building.getElevator().getOutport().connect(visitor.getInport());
 		visitor.getOutport().connect(building.getElevator().getInport());
 	}

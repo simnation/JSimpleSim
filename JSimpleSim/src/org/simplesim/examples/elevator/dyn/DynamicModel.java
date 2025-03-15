@@ -21,8 +21,8 @@ public class DynamicModel extends RoutingDomain {
 	public DynamicModel() {
 		super();
 		setAsRootDomain();
-		elevator.addToDomain(this); // add elevator
-		new Floor(Limits.LOBBY).addToDomain(this); // add lobby 
+		addEntity(elevator); // add elevator
+		addEntity(new Floor(Limits.LOBBY)); // add lobby 
 	}
 
 	public DynamicElevator getElevator() {
